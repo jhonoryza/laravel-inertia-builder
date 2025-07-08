@@ -18,8 +18,8 @@ class GenerateCommand extends Command
     use HasModel, HasFactory, HasRequest, HasController, HasRoute;
     use HasAppSidebar;
 
-    protected $signature = 'cms:generate {tableName}';
-    protected $description = 'Generate boilerplate for a given table';
+    protected $signature = 'inertia-builder:generate {tableName}';
+    protected $description = 'Generate inertia builder boilerplate for a given table';
 
     public function handle(): int
     {

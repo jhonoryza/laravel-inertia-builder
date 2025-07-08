@@ -35,14 +35,24 @@ class InstallCommand extends Command
             'sonner@^2.0.5',
         ];
         $command = 'npm install ' . implode(' ', $packages);
-        $result = Process::run($command);
+        $npmResult = Process::run($command);
 
-        if ($result->successful()) {
-            echo "NPM Packages installed successfully.\n";
-            echo $result->output();
+        if ($npmResult->successful()) {
+            $this->info("NPM Packages installed successfully");
+            echo $npmResult->output();
         } else {
-            echo "NPM Packages Installation failed:\n";
-            echo $result->errorOutput();
+            $this->error("NPM Packages Installation failed:");
+            echo $npmResult->errorOutput();
+        }
+
+        // install shadcn ui
+        $npxResult = Process::run('npx shadcn@latest add -y -o calendar command pagination popover radio-group slider sonner switch table tabs textarea');
+        if ($npxResult->successful()) {
+            $this->info('required shadcn ui added successfully.');
+            echo $npxResult->output();
+        } else {
+            $this->error('required shadcn ui failed to install.');
+            echo $npxResult->errorOutput();
         }
 
         // copy inertia builder components
@@ -63,11 +73,20 @@ class InstallCommand extends Command
 
         // copy css themes
         (new Filesystem)->copyDirectory(__DIR__ . '/../../Stubs/resources/css/theme', resource_path('css/theme'));
+        copy(__DIR__ . '/../../Stubs/resources/css/app.css', resource_path('css/app.css'));
         $this->info('theme copied successfully.');
 
         // copy tailwind config
         copy(__DIR__ . '/../../Stubs/tailwind.config.js', base_path('tailwind.config.js'));
         $this->info('tailwind config file copied successfully.');
+
+        // publish generator stubs
+        $publishResult = Process::run('php artisan vendor:publish --tag=inertia-builder-stubs');
+        if ($publishResult->successful()) {
+            echo $publishResult->output();
+        } else {
+            echo $publishResult->errorOutput();
+        }
 
         $this->info('inertia-builder installed successfully.');
     }
