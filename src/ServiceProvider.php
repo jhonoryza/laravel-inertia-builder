@@ -4,6 +4,7 @@ namespace Jhonoryza\InertiaBuilder;
 
 use Illuminate\Support\ServiceProvider as LaravelServiceProvider;
 use Jhonoryza\InertiaBuilder\Console\Commands\GenerateCommand;
+use Jhonoryza\InertiaBuilder\Console\Commands\InstallCommand;
 
 class ServiceProvider extends LaravelServiceProvider
 {
@@ -24,6 +25,7 @@ class ServiceProvider extends LaravelServiceProvider
 
         $this->commands([
             GenerateCommand::class,
+            InstallCommand::class,
         ]);
     }
 
@@ -31,6 +33,7 @@ class ServiceProvider extends LaravelServiceProvider
     {
         return [
             GenerateCommand::class,
+            InstallCommand::class,
         ];
     }
 }
