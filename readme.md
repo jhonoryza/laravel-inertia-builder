@@ -1,4 +1,15 @@
-# Laravel Inertia Builder
+<h1 align="center">Laravel Inertia Builder</h1>
+<p align="center">
+    <a href="https://packagist.org/packages/jhonoryza/laravel-inertia-builder">
+        <img src="https://poser.pugx.org/jhonoryza/laravel-inertia-builder/d/total.svg" alt="Total Downloads">
+    </a>
+    <a href="https://packagist.org/packages/jhonoryza/laravel-inertia-builder">
+        <img src="https://poser.pugx.org/jhonoryza/laravel-inertia-builder/v/stable.svg" alt="Latest Stable Version">
+    </a>
+    <a href="https://packagist.org/packages/jhonoryza/laravel-inertia-builder">
+        <img src="https://poser.pugx.org/jhonoryza/laravel-inertia-builder/license.svg" alt="License">
+    </a>
+</p>
 
 This project is inspired by Filament PHP. It aims to build complex UI components like data tables and forms using a
 declarative, backend-driven approach. The structure of the UI (e.g., form fields, table columns) is defined in PHP
