@@ -1,0 +1,35 @@
+{
+    "name": "jhonoryza/laravel-inertia-builder",
+    "description": "Laravel Inertia UI Builder",
+    "type": "library",
+    "license": "MIT",
+    "version": "0.0.1",
+    "autoload": {
+        "psr-4": {
+            "Jhonoryza\\InertiaBuilder\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Jhonoryza\\InertiaBuilder\\ServiceProvider"
+            ]
+        }
+    },
+    "authors": [
+        {
+            "name": "fajar sidik priatna",
+            "email": "jardik.oryza@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "require": {
+        "php": "^8.4",
+        "illuminate/support": "^12.0",
+        "illuminate/console": "^12.0"
+    },
+    "require-dev": {
+        "orchestra/testbench": "^10.0"
+    }
+}
