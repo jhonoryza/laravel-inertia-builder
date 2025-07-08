@@ -1,77 +1,148 @@
-# Laravel Inertia React UI Builder
+# Laravel Inertia Builder
 
-This project is inspired by Filament PHP. It aims to build complex UI components like data tables and forms using a
-declarative, backend-driven approach. The structure of the UI (e.g., form fields, table columns) is defined in PHP
-controller classes, and a generic set of React components renders the final UI. The goal is to build dynamic interfaces
-without writing custom frontend page components for each resource.
+This project is inspired by Filament PHP. It aims to build complex UI components like data tables and forms using a declarative, backend-driven approach. The structure of the UI (e.g., form fields, table columns) is defined in PHP controller classes, and a generic set of React components renders the final UI. The goal is to build dynamic interfaces without writing custom frontend page components for each resource.
 
 **Key Technologies:** Laravel, Inertia.js, React, TypeScript, TailwindCSS.
 
 ---
 
-## Reactive Forms (The Inertia Way)
+## Key Features
 
-The form builder supports creating fields that react to changes in other fields. This is achieved without custom
-frontend logic or API endpoints by using Inertia's "Partial Reloads" feature. This allows any field's properties (
-options, value, label, visibility, etc.) to be updated dynamically from the backend.
+- **Declarative UI Construction:** Define forms and data tables in your Laravel controllers. No need to write bespoke frontend components for every CRUD page.
+- **Rich Form Fields:** A wide variety of form fields are available out-of-the-box, including Text, Select, Textarea, Markdown, File Uploads, Date Pickers, and more.
+- **Powerful Data Tables:** Create complex data tables with searchable columns, advanced filtering, sorting, and bulk actions.
+- **Reactive Components:** Easily create dependent dropdowns and other reactive form elements where a change in one field automatically updates another, all handled seamlessly on the backend.
+- **Relationship Handling:** Automatically populate fields and table columns with data from Eloquent relationships (`belongsTo`, `hasMany`, etc.).
+- **Customizable:** Extend the library with your own custom fields and filters to meet specific needs.
+
+---
+
+## Example: Building a Data Table
+
+Define your entire data table in the `index` method of your controller. The builder handles searching, sorting, filtering, and actions.
+
+**`PostController.php`**
+```php
+public function index(): Response
+{
+    $table = Table::make(Post::class)
+        ->columns([
+            TableColumn::make('id')->sortable(),
+            TableColumn::make('title')->searchable()->sortable(),
+            TableColumn::make('author_id')
+                ->label('Author')
+                ->belongsTo('author', 'name') // Eloquent relationship
+                ->searchable(),
+            TableColumn::make('published')
+                ->renderUsing(fn ($value) => $value ? 'Yes' : 'No'),
+            TableColumn::make('published_at')->sortable(),
+        ])
+        ->filters([
+            Filter::text('title'),
+            Filter::select('author.name')->label('Author')->relationship(User::class, 'name', 'name'),
+            Filter::date('published_at'),
+            Filter::select('published')
+                ->options([
+                    ['label' => 'Publish', 'value' => true],
+                    ['label' => 'Unpublish', 'value' => false],
+                ]),
+        ])
+        ->defaultSort('id', 'desc')
+        ->actions([
+            Action::make('new')->needRowSelected(false),
+            Action::make('delete')->message('Delete this post?'),
+            Action::make('publish')->message('Publish this post?'),
+        ]);
+
+    return Inertia::render('builder/index', [
+        'data' => $table,
+        'routeName' => 'posts',
+    ]);
+}
+```
+
+---
+
+## Example: Building a Form
+
+Define the fields for your create/edit forms in a reusable private method. The builder handles data binding, validation, and different field types.
+
+**`PostController.php`**
+```php
+private function getFormFields(?Post $post = null, $disable = false): array
+{
+    return [
+        Field::text('title')->defaultValue($post?->title),
+        Field::textarea('description')->defaultValue($post?->description),
+        Field::markdown('content')->defaultValue($post?->content),
+        Field::select('category_id')
+            ->label('Category')
+            ->relationship(Category::class, 'name'),
+        Field::select('author_id')
+            ->label('Author')
+            ->searchable()
+            ->relationship(User::class, 'name'),
+        Field::toggle('published')->label('Published ?'),
+        Field::flatpickr('published_at')->date(),
+        Field::tags('tags')->defaultValue($post?->tags),
+        Field::file('thumbnail')->defaultValue($post?->thumbnail),
+    ];
+}
+```
+
+---
+
+## Core Concept: Reactive Forms (The Inertia Way)
+
+The form builder supports creating fields that react to changes in other fields (e.g., dependent dropdowns). This is achieved without custom frontend logic or API endpoints by using Inertia's "Partial Reloads" feature.
 
 ### How It Works
 
-1. **Backend (Marking a Field as Reactive):** In a controller, call the `.reactive()` method on any field that should
-   trigger an update when its value changes.
-   ```php
-   Field::select('province_id')->reactive()
-   ```
+1.  **Backend (Marking a Field as Reactive):** In a controller, call the `.reactive()` method on any field that should trigger an update when its value changes.
+2.  **Frontend (Triggering the Reload):** The generic field builder component detects if a field is `reactive`. When its value changes, it automatically makes an Inertia partial visit to the current URL, sending the new value.
+3.  **Backend (Handling the Reload):** The controller method (e.g., `create` or `edit`) receives the partial reload request. It uses the new value from the request to dynamically build a new `fields` array with updated options for other fields.
+4.  **Frontend (Seamless Update):** Inertia receives the updated `fields` prop and seamlessly updates the form, preserving the user's other input and scroll position.
 
-2. **Frontend (Triggering the Reload):** The `app-field-builder.tsx` component detects if a field is marked as
-   `reactive`. When the user changes the value of that field, it automatically makes an Inertia partial visit to the
-   current URL, sending the new value and requesting only the `fields` prop back.
-   ```javascript
-   router.get(currentUrl, { province_id: 'new-value' }, { only: ['fields'], ... });
-   ```
+### Example: Dependent Dropdowns
 
-3. **Backend (Handling the Reload):** The controller method (e.g., `create(Request $request)`) receives the partial
-   reload request. It uses the value from the `$request` (e.g., `$request->input('province_id')`) to dynamically build a
-   new `fields` array with updated options or values.
+Here is how to set up a dependent dropdown for `City` based on the selected `Province`.
 
-4. **Frontend (Seamless Update):** Inertia receives the updated `fields` prop and seamlessly updates the form,
-   preserving the user's other input and scroll position.
+```php
+private function getFormFields(?Subdistrict $subdistrict = null, $disable = false): array
+{
+    // ... logic to get current province_id from request or model
+    $provinceId = request()->input('province_id') ?: $subdistrict?->district?->city?->province_id;
 
-This architecture keeps the frontend components generic and moves all state logic to the Laravel backend where it
-belongs.
+    return [
+        Field::select('province_id')
+            ->label('Province')
+            ->relationship(Province::class, 'name')
+            ->reactive() // Mark this field as reactive
+            ->defaultValue($provinceId),
 
----
-
-## Backend (Laravel)
-
-1. `Jhonoryza/InertiaBuilder/Inertia/Fields`, This directory contains the PHP classes for the **Form Builder**. Each class (e.g., `TextField`, `SelectField`)
-represents a type of form field. They are used in controllers to define the form's structure.
-
-2. `Jhonoryza/InertiaBuilder/Inertia/Tables`, This directory contains the PHP classes for the **Datatable Builder**. It's used to define the columns, filters, and
-actions for data tables.
-
-3. `Jhonoryza/InertiaBuilder/Inertia/Tables/Filters`, Contains the specific PHP classes for defining filters used within the Datatable Builder.
-
----
-
-## Frontend (React Inertia)
-
-1. `resources/js/pages`, This is a critical folder containing the Inertia page components. These components receive the UI definition (e.g., an
-array of fields) from the Laravel controllers as props. They host the builder components. For example,
-`pages/districts/create.tsx` would render a form based on the fields defined in `DistrictController`.
-
-2. `resources/js/components/builder`, This folder contains all reusable generic inertia builder components.
-
-3. `resources/js/components/custom-fields`, This folder contains all reusable custom field components.
-
-4. `resources/js/components/custom-fields`, This folder contains all reusable custom filter components.
-
-5. `resources/js/pages/builder`, This folder contains all reusable create, view, edit, and index components.
-
-6. `resources/js/types`, Contains all TypeScript type definitions.
+        Field::select('city_id')
+            ->label('City')
+            ->placeholder('Select Province first')
+            ->relationship(City::class, 'name')
+            // This field depends on 'province_id'.
+            // The builder will automatically filter cities based on the selected province.
+            ->dependsOn(dependencyField: 'province_id', foreignKey: 'province_id', value: $provinceId)
+            ->defaultValue($cityId), // Set default value for city
+    ];
+}
+```
 
 ---
 
-## Examples
+## Project Structure
 
-more examples check this [docs](./docs/index.md)
+-   **`src/Inertia/Fields`**: Contains the PHP classes for the **Form Builder** (e.g., `TextField`, `SelectField`).
+-   **`src/Inertia/Tables`**: Contains the PHP classes for the **Datatable Builder** (e.g., `Table`, `TableColumn`, `Filter`).
+-   **`resources/js/pages/builder`**: Contains the generic Inertia page components (`index.tsx`, `create.tsx`, `edit.tsx`) that render the UI based on props from the backend.
+-   **`resources/js/components/builder`**: Contains the reusable React components that make up the form and table builders (e.g., `app-datatable.tsx`, `app-form-builder.tsx`).
+
+---
+
+## More Examples
+
+For more detailed examples, including CRUD implementations for Provinces, Cities, and Districts, please check the [docs](./docs/index.md).
