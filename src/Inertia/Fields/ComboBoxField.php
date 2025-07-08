@@ -9,8 +9,8 @@ use Jhonoryza\InertiaBuilder\Inertia\Fields\Concerns\HasRelationship;
 
 class ComboBoxField extends AbstractField
 {
-    use HasOptions;
     use HasMultiple;
+    use HasOptions;
     use HasRelationship;
 
     protected static function getType(): string
@@ -22,7 +22,7 @@ class ComboBoxField extends AbstractField
     {
         return array_merge(parent::toArray(), [
             'multiple' => $this->multiple,
-            'options' => $this->relation ? $this->getRelationshipData() : $this->options,
+            'options'  => $this->relation ? $this->getRelationshipData() : $this->options,
         ]);
     }
 }

@@ -9,8 +9,7 @@ class Operator implements JsonSerializable
     public function __construct(
         private readonly string $label,
         private readonly string $value,
-    )
-    {
+    ) {
         //
     }
 

@@ -218,6 +218,7 @@ class Field
 
     /**
      * Legacy support for the old API
+     *
      * @deprecated Use specific field type methods instead
      */
     public static function make(string $name): AbstractField

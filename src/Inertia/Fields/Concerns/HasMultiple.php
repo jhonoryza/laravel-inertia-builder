@@ -9,6 +9,7 @@ trait HasMultiple
     public function multiple(): static
     {
         $this->multiple = true;
+
         return $this;
     }
 }

@@ -9,6 +9,7 @@ trait HasSearchable
     public function searchable($state = true): static
     {
         $this->searchable = $state;
+
         return $this;
     }
 }

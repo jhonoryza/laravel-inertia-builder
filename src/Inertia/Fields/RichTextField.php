@@ -16,7 +16,9 @@ class RichTextField extends AbstractField
         'orderedList',
         'link',
     ];
+
     public ?int $minHeight = 250;
+
     public ?int $maxHeight = null;
 
     protected static function getType(): string
@@ -27,11 +29,12 @@ class RichTextField extends AbstractField
     /**
      * Set custom toolbar options
      *
-     * @param array $options Array of toolbar options
+     * @param  array  $options  Array of toolbar options
      */
     public function toolbar(array $options): static
     {
         $this->toolbar = $options;
+
         return $this;
     }
 
@@ -41,6 +44,7 @@ class RichTextField extends AbstractField
     public function minHeight(int $height): static
     {
         $this->minHeight = $height;
+
         return $this;
     }
 
@@ -50,6 +54,7 @@ class RichTextField extends AbstractField
     public function maxHeight(int $height): static
     {
         $this->maxHeight = $height;
+
         return $this;
     }
 
@@ -59,7 +64,7 @@ class RichTextField extends AbstractField
     public function toArray(): array
     {
         return array_merge(parent::toArray(), [
-            'toolbar' => $this->toolbar,
+            'toolbar'   => $this->toolbar,
             'minHeight' => $this->minHeight ?? 200,
             'maxHeight' => $this->maxHeight,
         ]);

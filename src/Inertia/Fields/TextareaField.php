@@ -7,6 +7,7 @@ use Jhonoryza\InertiaBuilder\Inertia\Fields\Base\AbstractField;
 class TextareaField extends AbstractField
 {
     public ?int $cols = 20;
+
     public ?int $rows = 2;
 
     protected static function getType(): string
@@ -20,6 +21,7 @@ class TextareaField extends AbstractField
     public function cols(int $cols): static
     {
         $this->cols = $cols;
+
         return $this;
     }
 
@@ -29,6 +31,7 @@ class TextareaField extends AbstractField
     public function rows(int $rows): static
     {
         $this->rows = $rows;
+
         return $this;
     }
 

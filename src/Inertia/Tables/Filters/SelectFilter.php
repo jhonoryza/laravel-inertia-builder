@@ -12,10 +12,10 @@ use Jhonoryza\InertiaBuilder\Inertia\Tables\Filters\Base\AbstractFilter;
 
 class SelectFilter extends AbstractFilter
 {
-    use HasOptions;
     use HasMultiple;
-    use HasRelationship;
+    use HasOptions;
     use HasQuery;
+    use HasRelationship;
     use HasSearchable;
     use HasServerside;
 
@@ -37,8 +37,8 @@ class SelectFilter extends AbstractFilter
     public function toArray(): array
     {
         return array_merge(parent::toArray(), [
-            'multiple' => $this->multiple,
-            'options' => $this->relation ? $this->getRelationshipData() : $this->options,
+            'multiple'   => $this->multiple,
+            'options'    => $this->relation ? $this->getRelationshipData() : $this->options,
             'searchable' => $this->searchable,
             'serverside' => $this->serverside,
         ]);

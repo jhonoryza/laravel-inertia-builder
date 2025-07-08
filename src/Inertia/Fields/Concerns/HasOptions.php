@@ -9,12 +9,14 @@ trait HasOptions
     public function options(array $options): static
     {
         $this->options = $options;
+
         return $this;
     }
 
     public function loadOptionsUsing(callable $callback): static
     {
         $this->options = $callback();
+
         return $this;
     }
 }

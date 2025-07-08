@@ -9,6 +9,7 @@ trait HasServerside
     public function serverside($state = true): self
     {
         $this->serverside = $state;
+
         return $this;
     }
 }

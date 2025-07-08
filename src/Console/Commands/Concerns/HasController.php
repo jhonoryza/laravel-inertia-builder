@@ -15,6 +15,7 @@ trait HasController
 
         if (File::exists($controllerPath)) {
             $this->warn("Controller $controllerName already exists. Skipping.");
+
             return;
         }
 
@@ -45,10 +46,11 @@ trait HasController
         $import = collect($schema)->map(function ($column) {
             if ($column['relationName']) {
                 $relatedModel = Str::studly($column['relationName']);
+
                 return 'use App\\Models\\' . $relatedModel . ';';
             }
-            return null;
-        })->filter(fn($item) => !is_null($item));
+
+        })->filter(fn ($item) => ! is_null($item));
         $content = str_replace('{{imports}}', $import->implode(PHP_EOL), $content);
 
         File::put($controllerPath, $content);
@@ -64,13 +66,13 @@ trait HasController
             $line = "TableColumn::make('$name')" . PHP_EOL;
             if ($column['relationName']) {
                 $relationName = $column['relationName'];
-                $relationKey = $column['relationKey'];
-                $line = "TableColumn::make('$name')
+                $relationKey  = $column['relationKey'];
+                $line         = "TableColumn::make('$name')
                     ->label('" . Str::studly($relationName) . "')
                     ->belongsTo('$relationName', '$relationKey')" . PHP_EOL;
             }
             if (in_array($type, ['varchar', 'text'])) {
-                $line .= "->searchable()" . PHP_EOL;
+                $line .= '->searchable()' . PHP_EOL;
             }
             if (in_array($type, ['timestamp', 'timestamptz'])) {
                 $line .= "->renderUsing(function (\$value) {
@@ -90,9 +92,10 @@ trait HasController
                     })" . PHP_EOL;
             }
             if ($name === 'deleted_at') {
-                $line .= "->hidden()" . PHP_EOL;
+                $line .= '->hidden()' . PHP_EOL;
             }
-            $line .= "->sortable(),";
+            $line .= '->sortable(),';
+
             return $line;
         })->implode("\n");
     }
@@ -104,13 +107,14 @@ trait HasController
             $type = $column['type_name'];
 
             if (in_array($name, ['id', 'created_at', 'updated_at', 'deleted_at'])) {
-                return null;
+                return;
             }
 
             if ($column['relationName']) {
                 $relationName = $column['relationName'];
-                $relationKey = $column['relationKey'];
+                $relationKey  = $column['relationKey'];
                 $relatedModel = Str::studly($relationName);
+
                 return "Filter::select('$name')
                     ->label('" . Str::studly($relationName) . "')
                     ->relationship($relatedModel::class, '$relationKey', '$relationKey')
@@ -123,7 +127,7 @@ trait HasController
                 'varchar', 'text' => "Filter::text('$name'),",
                 'int2', 'int4', 'int8' => "Filter::number('$name'),",
                 'date', 'timestamptz', 'timestamp' => "Filter::date('$name'),",
-                'bool' => "Filter::boolean('$name'),",
+                'bool'  => "Filter::boolean('$name'),",
                 default => null,
             };
         })->filter()->implode("\n");
@@ -134,18 +138,18 @@ trait HasController
         return collect($schema)->map(function ($column) {
             $name = $column['name'];
             if (in_array($name, ['id', 'created_at', 'updated_at', 'deleted_at'])) {
-                return null;
+                return;
             }
 
             if ($column['relationName']) {
                 $relationName = $column['relationName'];
-                $relationKey = $column['relationKey'];
+                $relationKey  = $column['relationKey'];
                 $relatedModel = Str::studly($relationName);
-                $field = "Field::select('$name')
+                $field        = "Field::select('$name')
                     ->label('" . Str::studly($relationName) . "')
                     ->relationship($relatedModel::class, '$relationKey')";
             } else {
-                $type = $column['type_name'];
+                $type  = $column['type_name'];
                 $field = match ($type) {
                     'text' => "Field::textarea('$name')",
                     'int2', 'int4', 'int8' => "Field::number('$name')",

@@ -2,23 +2,25 @@
 
 namespace Jhonoryza\InertiaBuilder\Console\Commands;
 
+use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Str;
 use Jhonoryza\InertiaBuilder\Console\Commands\Concerns\HasAppSidebar;
 use Jhonoryza\InertiaBuilder\Console\Commands\Concerns\HasController;
 use Jhonoryza\InertiaBuilder\Console\Commands\Concerns\HasFactory;
 use Jhonoryza\InertiaBuilder\Console\Commands\Concerns\HasModel;
 use Jhonoryza\InertiaBuilder\Console\Commands\Concerns\HasRequest;
 use Jhonoryza\InertiaBuilder\Console\Commands\Concerns\HasRoute;
-use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Support\Str;
+
 use function Laravel\Prompts\text;
 
 class GenerateCommand extends Command
 {
-    use HasModel, HasFactory, HasRequest, HasController, HasRoute;
     use HasAppSidebar;
+    use HasController, HasFactory, HasModel, HasRequest, HasRoute;
 
     protected $signature = 'inertia-builder:generate {tableName}';
+
     protected $description = 'Generate inertia builder boilerplate for a given table';
 
     public function handle(): int
@@ -28,8 +30,9 @@ class GenerateCommand extends Command
 
         $this->info("Generating for table: $tableName");
 
-        if (!Schema::hasTable($tableName)) {
+        if (! Schema::hasTable($tableName)) {
             $this->error("Table '$tableName' does not exist.");
+
             return 1;
         }
 
@@ -40,25 +43,27 @@ class GenerateCommand extends Command
             $type = $schema['type_name'];
             if (Str::endsWith($name, '_id')) {
                 $relationName = Str::beforeLast($name, '_id');
-                $titleAttr = text(
+                $titleAttr    = text(
                     label: 'possibly ' . Str::singular($tableName) . ' belongsTo ' . $relationName . ', which attribute want to display ?',
                     placeholder: 'example: name',
                     required: true
                 );
+
                 return [
-                    'name' => $name,
-                    'type_name' => $type,
+                    'name'         => $name,
+                    'type_name'    => $type,
                     'relationName' => $relationName,
-                    'relationKey' => $titleAttr,
-                    'nullable' => $schema['nullable'],
+                    'relationKey'  => $titleAttr,
+                    'nullable'     => $schema['nullable'],
                 ];
             }
+
             return [
-                'name' => $name,
-                'type_name' => $type,
+                'name'         => $name,
+                'type_name'    => $type,
                 'relationName' => null,
-                'relationKey' => null,
-                'nullable' => $schema['nullable'],
+                'relationKey'  => null,
+                'nullable'     => $schema['nullable'],
             ];
         })->toArray();
 
@@ -70,7 +75,8 @@ class GenerateCommand extends Command
         $this->addAppSidebar($tableName, $modelName);
 
         $this->info("$modelName generated successfully!");
-        $this->warn("Please review the generated files, especially for relationships and complex field types.");
+        $this->warn('Please review the generated files, especially for relationships and complex field types.');
+
         return 0;
     }
 }

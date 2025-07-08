@@ -7,7 +7,9 @@ use Jhonoryza\InertiaBuilder\Inertia\Fields\Base\AbstractField;
 class SliderField extends AbstractField
 {
     public ?int $min = 0;
+
     public ?int $max = 10;
+
     public ?int $step = 1;
 
     protected static function getType(): string
@@ -21,6 +23,7 @@ class SliderField extends AbstractField
     public function min(int $min): static
     {
         $this->min = $min;
+
         return $this;
     }
 
@@ -30,6 +33,7 @@ class SliderField extends AbstractField
     public function max(int $max): static
     {
         $this->max = $max;
+
         return $this;
     }
 
@@ -39,6 +43,7 @@ class SliderField extends AbstractField
     public function step(int $step): static
     {
         $this->step = $step;
+
         return $this;
     }
 
@@ -48,8 +53,8 @@ class SliderField extends AbstractField
     public function toArray(): array
     {
         return array_merge(parent::toArray(), [
-            'min' => $this->min ?? 0,
-            'max' => $this->max ?? 100,
+            'min'  => $this->min  ?? 0,
+            'max'  => $this->max  ?? 100,
             'step' => $this->step ?? 1,
         ]);
     }

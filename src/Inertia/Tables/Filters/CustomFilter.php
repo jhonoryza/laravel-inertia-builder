@@ -9,9 +9,6 @@ class CustomFilter extends AbstractFilter
 {
     use HasQuery;
 
-    /**
-     * @var string
-     */
     protected string $component;
 
     protected static function getType(): string

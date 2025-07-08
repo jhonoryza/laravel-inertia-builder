@@ -39,9 +39,9 @@ class DateFilter extends AbstractFilter
     public function toArray(): array
     {
         return array_merge(parent::toArray(), [
-            'mode' => $this->mode,
-            'config' => $this->config,
-            'withTime' => $this->withTime,
+            'mode'       => $this->mode,
+            'config'     => $this->config,
+            'withTime'   => $this->withTime,
             'utcConvert' => $this->utcConvert,
         ]);
     }

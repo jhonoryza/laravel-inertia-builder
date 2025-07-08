@@ -11,8 +11,8 @@ use Jhonoryza\InertiaBuilder\Inertia\Fields\Concerns\HasServerside;
 
 class SelectField extends AbstractField
 {
-    use HasOptions;
     use HasMultiple;
+    use HasOptions;
     use HasRelationship;
     use HasSearchable;
     use HasServerside;
@@ -25,8 +25,8 @@ class SelectField extends AbstractField
     public function toArray(): array
     {
         return array_merge(parent::toArray(), [
-            'multiple' => $this->multiple,
-            'options' => $this->relation ? $this->getRelationshipData() : $this->options,
+            'multiple'   => $this->multiple,
+            'options'    => $this->relation ? $this->getRelationshipData() : $this->options,
             'searchable' => $this->searchable,
             'serverside' => $this->serverside,
         ]);

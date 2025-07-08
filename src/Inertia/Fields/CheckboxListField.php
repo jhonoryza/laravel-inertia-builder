@@ -13,6 +13,7 @@ class CheckboxListField extends AbstractField
      * example: ['label' => 'Technology', 'value' => 'technology']
      */
     use HasOptions;
+
     use HasRelationship;
 
     protected static function getType(): string

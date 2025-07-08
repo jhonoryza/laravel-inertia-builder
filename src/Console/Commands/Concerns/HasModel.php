@@ -13,6 +13,7 @@ trait HasModel
         $modelPath = app_path("Models/$modelName.php");
         if (File::exists($modelPath)) {
             $this->warn("Model $modelName already exists. Skipping.");
+
             return;
         }
 
@@ -26,7 +27,7 @@ trait HasModel
                 '{{fillable}}',
                 '{{casts}}',
                 '{{relationships}}',
-                '{{softDeletes}}'
+                '{{softDeletes}}',
             ],
             [
                 $modelName,
@@ -46,8 +47,8 @@ trait HasModel
     private function generateFillable($schema): string
     {
         return collect($schema)->pluck('name')->filter(function ($name) {
-            return !in_array($name, ['id', 'created_at', 'updated_at', 'deleted_at']);
-        })->map(fn($name) => "        '$name',")->implode("\n");
+            return ! in_array($name, ['id', 'created_at', 'updated_at', 'deleted_at']);
+        })->map(fn ($name) => "        '$name',")->implode("\n");
     }
 
     private function generateCasts($schema): string
@@ -56,8 +57,9 @@ trait HasModel
             $name = $column['name'];
             $type = $column['type_name'];
             if (in_array($name, ['created_at', 'updated_at', 'deleted_at'])) {
-                return null;
+                return;
             }
+
             return match ($type) {
                 'bool' => "'$name' => 'boolean',",
                 'date' => "'$name' => 'date',",
@@ -70,13 +72,14 @@ trait HasModel
 
     private function generateRelationships($schema): string
     {
-        return collect($schema)->pluck('name')->filter(fn($name) => Str::endsWith($name, '_id'))
+        return collect($schema)->pluck('name')->filter(fn ($name) => Str::endsWith($name, '_id'))
             ->map(function ($foreignKey) {
                 $relationName = Str::beforeLast($foreignKey, '_id');
                 $relatedModel = Str::studly($relationName);
+
                 return "\n    public function $relationName(): BelongsTo\n    {\n
                         return \$this->belongsTo($relatedModel::class);\n
                 }";
-            })->implode("");
+            })->implode('');
     }
 }

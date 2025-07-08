@@ -7,13 +7,21 @@ use Jhonoryza\InertiaBuilder\Inertia\Fields\Base\AbstractField;
 class KeyValueField extends AbstractField
 {
     public bool $addable = true;
+
     public bool $editable = true;
+
     public bool $removable = true;
+
     public bool $reorderable = false;
+
     public ?string $keyLabel = null;
+
     public ?string $valueLabel = null;
+
     public ?string $addButtonLabel = null;
+
     public ?string $keyPlaceholder = null;
+
     public ?string $valuePlaceholder = null;
 
     protected static function getType(): string
@@ -27,6 +35,7 @@ class KeyValueField extends AbstractField
     public function addable(bool $addable = true): static
     {
         $this->addable = $addable;
+
         return $this;
     }
 
@@ -36,6 +45,7 @@ class KeyValueField extends AbstractField
     public function editable(bool $editable = true): static
     {
         $this->editable = $editable;
+
         return $this;
     }
 
@@ -45,6 +55,7 @@ class KeyValueField extends AbstractField
     public function removable(bool $removable = true): static
     {
         $this->removable = $removable;
+
         return $this;
     }
 
@@ -54,6 +65,7 @@ class KeyValueField extends AbstractField
     public function reorderable(bool $reorderable = true): static
     {
         $this->reorderable = $reorderable;
+
         return $this;
     }
 
@@ -63,6 +75,7 @@ class KeyValueField extends AbstractField
     public function keyLabel(string $label): static
     {
         $this->keyLabel = $label;
+
         return $this;
     }
 
@@ -72,6 +85,7 @@ class KeyValueField extends AbstractField
     public function valueLabel(string $label): static
     {
         $this->valueLabel = $label;
+
         return $this;
     }
 
@@ -81,6 +95,7 @@ class KeyValueField extends AbstractField
     public function addButtonLabel(string $label): static
     {
         $this->addButtonLabel = $label;
+
         return $this;
     }
 
@@ -90,6 +105,7 @@ class KeyValueField extends AbstractField
     public function keyPlaceholder(string $placeholder): static
     {
         $this->keyPlaceholder = $placeholder;
+
         return $this;
     }
 
@@ -99,6 +115,7 @@ class KeyValueField extends AbstractField
     public function valuePlaceholder(string $placeholder): static
     {
         $this->valuePlaceholder = $placeholder;
+
         return $this;
     }
 
@@ -108,14 +125,14 @@ class KeyValueField extends AbstractField
     public function toArray(): array
     {
         return array_merge(parent::toArray(), [
-            'addable' => $this->addable,
-            'editable' => $this->editable,
-            'removable' => $this->removable,
-            'reorderable' => $this->reorderable,
-            'keyLabel' => $this->keyLabel ?? 'Key',
-            'valueLabel' => $this->valueLabel ?? 'Value',
-            'addButtonLabel' => $this->addButtonLabel ?? 'Add Item',
-            'keyPlaceholder' => $this->keyPlaceholder ?? 'Enter key',
+            'addable'          => $this->addable,
+            'editable'         => $this->editable,
+            'removable'        => $this->removable,
+            'reorderable'      => $this->reorderable,
+            'keyLabel'         => $this->keyLabel         ?? 'Key',
+            'valueLabel'       => $this->valueLabel       ?? 'Value',
+            'addButtonLabel'   => $this->addButtonLabel   ?? 'Add Item',
+            'keyPlaceholder'   => $this->keyPlaceholder   ?? 'Enter key',
             'valuePlaceholder' => $this->valuePlaceholder ?? 'Enter value',
         ]);
     }

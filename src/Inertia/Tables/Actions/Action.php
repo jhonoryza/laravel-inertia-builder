@@ -8,14 +8,14 @@ use JsonSerializable;
 class Action implements JsonSerializable
 {
     private bool $rowSelected = true;
+
     private bool $needConfirm = true;
 
     public function __construct(
         private string $name,
         private string $label = '',
         private string $message = '',
-    )
-    {
+    ) {
         $this->label = Str::of($name)
             ->replace('_', ' ')
             ->replace('-', ' ')
@@ -31,27 +31,30 @@ class Action implements JsonSerializable
     public function message(string $message): static
     {
         $this->message = $message;
+
         return $this;
     }
 
     public function needRowSelected($state = true): static
     {
         $this->rowSelected = $state;
+
         return $this;
     }
 
     public function needConfirm($state = true): static
     {
         $this->needConfirm = $state;
+
         return $this;
     }
 
     public function toArray(): array
     {
         return [
-            'name' => $this->name,
-            'label' => $this->label,
-            'message' => $this->message,
+            'name'        => $this->name,
+            'label'       => $this->label,
+            'message'     => $this->message,
             'rowSelected' => $this->rowSelected,
             'needConfirm' => $this->needConfirm,
         ];

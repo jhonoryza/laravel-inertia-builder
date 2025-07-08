@@ -11,7 +11,7 @@ trait HasAppSidebar
     protected function addAppSidebar($tableName, $modelName): void
     {
         $filePath = base_path('resources/js/components/app-sidebar.tsx');
-        $content = File::get($filePath);
+        $content  = File::get($filePath);
 
         $title = Str::of($tableName)
             ->replace('-', ' ')
@@ -25,16 +25,17 @@ trait HasAppSidebar
 
         if (Str::contains($content, "href: '/$tableName'")) {
             $this->warn("app sidebar for $tableName already exist. Skipping.");
+
             return;
         }
 
-        $specificContent = "];
+        $specificContent = '];
 
-const footerNavItems: NavItem[] = [";
+const footerNavItems: NavItem[] = [';
 
         if (Str::contains($content, $specificContent)) {
             $replacement = $addition . PHP_EOL . $specificContent;
-            $content = Str::replaceFirst($specificContent, $replacement, $content);
+            $content     = Str::replaceFirst($specificContent, $replacement, $content);
         }
 
         File::put($filePath, $content);

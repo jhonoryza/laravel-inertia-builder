@@ -7,8 +7,11 @@ use Jhonoryza\InertiaBuilder\Inertia\Fields\Base\AbstractField;
 class CustomField extends AbstractField
 {
     public ?string $component = null;
+
     public array $extraAttributes = [];
+
     public mixed $state = null;
+
     public ?\Closure $formatStateUsing = null;
 
     protected static function getType(): string
@@ -24,6 +27,7 @@ class CustomField extends AbstractField
     public function component(string $component): static
     {
         $this->component = $component;
+
         return $this;
     }
 
@@ -33,6 +37,7 @@ class CustomField extends AbstractField
     public function extraAttributes(array $attributes): static
     {
         $this->extraAttributes = array_merge($this->extraAttributes, $attributes);
+
         return $this;
     }
 
@@ -42,6 +47,7 @@ class CustomField extends AbstractField
     public function extraAttribute(string $key, mixed $value): static
     {
         $this->extraAttributes[$key] = $value;
+
         return $this;
     }
 
@@ -51,6 +57,7 @@ class CustomField extends AbstractField
     public function state(mixed $state): static
     {
         $this->state = $state;
+
         return $this;
     }
 
@@ -60,6 +67,7 @@ class CustomField extends AbstractField
     public function formatStateUsing(\Closure $callback): static
     {
         $this->formatStateUsing = $callback;
+
         return $this;
     }
 
@@ -77,9 +85,9 @@ class CustomField extends AbstractField
         }
 
         return array_merge($data, [
-            'component' => $this->component,
+            'component'       => $this->component,
             'extraAttributes' => $this->extraAttributes,
-            'state' => $state,
+            'state'           => $state,
         ]);
     }
 }

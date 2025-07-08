@@ -34,14 +34,14 @@ class InstallCommand extends Command
             'react-day-picker@^9.7.0',
             'sonner@^2.0.5',
         ];
-        $command = 'npm install ' . implode(' ', $packages);
+        $command   = 'npm install ' . implode(' ', $packages);
         $npmResult = Process::run($command);
 
         if ($npmResult->successful()) {
-            $this->info("NPM Packages installed successfully");
+            $this->info('NPM Packages installed successfully');
             echo $npmResult->output();
         } else {
-            $this->error("NPM Packages Installation failed:");
+            $this->error('NPM Packages Installation failed:');
             echo $npmResult->errorOutput();
         }
 

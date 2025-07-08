@@ -19,10 +19,11 @@ trait HasRequest
         $requestPath = app_path("Http/Requests/$requestName.php");
         if (File::exists($requestPath)) {
             $this->warn("Request $requestName already exists. Skipping.");
+
             return;
         }
 
-        $stub = File::get(base_path('stubs/inertia-builder/cms.request.stub'));
+        $stub  = File::get(base_path('stubs/inertia-builder/cms.request.stub'));
         $rules = $this->generateValidationRules($schema);
 
         $content = str_replace(
@@ -41,7 +42,7 @@ trait HasRequest
         return collect($schema)->map(function ($column) {
             $name = $column['name'];
             if (in_array($name, ['id', 'created_at', 'updated_at', 'deleted_at'])) {
-                return null;
+                return;
             }
 
             $rules = $column['nullable'] ? ['nullable'] : ['required'];
@@ -53,17 +54,18 @@ trait HasRequest
                 $type = $column['type_name'];
                 match ($type) {
                     'varchar' => array_push($rules, 'string', 'min:1', 'max:255'),
-                    'text' => array_push($rules, 'string', 'min:1'),
-                    'float4', 'float8', 'numeric' => $rules[] = 'numeric',
-                    'int2', 'int4', 'int8' => $rules[] = 'integer',
-                    'bool' => $rules[] = 'boolean',
+                    'text'    => array_push($rules, 'string', 'min:1'),
+                    'float4', 'float8', 'numeric' => $rules[]      = 'numeric',
+                    'int2', 'int4', 'int8' => $rules[]             = 'integer',
+                    'bool' => $rules[]                             = 'boolean',
                     'date', 'timestamp', 'timestamptz' => $rules[] = 'date',
-                    'jsonb' => $rules[] = 'array',
+                    'jsonb' => $rules[]                            = 'array',
                     default => null,
                 };
             }
 
-            $ruleString = collect($rules)->map(fn($r) => "'$r'")->implode(', ');
+            $ruleString = collect($rules)->map(fn ($r) => "'$r'")->implode(', ');
+
             return "'$name' => [$ruleString],";
         })->filter()->implode("\n");
     }

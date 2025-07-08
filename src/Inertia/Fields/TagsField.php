@@ -7,9 +7,13 @@ use Jhonoryza\InertiaBuilder\Inertia\Fields\Base\AbstractField;
 class TagsField extends AbstractField
 {
     public ?array $suggestions = null;
+
     public ?string $separator = ',';
+
     public ?string $addButtonLabel = null;
+
     public ?int $maxTags = 100;
+
     public ?string $tagPrefix = null;
 
     protected static function getType(): string
@@ -24,6 +28,7 @@ class TagsField extends AbstractField
     public function suggestions(array $suggestions): static
     {
         $this->suggestions = $suggestions;
+
         return $this;
     }
 
@@ -33,6 +38,7 @@ class TagsField extends AbstractField
     public function separator(string $separator): static
     {
         $this->separator = $separator;
+
         return $this;
     }
 
@@ -42,6 +48,7 @@ class TagsField extends AbstractField
     public function addButtonLabel(string $label): static
     {
         $this->addButtonLabel = $label;
+
         return $this;
     }
 
@@ -51,6 +58,7 @@ class TagsField extends AbstractField
     public function maxTags(int $maxTags): static
     {
         $this->maxTags = $maxTags;
+
         return $this;
     }
 
@@ -60,6 +68,7 @@ class TagsField extends AbstractField
     public function tagPrefix(string $prefix): static
     {
         $this->tagPrefix = $prefix;
+
         return $this;
     }
 
@@ -69,11 +78,11 @@ class TagsField extends AbstractField
     public function toArray(): array
     {
         return array_merge(parent::toArray(), [
-            'suggestions' => $this->suggestions,
-            'separator' => $this->separator,
+            'suggestions'    => $this->suggestions,
+            'separator'      => $this->separator,
             'addButtonLabel' => $this->addButtonLabel ?? 'Add Tag',
-            'maxTags' => $this->maxTags,
-            'tagPrefix' => $this->tagPrefix,
+            'maxTags'        => $this->maxTags,
+            'tagPrefix'      => $this->tagPrefix,
         ]);
     }
 }
