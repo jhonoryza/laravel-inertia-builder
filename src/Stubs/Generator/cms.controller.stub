@@ -1,0 +1,129 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Http\Controllers\Controller;
+use Jhonoryza\InertiaBuilder\Inertia\Fields\Factory\Field;
+use Jhonoryza\InertiaBuilder\Inertia\Tables\Actions\Action;
+use Jhonoryza\InertiaBuilder\Inertia\Tables\Filters\Factory\Filter;
+use Jhonoryza\InertiaBuilder\Inertia\Tables\Table;
+use Jhonoryza\InertiaBuilder\Inertia\Tables\TableColumn;
+use App\Models\{{modelName}};
+use App\Http\Requests\{{modelName}}StoreRequest;
+use App\Http\Requests\{{modelName}}UpdateRequest;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+use Inertia\Inertia;
+use Inertia\Response;
+{{imports}}
+
+class {{className}} extends Controller
+{
+    public function index(): Response
+    {
+        $table = Table::make({{modelName}}::class)
+            ->columns([
+{{columns}}
+            ])
+            ->filters([
+{{filters}}
+            ])
+            ->defaultSort('id', 'desc')
+            ->actions([
+                Action::make('new')
+                    ->needRowSelected(false)
+                    ->needConfirm(false),
+                Action::make('delete')
+                    ->message('Delete this item?'),
+            ]);
+
+        return Inertia::render('builder/index', [
+            'data' => $table,
+            'routeName' => '{{routeName}}',
+        ]);
+    }
+
+    public function actions(Request $request): RedirectResponse
+    {
+        $action = $request->get('action');
+        $ids = $request->get('ids');
+
+        switch ($action) {
+            case 'new':
+                return redirect()->route('{{routeName}}.create');
+            case 'delete':
+                {{modelName}}::destroy($ids);
+                return redirect()
+                    ->route('{{routeName}}.index')
+                    ->with('description', collect($ids)->implode(', '))
+                    ->with('success', 'Items deleted successfully.');
+            default:
+                return redirect()
+                    ->route('{{routeName}}.index')
+                    ->with('failed', 'undefined action.');
+        }
+    }
+
+    private function getFormFields(?{{modelName}} ${{modelVariable}} = null, $disable = false): array
+    {
+        return [
+{{fields}}
+        ];
+    }
+
+    public function show({{modelName}} ${{modelVariable}}): Response
+    {
+        return Inertia::render('builder/show', [
+            'fields' => $this->getFormFields(${{modelVariable}}, true),
+            'routeName' => '{{routeName}}',
+            'routeId' => ${{modelVariable}}->id,
+        ]);
+    }
+
+    public function create(): Response
+    {
+        return Inertia::render('builder/create', [
+            'fields' => $this->getFormFields(),
+            'routeName' => '{{routeName}}',
+        ]);
+    }
+
+    public function edit({{modelName}} ${{modelVariable}}): Response
+    {
+        return Inertia::render('builder/edit', [
+            'fields' => $this->getFormFields(${{modelVariable}}),
+            'routeName' => '{{routeName}}',
+            'routeId' => ${{modelVariable}}->id,
+        ]);
+    }
+
+    public function store({{modelName}}StoreRequest $request): RedirectResponse
+    {
+        $item = {{modelName}}::create($request->validated());
+
+        return redirect()
+            ->route('{{routeName}}.index')
+            ->with('description', $item->id)
+            ->with('success', 'Item created successfully.');
+    }
+
+    public function update({{modelName}}UpdateRequest $request, {{modelName}} ${{modelVariable}}): RedirectResponse
+    {
+        ${{modelVariable}}->update($request->validated());
+
+        return redirect()
+            ->route('{{routeName}}.edit', ${{modelVariable}})
+            ->with('description', ${{modelVariable}}->id)
+            ->with('success', 'Item updated successfully.');
+    }
+
+    public function destroy({{modelName}} ${{modelVariable}}): RedirectResponse
+    {
+        ${{modelVariable}}->delete();
+
+        return redirect()
+            ->route('{{routeName}}.index')
+            ->with('description', ${{modelVariable}}->id)
+            ->with('success', 'Item deleted successfully.');
+    }
+}
