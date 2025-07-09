@@ -9,7 +9,7 @@ private function getFormFields(?Subdistrict $subdistrict = null, $disable = fals
     $reqDistrictId = request()->input('district_id');
     $provinceId = $reqProvinceId ?: $subdistrict?->district?->city?->province_id;
     $cityId = $reqCityId ?: ($reqProvinceId ? null : $subdistrict?->district?->city_id);
-    $districtId = $reqDistrictId ?: ($reqCityId ? null : ($reqProvinceId ? null : $subdistrict?->district_id));
+    $districtId = $reqDistrictId ?: ($reqCityId || $reqProvinceId ? null : $subdistrict?->district_id);
 
     return [
         Field::select('province_id')
@@ -22,8 +22,22 @@ private function getFormFields(?Subdistrict $subdistrict = null, $disable = fals
             ->placeholder('Select Province first')
             ->label('City')
             ->reactive()
-            ->relationship(City::class, 'name')
-            ->dependsOn(dependencyField: 'province_id', foreignKey: 'province_id', value: $provinceId)
+            //->relationship(City::class, 'name')
+            //->dependsOn(dependencyField: 'province_id', foreignKey: 'province_id', value: $provinceId)
+            ->loadOptionsUsing(function () use ($provinceId) {
+                return City::query()
+                    ->when(
+                        $provinceId,
+                        fn($q) => $q->where('province_id', $provinceId),
+                        fn($q) => $q->whereNull('id'),
+                    )
+                    ->get()
+                    ->map(fn ($item) => [
+                        'label' => $item->name,
+                        'value' => $item->id,
+                    ])
+                    ->toArray();
+            })
             ->defaultValue($cityId)
             ->disable($disable),
         Field::select('district_id')

@@ -184,10 +184,11 @@ the [docs](./docs/index.md).
 
 - PHP >= 8.4
 - Laravel >= 12
-- Nodejs & npm
+- Nodejs & npm >= 20
+- Tailwind 4
 - Laravel [official starter kit with React](https://laravel.com/docs/12.x/starter-kits#react)
 
-currently not supported for `vue starter kit`
+currently not supported for `official vue starter kit`
 
 ## Getting Started
 
