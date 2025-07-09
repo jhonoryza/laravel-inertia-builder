@@ -48,23 +48,31 @@ public function index(): Response
 {
     $table = Table::make(Post::class)
         ->columns([
-            TableColumn::make('id')->sortable(),
-            TableColumn::make('title')->searchable()->sortable(),
+            TableColumn::make('id')
+                ->sortable(),
+            TableColumn::make('title')
+                ->searchable()
+                ->sortable(),
             TableColumn::make('author_id')
                 ->label('Author')
                 ->belongsTo('author', 'name') // Eloquent relationship
                 ->searchable(),
             TableColumn::make('published')
                 ->renderUsing(fn ($value) => $value ? 'Yes' : 'No'),
-            TableColumn::make('published_at')->sortable(),
+            TableColumn::make('published_at')
+                ->sortable(),
         ])
         ->filters([
             Filter::text('title'),
-            Filter::select('author.name')->label('Author')->relationship(User::class, 'name', 'name'),
+            Filter::select('author.name')
+                ->label('Author')
+                ->relationship(User::class, 'name', 'name'),
             Filter::date('published_at'),
             Filter::select('published')
                 ->operators()
-                ->query(fn ($query, $op, $val) => $val ? $query->whereNotNull('published_at') : $query->whereNull('published_at'))
+                ->query(fn ($query, $op, $val) => $val ? 
+                    $query->whereNotNull('published_at') : $query->whereNull('published_at')
+                )
                 ->options([
                     Option::make(true)
                         ->label('Published'),
@@ -74,9 +82,13 @@ public function index(): Response
         ])
         ->defaultSort('id', 'desc')
         ->actions([
-            Action::make('new')->needRowSelected(false),
-            Action::make('delete')->message('Delete this post?'),
-            Action::make('publish')->message('Publish this post?'),
+            Action::make('new')
+                ->needRowSelected(false)
+                ->needConfirm(false),
+            Action::make('delete')
+                ->message('Delete this post?'),
+            Action::make('publish')
+                ->message('Publish this post?'),
         ]);
 
     return Inertia::render('builder/index', [
@@ -99,9 +111,12 @@ and different field types.
 private function getFormFields(?Post $post = null, $disable = false): array
 {
     return [
-        Field::text('title')->defaultValue($post?->title),
-        Field::textarea('description')->defaultValue($post?->description),
-        Field::markdown('content')->defaultValue($post?->content),
+        Field::text('title')
+            ->defaultValue($post?->title),
+        Field::textarea('description')
+            ->defaultValue($post?->description),
+        Field::markdown('content')
+            ->defaultValue($post?->content),
         Field::select('category_id')
             ->label('Category')
             ->relationship(Category::class, 'name'),
@@ -109,10 +124,14 @@ private function getFormFields(?Post $post = null, $disable = false): array
             ->label('Author')
             ->searchable()
             ->relationship(User::class, 'name'),
-        Field::toggle('published')->label('Published ?'),
-        Field::flatpickr('published_at')->date(),
-        Field::tags('tags')->defaultValue($post?->tags),
-        Field::file('thumbnail')->defaultValue($post?->thumbnail),
+        Field::toggle('published')
+            ->label('Published ?'),
+        Field::flatpickr('published_at')
+            ->date(),
+        Field::tags('tags')
+            ->defaultValue($post?->tags),
+        Field::file('thumbnail')
+            ->defaultValue($post?->thumbnail),
     ];
 }
 ```
