@@ -7,11 +7,11 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\DistrictStoreRequest;
 use App\Http\Requests\DistrictUpdateRequest;
-use App\Inertia\Fields\Factory\Field;
-use App\Inertia\Tables\Actions\Action;
-use App\Inertia\Tables\Filters\Factory\Filter;
-use App\Inertia\Tables\Table;
-use App\Inertia\Tables\TableColumn;
+use Jhonoryza\InertiaBuilder\Inertia\Fields\Factory\Field;
+use Jhonoryza\InertiaBuilder\Inertia\Tables\Actions\Action;
+use Jhonoryza\InertiaBuilder\Inertia\Tables\Filters\Factory\Filter;
+use Jhonoryza\InertiaBuilder\Inertia\Tables\Table;
+use Jhonoryza\InertiaBuilder\Inertia\Tables\TableColumn;
 use App\Models\City;
 use App\Models\District;
 use Illuminate\Http\RedirectResponse;

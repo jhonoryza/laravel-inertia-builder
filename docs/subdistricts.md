@@ -7,12 +7,12 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\SubdistrictStoreRequest;
 use App\Http\Requests\SubdistrictUpdateRequest;
-use App\Inertia\Fields\Factory\Field;
-use App\Inertia\Tables\Actions\Action;
-use App\Inertia\Tables\Filters\Factory\Filter;
-use App\Inertia\Tables\Filters\Operator;
-use App\Inertia\Tables\Table;
-use App\Inertia\Tables\TableColumn;
+use Jhonoryza\InertiaBuilder\Inertia\Fields\Factory\Field;
+use Jhonoryza\InertiaBuilder\Inertia\Tables\Actions\Action;
+use Jhonoryza\InertiaBuilder\Inertia\Tables\Filters\Factory\Filter;
+use Jhonoryza\InertiaBuilder\Inertia\Tables\Filters\Operator;
+use Jhonoryza\InertiaBuilder\Inertia\Tables\Table;
+use Jhonoryza\InertiaBuilder\Inertia\Tables\TableColumn;
 use App\Models\City;
 use App\Models\District;
 use App\Models\Province;

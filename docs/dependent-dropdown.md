@@ -30,13 +30,7 @@ private function getFormFields(?Subdistrict $subdistrict = null, $disable = fals
                         $provinceId,
                         fn($q) => $q->where('province_id', $provinceId),
                         fn($q) => $q->whereNull('id'),
-                    )
-                    ->get()
-                    ->map(fn ($item) => [
-                        'label' => $item->name,
-                        'value' => $item->id,
-                    ])
-                    ->toArray();
+                    );
             })
             ->defaultValue($cityId)
             ->disable($disable),

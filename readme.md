@@ -63,9 +63,13 @@ public function index(): Response
             Filter::select('author.name')->label('Author')->relationship(User::class, 'name', 'name'),
             Filter::date('published_at'),
             Filter::select('published')
+                ->operators()
+                ->query(fn ($query, $op, $val) => $val ? $query->whereNotNull('published_at') : $query->whereNull('published_at'))
                 ->options([
-                    ['label' => 'Publish', 'value' => true],
-                    ['label' => 'Unpublish', 'value' => false],
+                    Option::make(true)
+                        ->label('Published'),
+                    Option::make(false)
+                        ->label('Unpublished'),
                 ]),
         ])
         ->defaultSort('id', 'desc')
