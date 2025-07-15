@@ -1,5 +1,71 @@
 # Example Post
 
+create a migration
+
+```php
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        Schema::disableForeignKeyConstraints();
+
+        Schema::create('categories', function (Blueprint $table) {
+            $table->id();
+            $table->string('name', 400);
+            $table->softDeletesTz();
+            $table->timestampsTz();
+        });
+
+        Schema::create('posts', function (Blueprint $table) {
+            $table->id();
+            $table->string('title', 400);
+            $table->text('description')->nullable();
+            $table->longText('content');
+            $table->foreignId('author_id')->constrained('users');
+            $table->foreignId('category_id')->constrained('categories');
+            $table->boolean('published')->default(false);
+            $table->date('published_at')->nullable();
+            $table->dateTimeTz('expired_at')->nullable();
+            $table->jsonb('tags')->nullable();
+            $table->text('thumbnail')->nullable();
+            $table->softDeletesTz();
+            $table->timestampsTz();
+        });
+
+        \App\Models\Post::factory()->count(100)->create();
+
+        Schema::enableForeignKeyConstraints();
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::dropIfExists('posts');
+        Schema::dropIfExists('categories');
+    }
+};
+```
+
+generate scaffolding 
+
+```bash
+php artisan inertia-builder:categories
+php artisan inertia-builder:posts
+```
+
+edit `PostController` like this
+
 ```php
 <?php
 
@@ -261,4 +327,27 @@ class PostController extends Controller
     }
 }
 
+```
+
+edit `Post` model and find this relation change to `User`
+
+```php
+    public function author(): BelongsTo
+    {
+
+        return $this->belongsTo(User::class);
+
+    }
+```
+
+edit `CategoryController` and find this code add null safety `?` to `$value`
+
+```php
+                TableColumn::make('deleted_at')
+                    ->renderUsing(function ($value) {
+                        return $value
+                            ?->format('d/m/Y H:i') ?? '-';
+                    })
+                    ->hidden()
+                    ->sortable(),
 ```
