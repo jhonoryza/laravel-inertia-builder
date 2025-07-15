@@ -70,11 +70,12 @@ export function AppDataTableContent({
                                 />
                             </TableCell>
                             {columns.filter(col => !hiddenColumns[col.name]).map((col) => {
+                                const rawHtml = item[col.name] ?? '';
                                 return <TableCell key={col.name}
                                                   className='cursor-pointer'
                                                   onClick={() => router.visit(route(`${routeName}.show`, id))}
                                 >
-                                    {String(item[col.name] ?? '')}
+                                    <span dangerouslySetInnerHTML={{ __html: rawHtml }} />
                                 </TableCell>;
                             })}
                         </TableRow>

@@ -206,7 +206,10 @@ class RoleController extends Controller
                     ->searchable()
                     ->sortable(),
                 TableColumn::make('permissions')
-                    ->hasMany('permissions', 'name'),
+                    ->hasMany('permissions', 'name')
+                    ->renderUsing(function ($value, $role) {
+                        return $role->permissions->count();
+                    }),
                 TableColumn::make('created_at')
                     ->renderUsing(function ($value) {
                         return $value
@@ -276,7 +279,14 @@ class RoleController extends Controller
                     return Permission::query();
                 })
                 ->multiple()
-                ->searchable(),
+                ->searchable()
+                ->hidden($disable),
+            Field::checkboxList('permissions')
+                ->defaultValue($role?->permissions->pluck('id')->toArray())
+                ->loadOptionsUsing(function () use ($role) {
+                    return $role?->permissions()->get();
+                })
+                ->hidden(!$disable),
         ];
     }
 

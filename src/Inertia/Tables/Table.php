@@ -222,7 +222,13 @@ class Table implements JsonSerializable
                         $value = $row->{$col->relation}->{$col->relationKey} ?? null;
                     }
                 } elseif ($col->relation && $col->relationKey && $col->relationType === 'hasMany') {
-                    $value = $row->{$col->relation}->implode($col->relationKey, ', ');
+                    $value = $row->{$col->relation}->implode($col->relationKey, ' ');
+                    $value = str($value)
+                        ->squish()
+                        ->explode(' ')
+                        ->chunk(2)
+                        ->map(fn($chunk) => $chunk->implode(' '))
+                        ->implode('<br>');
                 }
                 $arr[$col->name] = $value;
             }
