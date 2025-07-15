@@ -484,7 +484,7 @@ export function AppFieldBuilder({field, value, setData, error, isProcessing}: Fi
             return (
                 <div key={field.name} className={`'space-y-2' ${field.isInline ? 'flex items-center space-x-2' : ''}`}>
                     <Label htmlFor={field.name}>{field.label}</Label>
-                    <Select value={value || ''} onValueChange={(val) => handleReactiveChange(val)}
+                    <Select value={value.toString() || ''} onValueChange={(val) => handleReactiveChange(val)}
                             disabled={field.isDisable || isProcessing}>
                         <SelectTrigger>
                             <SelectValue placeholder={field.placeholder || 'Select an option'}/>
@@ -492,7 +492,7 @@ export function AppFieldBuilder({field, value, setData, error, isProcessing}: Fi
                         <SelectContent>
                             {isProcessing && <SelectItem value="loading" disabled>Loading...</SelectItem>}
                             {field.options?.map((opt) => (
-                                <SelectItem key={opt.value as Key} value={opt.value as string}
+                                <SelectItem key={opt.value as Key} value={opt.value.toString() as string}
                                             className={field.mergeClass}>
                                     {opt.label}
                                 </SelectItem>
