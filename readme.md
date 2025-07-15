@@ -222,6 +222,43 @@ composer require jhonoryza/laravel-inertia-builder
 php artisan inertia-builder:install
 ```
 
+add toaster component for notification, edit this file `resources/js/layouts/app.layout.tsx`.
+
+```tsx
+import {Toaster} from "@/components/ui/sonner";
+
+<AppLayoutTemplate breadcrumbs={breadcrumbs} {...props}>
+    <Toaster />
+    {children}
+</AppLayoutTemplate>
+```
+
+edit this file `app/Http/Middleware/HandleInertiaRequests.php`.
+
+```php
+    public function share(Request $request): array
+    {
+        return [
+            // ... etc
+            'flash' => [
+                'success' => fn() => $request->session()->get('success'),
+                'error' => fn() => $this->getErrMessage($request),
+                'description' => fn() => $request->session()->get('description'),
+            ],
+        ];
+    }
+    
+    private function getErrMessage(Request $request): string
+    {
+        /** @var ViewErrorBag $errors */
+        $errors = $request->session()->get('errors');
+        if ($errors) {
+            return collect($errors->getMessages())->flatten()->implode(', ');
+        }
+        return '';
+    }
+```
+
 ### Generator scaffolding
 
 you need at least a table structure in your database
