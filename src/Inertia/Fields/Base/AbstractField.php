@@ -27,10 +27,10 @@ abstract class AbstractField implements JsonSerializable
     public ?string $mergeClass = null;
 
     public bool $isDisable = false;
-    
+
     public bool $hidden = false;
 
-    public \Closure|string|int|bool|null $defaultValue = null;
+    public \Closure|array|string|int|bool|null $defaultValue = null;
 
     public function __construct(string $name)
     {
@@ -48,7 +48,7 @@ abstract class AbstractField implements JsonSerializable
         return $this;
     }
 
-    public function defaultValue(string|bool|int|callable|null $value = null): static
+    public function defaultValue(array|string|bool|int|callable|null $value = null): static
     {
         $this->defaultValue = $value;
 
