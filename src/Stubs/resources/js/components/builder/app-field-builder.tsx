@@ -457,6 +457,7 @@ export function AppFieldBuilder({field, value, setData, error, isProcessing}: Fi
                                             return (
                                                 <CommandItem
                                                     key={opt.label.toString()}
+                                                    value={opt.label.toString()}
                                                     onSelect={() => {
                                                         const current = Array.isArray(value) ? value : value ? [value] : [];
                                                         const newSet = new Set(current);
@@ -550,6 +551,7 @@ export function AppFieldBuilder({field, value, setData, error, isProcessing}: Fi
                                             return (
                                                 <CommandItem
                                                     key={opt.label.toString()}
+                                                    value={opt.label.toString()}
                                                     onSelect={() => {
                                                         const current = Array.isArray(value) ? value : value ? [value] : [];
                                                         const newSet = new Set(current);
