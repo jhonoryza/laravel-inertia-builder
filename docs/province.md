@@ -1,5 +1,34 @@
 # Example Province
 
+create migration
+
+```php
+    public function up(): void
+    {
+        Schema::create('provinces', function (Blueprint $table) {
+            $table->string('id')->primary();
+            $table->string('name');
+        });
+    }
+```
+
+generate scaffold `php artisan inertia-builder:generate provinces`
+
+edit `Province` model
+
+```php
+    protected $keyType = 'string';
+
+    protected function casts(): array
+    {
+        return [
+            'id' => 'string',
+        ];
+    }
+```
+
+edit `ProvinceController` like this
+
 ```php
 <?php
 

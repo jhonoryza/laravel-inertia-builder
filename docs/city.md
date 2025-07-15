@@ -1,5 +1,37 @@
 # Example City
 
+create migration
+
+```php
+    public function up(): void
+    {
+        Schema::create('cities', function (Blueprint $table) {
+            $table->string('id')->primary();
+            $table->string('name');
+            $table->string('province_id');
+            $table->foreign('province_id')->references('id')->on('provinces');
+        });
+    }
+```
+
+generate scaffold `php artisan inertia-builder:generate cities`
+
+edit `City` model
+
+```php
+    protected $keyType = 'string';
+
+    protected function casts(): array
+    {
+        return [
+            'province_id' => 'string',
+            'id' => 'string',
+        ];
+    }
+```
+
+edit `CityController` like this
+
 ```php
 <?php
 

@@ -1,5 +1,37 @@
 # Example Subdistricts
 
+create migration
+
+```php
+    public function up(): void
+    {
+        Schema::create('subdistricts', function (Blueprint $table) {
+            $table->string('id')->primary();
+            $table->string('name');
+            $table->string('district_id');
+            $table->foreign('district_id')->references('id')->on('districts');
+        });
+    }
+```
+
+generate scaffold `php artisan inertia-builder:generate subdistricts`
+
+edit `Subdistrict` model
+
+```php
+    protected $keyType = 'string';
+
+    protected function casts(): array
+    {
+        return [
+            'district_id' => 'string',
+            'id' => 'string',
+        ];
+    }
+```
+
+edit `SubdistrictController` like this
+
 ```php
 <?php
 

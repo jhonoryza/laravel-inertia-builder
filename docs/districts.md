@@ -1,5 +1,37 @@
 # Example Districts
 
+create migration
+
+```php
+    public function up(): void
+    {
+        Schema::create('districts', function (Blueprint $table) {
+            $table->string('id')->primary();
+            $table->string('name');
+            $table->string('city_id');
+            $table->foreign('city_id')->references('id')->on('cities');
+        });
+    }
+```
+
+generate scaffold `php artisan inertia-builder:generate districts`
+
+edit `District` model
+
+```php
+    protected $keyType = 'string';
+
+    protected function casts(): array
+    {
+        return [
+            'city_id' => 'string',
+            'id' => 'string',
+        ];
+    }
+```
+
+edit `DistrictController` like this
+
 ```php
 <?php
 
