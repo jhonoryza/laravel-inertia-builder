@@ -14,6 +14,7 @@ export type FieldDefinition = {
         | 'custom';
     options?: FieldOption[];
     isDisable?: boolean;
+    hidden?: boolean;
     cols?: number;
     rows?: number;
     mode?: 'single' | 'multiple' | 'range' | 'time';

@@ -27,6 +27,8 @@ abstract class AbstractField implements JsonSerializable
     public ?string $mergeClass = null;
 
     public bool $isDisable = false;
+    
+    public bool $hidden = false;
 
     public \Closure|string|int|bool|null $defaultValue = null;
 
@@ -84,6 +86,12 @@ abstract class AbstractField implements JsonSerializable
         return $this;
     }
 
+    public function hidden($state = true): static
+    {
+        $this->hidden = $state;
+        return $this;
+    }
+
     public function disableUsing(callable $func): static
     {
         $this->isDisable = $func();
@@ -104,6 +112,7 @@ abstract class AbstractField implements JsonSerializable
             'isInline'     => $this->isInline,
             'mergeClass'   => $this->mergeClass,
             'isDisable'    => $this->isDisable,
+            'hidden'       => $this->hidden,
             'reactive'     => $this->isReactive,
             'defaultValue' => is_callable($this->defaultValue) ?
                 call_user_func($this->defaultValue)

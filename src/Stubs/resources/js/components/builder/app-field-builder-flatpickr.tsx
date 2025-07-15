@@ -2,7 +2,7 @@
 import React, {useCallback, useEffect, useRef} from 'react';
 import {Input} from '@/components/ui/input';
 import flatpickr from 'flatpickr';
-import 'flatpickr/dist/flatpickr.min.css';
+import 'flatpickr/dist/themes/dark.css';
 import {cn} from "@/lib/utils";
 import {format, parse} from "date-fns";
 import {FieldDefinition} from "@/types/field-builder";
