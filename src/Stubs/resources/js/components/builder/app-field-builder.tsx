@@ -677,13 +677,15 @@ export function AppFieldBuilder({field, value, setData, error, isProcessing}: Fi
             return (
                 <div key={field.name} className={`'space-y-2' ${field.isInline ? 'flex items-center space-x-2' : ''}`}>
                     <Label htmlFor={field.name}>{field.label}</Label>
-                    <Switch
-                        id={field.name}
-                        checked={!!value}
-                        onCheckedChange={(checked) => handleReactiveChange(checked)}
-                        className={field.mergeClass}
-                        disabled={field.isDisable || isProcessing}
-                    />
+                    <div>
+                        <Switch
+                            id={field.name}
+                            checked={!!value}
+                            onCheckedChange={(checked) => handleReactiveChange(checked)}
+                            className={field.mergeClass}
+                            disabled={field.isDisable || isProcessing}
+                        />
+                    </div>
                     {error && <div className="text-sm text-destructive">{error}</div>}
                 </div>
             )
