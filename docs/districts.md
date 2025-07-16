@@ -63,9 +63,8 @@ class DistrictController extends Controller
                 TableColumn::make('name')
                     ->searchable()
                     ->sortable(),
-                TableColumn::make('city_id')
+                TableColumn::make('city.name')
                     ->label('City')
-                    ->belongsTo('city', 'name')
                     ->searchable()
                     ->sortable(),
             ])

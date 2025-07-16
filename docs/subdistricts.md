@@ -66,19 +66,16 @@ class SubdistrictController extends Controller
                 TableColumn::make('name')
                     ->searchable()
                     ->sortable(),
-                TableColumn::make('district_id')
+                TableColumn::make('district.name')
                     ->label('District')
-                    ->belongsTo('district', 'name')
                     ->searchable()
                     ->sortable(),
-                TableColumn::make('city_id')
+                TableColumn::make('city.name')
                     ->label('City')
-                    ->belongsTo('district.city', 'name')
                     ->searchable()
                     ->sortable(),
-                TableColumn::make('province_id')
+                TableColumn::make('district.city.province.name')
                     ->label('Province')
-                    ->belongsTo('district.city.province', 'name')
                     ->searchable()
                     ->sortable(),
             ])

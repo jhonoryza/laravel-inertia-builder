@@ -101,9 +101,8 @@ class PostController extends Controller
                     ->label('Title')
                     ->searchable()
                     ->sortable(),
-                TableColumn::make('author_id')
+                TableColumn::make('author.name')
                     ->label('Author')
-                    ->belongsTo('author', 'name')
                     ->searchable()
                     ->sortable(),
                 TableColumn::make('published')

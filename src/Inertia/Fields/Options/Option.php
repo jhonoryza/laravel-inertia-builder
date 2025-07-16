@@ -9,8 +9,7 @@ class Option implements JsonSerializable
     public function __construct(
         public string $label,
         public string|int|bool|null $value,
-    )
-    {
+    ) {
         //
     }
 
@@ -22,17 +21,19 @@ class Option implements JsonSerializable
         } elseif (is_null($value)) {
             $label = 'null';
         } else {
-            $label = str((string)$value)
+            $label = str((string) $value)
                 ->replace('-', ' ')
                 ->replace('_', ' ')
                 ->title();
         }
+
         return new static($label, $value);
     }
 
     public function label(string $label): static
     {
         $this->label = $label;
+
         return $this;
     }
 

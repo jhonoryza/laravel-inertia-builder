@@ -63,9 +63,8 @@ class CityController extends Controller
                 TableColumn::make('name')
                     ->searchable()
                     ->sortable(),
-                TableColumn::make('province_id')
+                TableColumn::make('province.name')
                     ->label('Province')
-                    ->belongsTo('province', 'name')
                     ->searchable()
                     ->sortable(),
             ])

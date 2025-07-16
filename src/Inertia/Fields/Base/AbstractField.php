@@ -89,6 +89,7 @@ abstract class AbstractField implements JsonSerializable
     public function hidden($state = true): static
     {
         $this->hidden = $state;
+
         return $this;
     }
 

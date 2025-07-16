@@ -415,8 +415,7 @@ class UserController extends Controller implements HasMiddleware
                 TableColumn::make('email')
                     ->searchable()
                     ->sortable(),
-                TableColumn::make('role')
-                    ->hasMany('roles', 'name'),
+                TableColumn::make('roles.name'),
                 TableColumn::make('created_at')
                     ->renderUsing(function ($value) {
                         return $value

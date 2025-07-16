@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Pagination\CursorPaginator;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Pagination\Paginator;
+use Illuminate\Support\Collection;
 use Jhonoryza\InertiaBuilder\QueryBuilder\Sorts\SortByRelationColumn;
 use JsonSerializable;
 use Spatie\QueryBuilder\AllowedFilter;
@@ -125,7 +126,10 @@ class Table implements JsonSerializable
         return $this->actions;
     }
 
-    public function get(): LengthAwarePaginator|Paginator|CursorPaginator
+    /**
+     * get datatable data in pagination format
+     */
+    private function get(): LengthAwarePaginator|Paginator|CursorPaginator
     {
         $sort = request()->get('sort', 'id');
         request()->merge([
@@ -142,40 +146,59 @@ class Table implements JsonSerializable
                 }
             )
             ->allowedFilters($this->getAllowedFilters(request()))
-            ->allowedSorts($this->getAllowedSorts());
+            ->allowedSorts($this->getAllowedSorts())
+            ->with(array_filter(array_map(fn ($c) => $c->relation, $this->columns)));
 
+        /**
+         * default sort handler
+         */
         if ($this->defaultSort) {
             $dir = request()->get('dir', $this->defaultSortDir) === 'desc' ? '-' : '';
             $query
                 ->defaultSort($dir . $this->defaultSort);
         }
 
+        /**
+         * search handler
+         */
         $search = request()->get('q');
         if ($search) {
             $query->where(function ($q) use ($search) {
                 foreach ($this->columns as $col) {
-                    if ($col->searchable) {
-                        if ($col->relation && $col->relationKey) {
-                            if (str_contains($col->relation, '.')) {
-                                $tmp               = explode('.', $col->relation);
-                                $relationAttribute = end($tmp);
-                                $tmp               = array_diff($tmp, [$relationAttribute]);
-                                $relationName      = implode('.', $tmp);
-                            }
-                            $q->orWhereHas($relationName ?? $col->relation, function ($q) use ($col, $search) {
-                                $q->whereRaw("LOWER($col->relationKey) LIKE ?", "%{$search}%");
-                            });
-                        } else {
-                            $q->orWhereRaw("LOWER($col->name) LIKE ?", "%{$search}%");
-                        }
+                    if (! $col->searchable) {
+                        continue;
                     }
+                    if ($col->relation && $col->relationKey) {
+                        if (str_contains($col->relation, '.')) {
+                            [$relationName, $relationAttribute] = extractRelation($col->relation);
+                            $q->orWhereHas($relationName, function ($q) use ($relationAttribute, $search) {
+                                $q->whereRaw("LOWER($relationAttribute) LIKE ?", "%{$search}%");
+                            });
+
+                            continue;
+                        }
+                        $q->orWhereHas($col->relation, function ($q) use ($col, $search) {
+                            $q->whereRaw("LOWER($col->relationKey) LIKE ?", "%{$search}%");
+                        });
+
+                        continue;
+                    }
+                    if (str_contains($col->name, '.')) {
+                        [$relationName, $relationAttribute] = extractRelation($col->name);
+                        $q->orWhereHas($relationName, function ($q) use ($relationAttribute, $search) {
+                            $q->whereRaw("LOWER($relationAttribute) LIKE ?", "%{$search}%");
+                        });
+
+                        continue;
+                    }
+                    $q->orWhereRaw("LOWER($col->name) LIKE ?", "%{$search}%");
                 }
             });
         }
 
-        $query
-            ->with(array_filter(array_map(fn ($c) => $c->relation, $this->columns)));
-
+        /**
+         * pagination handler
+         */
         $perPage = request()->input('perPage', $this->perPage);
 
         if ($this->paginationMethod === 'cursor') {
@@ -190,6 +213,9 @@ class Table implements JsonSerializable
                 ->withQueryString();
         }
 
+        /**
+         * datatable rendering handler
+         */
         $items = $this->mapRowsWithRenderUsing($items);
 
         request()->merge([
@@ -199,6 +225,9 @@ class Table implements JsonSerializable
         return $items;
     }
 
+    /**
+     * datatable rendering handler
+     */
     private function mapRowsWithRenderUsing(
         LengthAwarePaginator|Paginator|CursorPaginator $items,
     ): LengthAwarePaginator|Paginator|CursorPaginator {
@@ -224,11 +253,19 @@ class Table implements JsonSerializable
                 } elseif ($col->relation && $col->relationKey && $col->relationType === 'hasMany') {
                     $value = $row->{$col->relation}->implode($col->relationKey, ' ');
                     $value = str($value)
-                        ->squish()
-                        ->explode(' ')
-                        ->chunk(2)
-                        ->map(fn($chunk) => $chunk->implode(' '))
-                        ->implode('<br>');
+                        ->wordWrap(break: '<br>');
+                } elseif (str_contains($col->name, '.')) {
+                    [$relationName, $relationAttribute] = extractRelation($col->name);
+                    $value                              = $row->{$relationName};
+                    if ($value instanceof Collection) {
+                        $value = $value
+                            ->pluck($relationAttribute)
+                            ->implode(' ');
+                        $value = str($value)
+                            ->wordWrap(break: '<br>');
+                    } else {
+                        $value = $value->{$relationAttribute};
+                    }
                 }
                 $arr[$col->name] = $value;
             }
@@ -239,11 +276,17 @@ class Table implements JsonSerializable
         return $items;
     }
 
+    /**
+     * get all columns
+     */
     public function getColumns(): array
     {
         return array_map(fn ($col) => $col->toArray(), $this->columns);
     }
 
+    /**
+     * sort handler
+     */
     private function getAllowedSorts(): array
     {
         $allowedSorts = array_map(
@@ -255,16 +298,18 @@ class Table implements JsonSerializable
 
         return collect($allowedSorts)->map(function ($col) {
             if (str_contains($col, '.')) {
-                $relation = explode('.', $col)[0];
-                $key      = explode('.', $col)[1];
+                [$relationName, $relationAttribute] = extractRelation($col);
 
-                return AllowedSort::custom($col, SortByRelationColumn::make($relation, $key));
+                return AllowedSort::custom($col, SortByRelationColumn::make($relationName, $relationAttribute));
             }
 
             return $col;
         })->toArray();
     }
 
+    /**
+     * filter handler
+     */
     private function getAllowedFilters(Request $request): array
     {
         $allowedFilters = [];
@@ -310,10 +355,7 @@ class Table implements JsonSerializable
                 }
                 // relation query
                 if (str_contains($key, '.')) {
-                    $tmp               = explode('.', $key);
-                    $relationAttribute = end($tmp);
-                    $tmp               = array_diff($tmp, [$relationAttribute]);
-                    $relationName      = implode('.', $tmp);
+                    [$relationName, $relationAttribute] = extractRelation($key);
                     $query->whereHas(
                         $relationName,
                         function (Builder $query) use ($relationAttribute, $operator, $value) {
@@ -330,6 +372,9 @@ class Table implements JsonSerializable
         return $allowedFilters;
     }
 
+    /**
+     * filter operator handler
+     */
     private function filterQuery(Builder $query, string $key, string $operator, mixed $value): void
     {
         if ($operator === '><') {

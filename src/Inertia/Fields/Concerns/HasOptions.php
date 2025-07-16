@@ -18,6 +18,7 @@ trait HasOptions
             }
             $this->options[] = $option;
         }
+
         return $this;
     }
 
@@ -26,7 +27,7 @@ trait HasOptions
         $data = $callback();
         if ($data instanceof Collection) {
             $this->options = $data
-                ->map(fn($item) => [
+                ->map(fn ($item) => [
                     'label' => $item->name,
                     'value' => $item->id,
                 ])
@@ -35,7 +36,7 @@ trait HasOptions
         if ($data instanceof Builder || $data instanceof EloquentBuilder) {
             $this->options = $data
                 ->get()
-                ->map(fn($item) => [
+                ->map(fn ($item) => [
                     'label' => $item->name,
                     'value' => $item->id,
                 ])
@@ -44,6 +45,7 @@ trait HasOptions
         if (is_array($data)) {
             return $this->options($data);
         }
+
         return $this;
     }
 }
