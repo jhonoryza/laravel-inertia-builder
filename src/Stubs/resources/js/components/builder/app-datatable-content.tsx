@@ -58,10 +58,10 @@ export function AppDataTableContent({
                 </TableRow>
             </TableHeader>
             <TableBody>
-                {items.data.map((item: DataItem) => {
-                    const id = item.id as string | number;
+                {items.data.map((item: DataItem, index: number) => {
+                    const id = index;
                     return (
-                        <TableRow key={id} className={selectedIds.includes(id) ? 'bg-muted' : ''}>
+                        <TableRow key={`table-row-${id}`} className={selectedIds.includes(id) ? 'bg-muted' : ''}>
                             <TableCell>
                                 <Checkbox
                                     checked={selectedIds.includes(id)}
@@ -71,7 +71,7 @@ export function AppDataTableContent({
                             </TableCell>
                             {columns.filter(col => !hiddenColumns[col.name]).map((col) => {
                                 const rawHtml = item[col.name] ?? '';
-                                return <TableCell key={col.name}
+                                return <TableCell key={`table-cell-${col.name}`}
                                                   className='cursor-pointer'
                                                   onClick={() => router.visit(route(`${routeName}.show`, id))}
                                 >
