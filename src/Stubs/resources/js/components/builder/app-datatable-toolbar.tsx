@@ -50,44 +50,46 @@ export function AppDataTableToolbar({
                 />
             </div>
             <div className="flex items-center gap-2">
-                <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                        <Button className='cursor-pointer flex items-center gap-2' variant="outline" size="sm">
-                            <WrenchIcon/>
-                            Action
-                        </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="start">
-                        <DropdownMenuGroup>
-                            {actions.length > 0 && actions.map((action) => (
-                                <DropdownMenuItem
-                                    key={action.name}
-                                    className='cursor-pointer'
-                                    onClick={(e) => {
-                                        e.preventDefault();
-                                        if (action.rowSelected && selectedIds.length === 0) return;
-                                        if (action.needConfirm) {
-                                            const confirmed = confirm(action.message);
-                                            if (!confirmed) return;
-                                        }
+                {actions.length > 0 && (
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <Button className='cursor-pointer flex items-center gap-2' variant="outline" size="sm">
+                                <WrenchIcon/>
+                                Action
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="start">
+                            <DropdownMenuGroup>
+                                {actions.map((action) => (
+                                    <DropdownMenuItem
+                                        key={action.name}
+                                        className='cursor-pointer'
+                                        onClick={(e) => {
+                                            e.preventDefault();
+                                            if (action.rowSelected && selectedIds.length === 0) return;
+                                            if (action.needConfirm) {
+                                                const confirmed = confirm(action.message);
+                                                if (!confirmed) return;
+                                            }
 
-                                        router.visit(route(`${routeName}.actions`), {
-                                            method: 'post',
-                                            data: {
-                                                ids: selectedIds,
-                                                action: action.name,
-                                            },
-                                            preserveScroll: true,
-                                        });
-                                    }}
-                                    disabled={action.rowSelected && selectedIds.length === 0}
-                                >
-                                    {action.label}
-                                </DropdownMenuItem>
-                            ))}
-                        </DropdownMenuGroup>
-                    </DropdownMenuContent>
-                </DropdownMenu>
+                                            router.visit(route(`${routeName}.actions`), {
+                                                method: 'post',
+                                                data: {
+                                                    ids: selectedIds,
+                                                    action: action.name,
+                                                },
+                                                preserveScroll: true,
+                                            });
+                                        }}
+                                        disabled={action.rowSelected && selectedIds.length === 0}
+                                    >
+                                        {action.label}
+                                    </DropdownMenuItem>
+                                ))}
+                            </DropdownMenuGroup>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+                )}
                 {(filters.opt?.length ?? 0) > 0 && (
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
