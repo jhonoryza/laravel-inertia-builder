@@ -59,9 +59,9 @@ export function AppDataTableContent({
             </TableHeader>
             <TableBody>
                 {items.data.map((item: DataItem, index: number) => {
-                    const id = index;
+                    const id = item.id as string | number;
                     return (
-                        <TableRow key={`table-row-${id}`} className={selectedIds.includes(id) ? 'bg-muted' : ''}>
+                        <TableRow key={`table-row-${index}`} className={selectedIds.includes(id) ? 'bg-muted' : ''}>
                             <TableCell>
                                 <Checkbox
                                     checked={selectedIds.includes(id)}
