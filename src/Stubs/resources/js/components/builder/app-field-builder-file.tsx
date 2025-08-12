@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useRef, useState } from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import {FieldDefinition} from "@/types/field-builder";
@@ -13,18 +13,66 @@ interface FileFieldProps {
     setData: (field: string, value: any) => void;
 }
 
+interface FilePreview {
+    name: string;
+    url: string;
+    type: string;
+    isFromServer?: boolean;
+}
+
 export function AppFieldBuilderFile({ field, value, setData }: FileFieldProps) {
     const fileInputRef = useRef<HTMLInputElement>(null);
-    const [fileNames, setFileNames] = useState<string[]>([]);
+    const [serverPreviews, setServerPreviews] = useState<FilePreview[]>([]);
+    const [localPreviews, setLocalPreviews] = useState<FilePreview[]>([]);
+
+    // generate preview awal dari server
+    useEffect(() => {
+        if (!value) {
+            setServerPreviews([]);
+            return;
+        }
+
+        let previews: FilePreview[] = [];
+
+        if (typeof value === 'string') {
+            previews = [{
+                name: value.split('/').pop() || 'file',
+                url: value,
+                type: guessFileType(value),
+                isFromServer: true
+            }];
+        } else if (Array.isArray(value) && typeof value[0] === 'string') {
+            previews = value.map((url: string) => ({
+                name: url.split('/').pop() || 'file',
+                url,
+                type: guessFileType(url),
+                isFromServer: true
+            }));
+        }
+
+        setServerPreviews(previews);
+    }, [value]);
+
+    const guessFileType = (url: string) => {
+        const ext = url.split('.').pop()?.toLowerCase();
+        if (['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(ext || '')) return `image/${ext}`;
+        if (ext === 'pdf') return 'application/pdf';
+        return 'application/octet-stream';
+    };
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const files = e.target.files;
         if (files) {
             setData(field.name, field.multiple ? files : files[0]);
 
-            // Update displayed file names
-            const names = Array.from(files).map(file => file.name);
-            setFileNames(names);
+            // buat preview URL
+            const previews: FilePreview[] = Array.from(files).map(file => ({
+                name: file.name,
+                url: URL.createObjectURL(file),
+                type: file.type,
+                isFromServer: false
+            }));
+            setLocalPreviews(previews);
         }
     };
 
@@ -33,6 +81,14 @@ export function AppFieldBuilderFile({ field, value, setData }: FileFieldProps) {
     };
 
     const acceptAttribute = field.accept ? field.accept.join(',') : undefined;
+
+    useEffect(() => {
+        return () => {
+            localPreviews.forEach(p => URL.revokeObjectURL(p.url));
+        };
+    }, [localPreviews]);
+
+    const previewsToShow = localPreviews.length > 0 ? localPreviews : serverPreviews;
 
     return (
         <div className="space-y-2">
@@ -56,12 +112,30 @@ export function AppFieldBuilderFile({ field, value, setData }: FileFieldProps) {
                 {field.placeholder || (field.multiple ? 'Choose Files' : 'Choose File')}
             </Button>
 
-            {fileNames.length > 0 && (
-                <div className="mt-2">
+            {previewsToShow.length > 0 && (
+                <div className="mt-2 space-y-2">
                     <Label>Selected {field.multiple ? 'Files' : 'File'}:</Label>
-                    <ul className="text-sm text-muted-foreground mt-1">
-                        {fileNames.map((name, index) => (
-                            <li key={index}>{name}</li>
+                    <ul className="text-sm text-muted-foreground mt-1 space-y-2">
+                        {previewsToShow.map((file, index) => (
+                            <li key={index} className="flex flex-col gap-1">
+                                <span>{file.name}</span>
+                                {file.type.startsWith('image/') ? (
+                                    <img
+                                        src={file.url}
+                                        alt={file.name}
+                                        className="w-32 h-32 object-cover rounded border"
+                                    />
+                                ) : (
+                                    <a
+                                        href={file.url}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="text-blue-500 underline"
+                                    >
+                                        Preview
+                                    </a>
+                                )}
+                            </li>
                         ))}
                     </ul>
                 </div>
