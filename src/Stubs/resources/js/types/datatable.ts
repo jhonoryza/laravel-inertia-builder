@@ -30,8 +30,8 @@ export type Filter = {
 
 export type DataTableFilters = Record<string, unknown> & {
     q: string;
-    sort?: string;
-    dir?: 'asc' | 'desc';
+    sort: string;
+    dir: 'asc' | 'desc';
     opt?: Filter[];
     filter?: Record<string, string>;
 };
@@ -78,6 +78,7 @@ export type DataTableProps = {
     columns: Column[];
     filters: DataTableFilters;
     routeName: string;
+    tableRoute?: string;
     actions: Action[];
     perPage?: number;
     perPageOptions?: number[];

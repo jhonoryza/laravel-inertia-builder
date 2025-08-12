@@ -30,7 +30,7 @@ class Table implements JsonSerializable
 
     protected ?string $defaultSort = null;
 
-    protected ?string $defaultSortDir = 'desc';
+    protected ?string $defaultSortDir = 'asc';
 
     protected int $perPage = 10;
 
@@ -57,13 +57,13 @@ class Table implements JsonSerializable
     }
 
     /**
-     * @param  string  $method  paginate, simple, cursor
+     * @param string $method paginate, simple, cursor
      *
      * @throws \Exception
      */
     public function pagination(string $method): static
     {
-        if (! in_array($method, ['paginate', 'simple', 'cursor'])) {
+        if (!in_array($method, ['paginate', 'simple', 'cursor'])) {
             throw new \Exception('Invalid pagination method: ' . $method);
         }
         $this->paginationMethod = $method;
@@ -92,9 +92,9 @@ class Table implements JsonSerializable
         return $this;
     }
 
-    public function defaultSort(string $column, string $dir = 'desc'): static
+    public function defaultSort(string $column, string $dir = 'asc'): static
     {
-        $this->defaultSort    = $column;
+        $this->defaultSort = $column;
         $this->defaultSortDir = $dir;
 
         return $this;
@@ -131,9 +131,9 @@ class Table implements JsonSerializable
      */
     private function get(): LengthAwarePaginator|Paginator|CursorPaginator
     {
-        $sort = request()->get('sort', 'id');
+        $sort = request()->get('sort', $this->defaultSort);
         request()->merge([
-            'sort' => request()->get('dir', 'desc') === 'desc' ? '-' . $sort : $sort,
+            'sort' => request()->get('dir', $this->defaultSortDir) === 'desc' ? '-' . $sort : $sort,
         ]);
 
         $query = QueryBuilder::for($this->model, request())
@@ -147,7 +147,7 @@ class Table implements JsonSerializable
             )
             ->allowedFilters($this->getAllowedFilters(request()))
             ->allowedSorts($this->getAllowedSorts())
-            ->with(array_filter(array_map(fn ($c) => $c->relation, $this->columns)));
+            ->with(array_filter(array_map(fn($c) => $c->relation, $this->columns)));
 
         /**
          * default sort handler
@@ -165,7 +165,7 @@ class Table implements JsonSerializable
         if ($search) {
             $query->where(function ($q) use ($search) {
                 foreach ($this->columns as $col) {
-                    if (! $col->searchable) {
+                    if (!$col->searchable) {
                         continue;
                     }
                     if ($col->relation && $col->relationKey) {
@@ -230,7 +230,8 @@ class Table implements JsonSerializable
      */
     private function mapRowsWithRenderUsing(
         LengthAwarePaginator|Paginator|CursorPaginator $items,
-    ): LengthAwarePaginator|Paginator|CursorPaginator {
+    ): LengthAwarePaginator|Paginator|CursorPaginator
+    {
         $columns = $this->columns;
         $items->getCollection()->transform(function ($row) use ($columns) {
             $arr = [];
@@ -241,7 +242,7 @@ class Table implements JsonSerializable
                     $value = call_user_func($col->renderUsing, $value, $row);
                 } elseif ($col->relation && $col->relationKey && $col->relationType === 'belongsTo') {
                     if (str_contains($col->relation, '.')) {
-                        $tmps  = explode('.', $col->relation);
+                        $tmps = explode('.', $col->relation);
                         $value = $row;
                         foreach ($tmps as $tmp) {
                             $value = $value->{$tmp};
@@ -256,7 +257,7 @@ class Table implements JsonSerializable
                         ->wordWrap(break: '<br>');
                 } elseif (str_contains($col->name, '.')) {
                     [$relationName, $relationAttribute] = extractRelation($col->name);
-                    $value                              = $row->{$relationName};
+                    $value = $row->{$relationName};
                     if ($value instanceof Collection) {
                         $value = $value
                             ->pluck($relationAttribute)
@@ -281,7 +282,7 @@ class Table implements JsonSerializable
      */
     public function getColumns(): array
     {
-        return array_map(fn ($col) => $col->toArray(), $this->columns);
+        return array_map(fn($col) => $col->toArray(), $this->columns);
     }
 
     /**
@@ -290,7 +291,7 @@ class Table implements JsonSerializable
     private function getAllowedSorts(): array
     {
         $allowedSorts = array_map(
-            fn ($col) => $col->relation ?
+            fn($col) => $col->relation ?
                 $col->relation . '.' . $col->relationKey
                 : $col->name,
             $this->columns
@@ -313,16 +314,16 @@ class Table implements JsonSerializable
     private function getAllowedFilters(Request $request): array
     {
         $allowedFilters = [];
-        if (! $request->has('filter')) {
+        if (!$request->has('filter')) {
             return $allowedFilters;
         }
         foreach (collect($this->filters) as $filter) {
             $key = $filter->field;
-            if (! array_key_exists($key, $request->filter)) {
+            if (!array_key_exists($key, $request->filter)) {
                 continue;
             }
             $oldValue = $request->filter[$key];
-            $temp     = str_contains($oldValue, ':') ? explode(':', $oldValue, 2) : [$oldValue];
+            $temp = str_contains($oldValue, ':') ? explode(':', $oldValue, 2) : [$oldValue];
             $operator = null;
 
             if (count($temp) < 1) {
@@ -335,9 +336,9 @@ class Table implements JsonSerializable
             }
 
             $operator = $temp[0];
-            $value    = $temp[1] ?? $operator ?? '';
+            $value = $temp[1] ?? $operator ?? '';
 
-            if (! in_array($operator, $this->predefinedOperators)) {
+            if (!in_array($operator, $this->predefinedOperators)) {
                 // fallback does nothing
                 $allowedFilters[] = AllowedFilter::callback($key, function (Builder $query) use ($key, $value) {
                     $query->where($key, $value);
@@ -450,18 +451,18 @@ class Table implements JsonSerializable
         $items = $this->get();
 
         return [
-            'items'   => $items,
+            'items' => $items,
             'filters' => [
-                'q'      => request()->input('q'),
-                'sort'   => request()->input('sort'),
-                'dir'    => request()->input('dir', 'desc'),
-                'opt'    => $this->filters,
+                'q' => request()->input('q'),
+                'sort' => request()->input('sort', $this->defaultSort),
+                'dir' => request()->input('dir', $this->defaultSortDir),
+                'opt' => $this->filters,
                 'filter' => request()->input('filter'),
             ],
-            'perPage'        => (int) $items->perPage(),
+            'perPage' => (int)$items->perPage(),
             'perPageOptions' => $this->perPageOptions,
-            'columns'        => $this->getColumns(),
-            'actions'        => $this->getActions(),
+            'columns' => $this->getColumns(),
+            'actions' => $this->getActions(),
         ];
     }
 

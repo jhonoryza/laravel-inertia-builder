@@ -50,6 +50,10 @@ abstract class AbstractField implements JsonSerializable
 
     public function defaultValue(array|string|bool|int|callable|null $value = null): static
     {
+        if (is_callable($value)) {
+            $this->defaultValue = call_user_func($value);
+            return $this;
+        }
         $this->defaultValue = $value;
 
         return $this;
@@ -79,15 +83,23 @@ abstract class AbstractField implements JsonSerializable
         return $this;
     }
 
-    public function disable($state = true): static
+    public function disable(bool|callable $state = true): static
     {
+        if (is_callable($state)) {
+            $this->isDisable = call_user_func($state);
+            return $this;
+        }
         $this->isDisable = $state;
 
         return $this;
     }
 
-    public function hidden($state = true): static
+    public function hidden(bool|callable $state = true): static
     {
+        if (is_callable($state)) {
+            $this->hidden = call_user_func($state);
+            return $this;
+        }
         $this->hidden = $state;
 
         return $this;
@@ -115,9 +127,7 @@ abstract class AbstractField implements JsonSerializable
             'isDisable'    => $this->isDisable,
             'hidden'       => $this->hidden,
             'reactive'     => $this->isReactive,
-            'defaultValue' => is_callable($this->defaultValue) ?
-                call_user_func($this->defaultValue)
-                : $this->defaultValue,
+            'defaultValue' => $this->defaultValue,
         ];
     }
 

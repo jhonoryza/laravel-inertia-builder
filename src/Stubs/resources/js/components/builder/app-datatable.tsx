@@ -1,5 +1,5 @@
 import {router, usePage} from '@inertiajs/react';
-import {useEffect, useState} from 'react';
+import {useEffect, useRef, useState} from 'react';
 import {toast} from 'sonner';
 import {AppDataTableToolbar} from "./app-datatable-toolbar";
 import {AppDataTableContent} from "./app-datatable-content";
@@ -8,14 +8,15 @@ import {ActiveFilter, DataTableProps} from '@/types/datatable';
 import {AppDataTableActiveFilters} from "@/components/builder/app-datatable-active-filters";
 
 export default function AppDataTable({
-    items,
-    columns,
-    filters,
-    routeName,
-    actions,
-    perPage,
-    perPageOptions,
-}: DataTableProps) {
+     items,
+     columns,
+     filters,
+     routeName,
+     tableRoute,
+     actions,
+     perPage,
+     perPageOptions,
+ }: DataTableProps) {
     const [openFilterPopovers, setOpenFilterPopovers] = useState<Record<string, boolean>>({});
     const openPopover = (field: string) => setOpenFilterPopovers(prev => ({...prev, [field]: true}));
     const closePopover = (field: string) => setOpenFilterPopovers(prev => ({...prev, [field]: false}));
@@ -48,9 +49,11 @@ export default function AppDataTable({
     }
     const [activeFilters, setActiveFilters] = useState<ActiveFilter[]>(initialActiveFilters);
 
-    const [searchQuery, setSearchQuery] = useState(() => filters.q ?? '');
-    const [sort, setSort] = useState(() => filters.sort ?? 'id');
-    const [dir, setDir] = useState(() => filters.dir ?? 'desc');
+    const [searchQuery, setSearchQuery] = useState(() => filters.q || '');
+    const [sort, setSort] = useState(() => filters.sort);
+    const [dir, setDir] = useState(() => filters.dir);
+
+    const firstRender = useRef(true);
 
     const handleSort = (colName: string) => {
         if (sort === colName) {
@@ -62,11 +65,17 @@ export default function AppDataTable({
     };
 
     useEffect(() => {
+        if (firstRender.current) {
+            firstRender.current = false;
+            return; // skip request pertama
+        }
+
         if (
             (sort.length > 0 && dir.length > 0)
             || searchQuery.length > 0
             || activeFilters.length > 0
         ) {
+            // console.log(sort, dir, searchQuery, activeFilters)
             setTimeout(() => {
                 const filterParams = activeFilters.reduce((acc, filter) => {
                     if (filter.value && Array.isArray(filter.value) && filter.value.length > 0) {
@@ -91,20 +100,20 @@ export default function AppDataTable({
                 const params = Object.keys(filterParams).length > 0 ? filterParams : {};
                 // console.log(params);
 
-                const routeUrl = route(`${routeName}.index`);
+                const routeUrl = tableRoute ? tableRoute : route(`${routeName}.index`);
                 router.get(
                     routeUrl,
                     {
                         ...(params ? {...params} : {}),
-                        q: searchQuery ?? '',
-                        sort: sort ?? 'id',
-                        dir: dir ?? 'desc',
+                        q: searchQuery,
+                        sort: sort,
+                        dir: dir,
                     },
                     {preserveScroll: true, preserveState: true},
                 );
             }, 500);
         }
-    }, [sort, dir, searchQuery, activeFilters, routeName]);
+    }, [sort, dir, searchQuery, activeFilters, tableRoute, routeName]);
 
     useEffect(() => {
         if (flash?.success) {
