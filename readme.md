@@ -227,10 +227,15 @@ add toaster component for notification, edit this file `resources/js/layouts/app
 ```tsx
 import {Toaster} from "@/components/ui/sonner";
 
-<AppLayoutTemplate breadcrumbs={breadcrumbs} {...props}>
-    <Toaster />
-    {children}
-</AppLayoutTemplate>
+export default ({ children, breadcrumbs, ...props }: AppLayoutProps) => {
+    const isDark = document.documentElement.classList.contains("dark");
+    return (
+        <AppLayoutTemplate breadcrumbs={breadcrumbs} {...props}>
+            <Toaster theme={isDark ? "dark" : "light"} />
+            {children}
+        </AppLayoutTemplate>
+    );
+}
 ```
 
 edit this file `app/Http/Middleware/HandleInertiaRequests.php`.
@@ -243,7 +248,6 @@ edit this file `app/Http/Middleware/HandleInertiaRequests.php`.
             'flash' => [
                 'success' => fn() => $request->session()->get('success'),
                 'error' => fn() => $this->getErrMessage($request),
-                'description' => fn() => $request->session()->get('description'),
             ],
         ];
     }

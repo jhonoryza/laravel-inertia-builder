@@ -28,7 +28,7 @@ class {{className}} extends Controller
             ->filters([
 {{filters}}
             ])
-            ->defaultSort('id', 'desc')
+            ->defaultSort('id', 'asc')
             ->actions([
                 Action::make('new')
                     ->needRowSelected(false)
@@ -39,6 +39,7 @@ class {{className}} extends Controller
 
         return Inertia::render('builder/index', [
             'data' => $table,
+            'tableRoute' => route('{{routeName}}.index'),
             'routeName' => '{{routeName}}',
         ]);
     }
@@ -55,8 +56,7 @@ class {{className}} extends Controller
                 {{modelName}}::destroy($ids);
                 return redirect()
                     ->route('{{routeName}}.index')
-                    ->with('description', collect($ids)->implode(', '))
-                    ->with('success', 'Items deleted successfully.');
+                    ->with('success', 'Items ' . collect($ids)->implode(', ') . ' deleted successfully.');
             default:
                 return redirect()
                     ->route('{{routeName}}.index')
@@ -64,17 +64,18 @@ class {{className}} extends Controller
         }
     }
 
-    private function getFormFields(?{{modelName}} ${{modelVariable}} = null, $disable = false): array
+    private function getForm(?{{modelName}} ${{modelVariable}} = null, $disable = false)
     {
-        return [
+        return Form::make()
+            ->columns([
 {{fields}}
-        ];
+        ]);
     }
 
     public function show({{modelName}} ${{modelVariable}}): Response
     {
         return Inertia::render('builder/show', [
-            'fields' => $this->getFormFields(${{modelVariable}}, true),
+            'form' => $this->getForm(${{modelVariable}}, true),
             'routeName' => '{{routeName}}',
             'routeId' => ${{modelVariable}}->id,
         ]);
@@ -83,7 +84,7 @@ class {{className}} extends Controller
     public function create(): Response
     {
         return Inertia::render('builder/create', [
-            'fields' => $this->getFormFields(),
+            'form' => $this->getForm(),
             'routeName' => '{{routeName}}',
         ]);
     }
@@ -91,7 +92,7 @@ class {{className}} extends Controller
     public function edit({{modelName}} ${{modelVariable}}): Response
     {
         return Inertia::render('builder/edit', [
-            'fields' => $this->getFormFields(${{modelVariable}}),
+            'form' => $this->getForm(${{modelVariable}}),
             'routeName' => '{{routeName}}',
             'routeId' => ${{modelVariable}}->id,
         ]);
@@ -103,8 +104,7 @@ class {{className}} extends Controller
 
         return redirect()
             ->route('{{routeName}}.index')
-            ->with('description', $item->id)
-            ->with('success', 'Item created successfully.');
+            ->with('success', 'Item ' . $item->id . ' created successfully.');
     }
 
     public function update({{modelName}}UpdateRequest $request, {{modelName}} ${{modelVariable}}): RedirectResponse
@@ -113,8 +113,7 @@ class {{className}} extends Controller
 
         return redirect()
             ->route('{{routeName}}.edit', ${{modelVariable}})
-            ->with('description', ${{modelVariable}}->id)
-            ->with('success', 'Item updated successfully.');
+            ->with('success', 'Item ' . ${{modelVariable}}->id . ' updated successfully.');
     }
 
     public function destroy({{modelName}} ${{modelVariable}}): RedirectResponse
@@ -123,7 +122,6 @@ class {{className}} extends Controller
 
         return redirect()
             ->route('{{routeName}}.index')
-            ->with('description', ${{modelVariable}}->id)
-            ->with('success', 'Item deleted successfully.');
+            ->with('success', 'Item ' . ${{modelVariable}}->id . ' deleted successfully.');
     }
 }

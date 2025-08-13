@@ -4,7 +4,17 @@ export type FieldOption = {
     value: string | number | boolean;
 };
 
+export type ColumnDef = {
+    default: number;
+    sm?: number;
+    md?: number;
+    xl?: number;
+    '2xl'?: number;
+};
+
 export type FieldDefinition = {
+    columnSpan: ColumnDef;
+    columnOrder: ColumnDef;
     name: string;
     label: string;
     type: 'text' | 'email' | 'number' | 'date' | 'datetime-local' | 'password'

@@ -117,14 +117,15 @@ export default function AppDataTable({
 
     useEffect(() => {
         if (flash?.success) {
-            toast.success(flash.success, {
+            toast.success('success', {
                 position: 'top-center',
-                description: flash.description,
+                description: flash.success,
             });
         }
         if (flash?.error) {
-            toast.error(flash.error, {
+            toast.error('error', {
                 position: "top-center",
+                description: flash.error,
             });
         }
     }, [flash]);

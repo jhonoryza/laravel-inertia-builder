@@ -1,15 +1,22 @@
-import {FieldDefinition} from "@/types/field-builder";
+import {ColumnDef, FieldDefinition} from "@/types/field-builder";
 import {AppFormBuilder} from "@/components/builder/app-form-builder";
 import AppLayout from "@/layouts/app-layout";
 import {Head} from "@inertiajs/react";
 import {BreadcrumbItem} from "@/types";
+import {Card, CardContent} from "@/components/ui/card";
+
+type Form = {
+    columns: ColumnDef;
+    fields: FieldDefinition[];
+};
 
 type PageProps = {
-    fields: FieldDefinition[];
+    form: Form;
     routeName: string;
 };
 
-export default function Create({fields, routeName}: PageProps) {
+export default function Create({form, routeName}: PageProps) {
+    const {columns, fields} = form;
     const breadcrumbs: BreadcrumbItem[] = [
         {title: `${routeName}`, href: route(routeName + ".index")},
         {title: 'new', href: route(routeName + ".create")},
@@ -19,7 +26,11 @@ export default function Create({fields, routeName}: PageProps) {
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title={`new ${routeName}`}/>
             <div className="p-4">
-                <AppFormBuilder fields={fields} routeName={routeName} mode="create" />
+                <Card className="p-4 max-w-full">
+                    <CardContent>
+                        <AppFormBuilder columns={columns} fields={fields} routeName={routeName} mode="create"/>
+                    </CardContent>
+                </Card>
             </div>
         </AppLayout>
     );

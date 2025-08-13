@@ -32,6 +32,10 @@ abstract class AbstractField implements JsonSerializable
 
     public \Closure|array|string|int|bool|null $defaultValue = null;
 
+    public array $columnSpan = ['default' => 1];
+
+    public array $columnOrder = [];
+
     public function __construct(string $name)
     {
         $this->name  = $name;
@@ -112,6 +116,18 @@ abstract class AbstractField implements JsonSerializable
         return $this;
     }
 
+    public function columnSpan(array $columnSpan): static
+    {
+        $this->columnSpan = $columnSpan;
+        return $this;
+    }
+
+    public function columnOrder(array $columnOrder): static
+    {
+        $this->columnOrder = $columnOrder;
+        return $this;
+    }
+
     /**
      * Convert the field to an array
      */
@@ -128,6 +144,8 @@ abstract class AbstractField implements JsonSerializable
             'hidden'       => $this->hidden,
             'reactive'     => $this->isReactive,
             'defaultValue' => $this->defaultValue,
+            'columnSpan'   => $this->columnSpan,
+            'columnOrder'   => $this->columnOrder,
         ];
     }
 

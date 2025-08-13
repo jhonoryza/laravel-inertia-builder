@@ -4,28 +4,31 @@ import {AppFieldBuilder} from "@/components/builder/app-field-builder";
 import React, {useEffect} from "react";
 import {Button} from "@/components/ui/button";
 import {toast} from "sonner";
-import {FieldDefinition} from "@/types/field-builder";
+import {ColumnDef, FieldDefinition} from "@/types/field-builder";
 import {RefreshCw} from "lucide-react";
+import {clsx} from "clsx";
 
 type PageProps = {
+    columns?: ColumnDef;
     fields: FieldDefinition[];
     routeName: string;
     routeId?: string;
     mode: string; // create, edit, show
 };
 
-export function AppFormBuilder({fields, routeName, routeId, mode}: PageProps) {
+export function AppFormBuilder({columns, fields, routeName, routeId, mode}: PageProps) {
     const {flash} = usePage().props as { flash?: { success?: string, error?: string, description?: string } };
     useEffect(() => {
         if (flash?.error) {
-            toast.error(flash.error, {
+            toast.error('error', {
                 position: "top-center",
+                description: flash.error,
             });
         }
         if (flash?.success) {
-            toast.success(flash.success, {
+            toast.success('success', {
                 position: 'top-center',
-                description: flash.description,
+                description: flash.success,
             });
         }
     }, [flash]);
@@ -49,7 +52,7 @@ export function AppFormBuilder({fields, routeName, routeId, mode}: PageProps) {
     // The 'transform' function is used here to add this field to the data right before it's submitted.
     transform((data) => (
         routeId
-            ? { ...data, _method: 'patch' }
+            ? {...data, _method: 'patch'}
             : data
     ));
 
@@ -72,45 +75,77 @@ export function AppFormBuilder({fields, routeName, routeId, mode}: PageProps) {
         post(route(`${routeName}.store`));
     };
 
-    return (
-        <form onSubmit={handleSubmit} className="space-y-4 max-w-xl border shadow-lg p-4 rounded-lg"
-              encType="multipart/form-data">
-            {mode === 'show' && (
-                <div className="flex items-center gap-2">
-                    <Button
-                        onClick={() => {
-                            router.visit(route(`${routeName}.edit`, routeId));
-                        }}
-                        variant="default"
-                        type="button"
-                        className="hover:cursor-pointer"
-                    >
-                        edit
-                    </Button>
-                    <Button
-                        onClick={() => {
-                            router.visit(route(`${routeName}.index`, routeId));
-                        }}
-                        variant="link"
-                        type="button"
-                        className="hover:cursor-pointer"
-                    >
-                        back
-                    </Button>
-                </div>
-            )}
+    const gridClass = clsx(
+        "grid gap-2",
+        columns?.default && `grid-cols-${columns.default}`,
+        columns?.sm && `sm:grid-cols-${columns.sm}`,
+        columns?.md && `md:grid-cols-${columns.md}`,
+        columns?.xl && `xl:grid-cols-${columns.xl}`,
+        columns?.["2xl"] && `2xl:grid-cols-${columns["2xl"]}`
+    );
 
-            {fields.map((field) => (
-                <AppFieldBuilder
-                    key={field.name}
-                    field={field}
-                    value={data[field.name]}
-                    setData={setData}
-                    error={errors[field.name]}
-                    isProcessing={processing}
-                />
-            ))}
+    function fieldClasses(field: FieldDefinition) {
+        const span = field.columnSpan || {};
+        const order = field.columnOrder || {};
+
+        return [
+            span.default && `col-span-${span.default}`,
+            span.sm && `sm:col-span-${span.sm}`,
+            span.md && `md:col-span-${span.md}`,
+            span.xl && `xl:col-span-${span.xl}`,
+            span['2xl'] && `2xl:col-span-${span['2xl']}`,
+            order.default && `order-${order.default}`,
+            order.sm && `sm:order-${order.sm}`,
+            order.md && `md:order-${order.md}`,
+            order.xl && `xl:order-${order.xl}`,
+            order['2xl'] && `2xl:order-${order['2xl']}`,
+        ].filter(Boolean).join(" ");
+    }
+
+    return (
+        <form onSubmit={handleSubmit} className="flex flex-col gap-4"
+              encType="multipart/form-data">
+
+            <div className={gridClass}>
+                {fields.map((field) => (
+                    <div key={field.name} className={fieldClasses(field)}>
+                        <AppFieldBuilder
+                            key={field.name}
+                            field={field}
+                            value={data[field.name]}
+                            setData={setData}
+                            error={errors[field.name]}
+                            isProcessing={processing}
+                        />
+                    </div>
+                ))}
+            </div>
+
             <div className="flex items-center justify-between">
+                {mode === 'show' && (
+                    <div className="flex items-center gap-2">
+                        <Button
+                            onClick={() => {
+                                router.visit(route(`${routeName}.edit`, routeId));
+                            }}
+                            variant="default"
+                            type="button"
+                            className="hover:cursor-pointer"
+                        >
+                            edit
+                        </Button>
+                        <Button
+                            onClick={() => {
+                                router.visit(route(`${routeName}.index`, routeId));
+                            }}
+                            variant="link"
+                            type="button"
+                            className="hover:cursor-pointer"
+                        >
+                            back
+                        </Button>
+                    </div>
+                )}
                 {(mode === "edit" || mode === "create") && (
                     <div className="flex items-center gap-2">
                         <Button
