@@ -81,6 +81,9 @@ class InstallCommand extends Command
         $this->info('tailwind config file copied successfully.');
 
         // publish generator stubs
+        if ((new Filesystem)->exists(base_path('stubs/inertia-builder'))) {
+            rmdir(base_path('stubs/inertia-builder'));
+        }
         $publishResult = Process::run('php artisan vendor:publish --tag=inertia-builder-stubs');
         if ($publishResult->successful()) {
             echo $publishResult->output();

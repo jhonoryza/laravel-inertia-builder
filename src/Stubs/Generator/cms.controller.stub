@@ -8,6 +8,7 @@ use Jhonoryza\InertiaBuilder\Inertia\Tables\Actions\Action;
 use Jhonoryza\InertiaBuilder\Inertia\Tables\Filters\Factory\Filter;
 use Jhonoryza\InertiaBuilder\Inertia\Tables\Table;
 use Jhonoryza\InertiaBuilder\Inertia\Tables\TableColumn;
+use Jhonoryza\InertiaBuilder\Inertia\Form;
 use App\Models\{{modelName}};
 use App\Http\Requests\{{modelName}}StoreRequest;
 use App\Http\Requests\{{modelName}}UpdateRequest;
@@ -67,7 +68,8 @@ class {{className}} extends Controller
     private function getForm(?{{modelName}} ${{modelVariable}} = null, $disable = false)
     {
         return Form::make()
-            ->columns([
+            ->columns(1)
+            ->fields([
 {{fields}}
         ]);
     }
