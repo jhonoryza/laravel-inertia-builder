@@ -50,6 +50,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
+use Jhonoryza\InertiaBuilder\Inertia\Form;
 
 class DistrictController extends Controller
 {
@@ -106,7 +107,6 @@ class DistrictController extends Controller
 
                 return redirect()
                     ->route('districts.index')
-                    ->with('description', collect($ids)->implode(', '))
                     ->with('success', 'Items deleted successfully.');
             default:
                 return redirect()
@@ -115,24 +115,25 @@ class DistrictController extends Controller
         }
     }
 
-    private function getFormFields(?District $district = null, $disable = false): array
+    private function getForm(?District $district = null, $disable = false)
     {
-        return [
-            Field::text('name')
-                ->defaultValue($district?->name)
-                ->disable($disable),
-            Field::select('city_id')
-                ->label('City')
-                ->relationship(City::class, 'name')
-                ->defaultValue($district?->city_id)
-                ->disable($disable),
-        ];
+        return Form::make()
+            ->fields([
+                Field::text('name')
+                    ->defaultValue($district?->name)
+                    ->disable($disable),
+                Field::select('city_id')
+                    ->label('City')
+                    ->relationship(City::class, 'name')
+                    ->defaultValue($district?->city_id)
+                    ->disable($disable),
+        ]);
     }
 
     public function show(District $district): Response
     {
         return Inertia::render('builder/show', [
-            'fields' => $this->getFormFields($district, true),
+            'form' => $this->getForm($district, true),
             'routeName' => 'districts',
             'routeId' => $district->id,
         ]);
@@ -141,7 +142,7 @@ class DistrictController extends Controller
     public function create(): Response
     {
         return Inertia::render('builder/create', [
-            'fields' => $this->getFormFields(),
+            'form' => $this->getForm(),
             'routeName' => 'districts',
         ]);
     }
@@ -149,7 +150,7 @@ class DistrictController extends Controller
     public function edit(District $district): Response
     {
         return Inertia::render('builder/edit', [
-            'fields' => $this->getFormFields($district),
+            'form' => $this->getForm($district),
             'routeName' => 'districts',
             'routeId' => $district->id,
         ]);
@@ -161,7 +162,6 @@ class DistrictController extends Controller
 
         return redirect()
             ->route('districts.index')
-            ->with('description', $item->id)
             ->with('success', 'Item created successfully.');
     }
 
@@ -171,7 +171,6 @@ class DistrictController extends Controller
 
         return redirect()
             ->route('districts.edit', $district)
-            ->with('description', $district->id)
             ->with('success', 'Item updated successfully.');
     }
 
@@ -181,7 +180,6 @@ class DistrictController extends Controller
 
         return redirect()
             ->route('districts.index')
-            ->with('description', $district->id)
             ->with('success', 'Item deleted successfully.');
     }
 }

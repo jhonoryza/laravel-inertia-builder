@@ -108,31 +108,32 @@ and different field types.
 **`PostController.php`**
 
 ```php
-private function getFormFields(?Post $post = null, $disable = false): array
+private function getForm(?Post $post = null, $disable = false)
 {
-    return [
-        Field::text('title')
-            ->defaultValue($post?->title),
-        Field::textarea('description')
-            ->defaultValue($post?->description),
-        Field::markdown('content')
-            ->defaultValue($post?->content),
-        Field::select('category_id')
-            ->label('Category')
-            ->relationship(Category::class, 'name'),
-        Field::select('author_id')
-            ->label('Author')
-            ->searchable()
-            ->relationship(User::class, 'name'),
-        Field::toggle('published')
-            ->label('Published ?'),
-        Field::flatpickr('published_at')
-            ->date(),
-        Field::tags('tags')
-            ->defaultValue($post?->tags),
-        Field::file('thumbnail')
-            ->defaultValue($post?->thumbnail),
-    ];
+    return Form::make()
+        ->fields([
+            Field::text('title')
+                ->defaultValue($post?->title),
+            Field::textarea('description')
+                ->defaultValue($post?->description),
+            Field::markdown('content')
+                ->defaultValue($post?->content),
+            Field::select('category_id')
+                ->label('Category')
+                ->relationship(Category::class, 'name'),
+            Field::select('author_id')
+                ->label('Author')
+                ->searchable()
+                ->relationship(User::class, 'name'),
+            Field::toggle('published')
+                ->label('Published ?'),
+            Field::flatpickr('published_at')
+                ->date(),
+            Field::tags('tags')
+                ->defaultValue($post?->tags),
+            Field::file('thumbnail')
+                ->defaultValue($post?->thumbnail),
+    ]);
 }
 ```
 

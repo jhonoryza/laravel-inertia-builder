@@ -41,6 +41,7 @@ use Jhonoryza\InertiaBuilder\Inertia\Tables\Actions\Action;
 use Jhonoryza\InertiaBuilder\Inertia\Tables\Filters\Factory\Filter;
 use Jhonoryza\InertiaBuilder\Inertia\Tables\Table;
 use Jhonoryza\InertiaBuilder\Inertia\Tables\TableColumn;
+use Jhonoryza\InertiaBuilder\Inertia\Form;
 use App\Models\Province;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -91,7 +92,6 @@ class ProvinceController extends Controller
 
                 return redirect()
                     ->route('provinces.index')
-                    ->with('description', collect($ids)->implode(', '))
                     ->with('success', 'Items deleted successfully.');
             default:
                 return redirect()
@@ -100,19 +100,20 @@ class ProvinceController extends Controller
         }
     }
 
-    private function getFormFields(?Province $province = null, $disable = false): array
+    private function getForm(?Province $province = null, $disable = false)
     {
-        return [
-            Field::text('name')
-                ->defaultValue($province?->name)
-                ->disable($disable),
-        ];
+        return Form::make()
+            ->fields([
+                Field::text('name')
+                    ->defaultValue($province?->name)
+                    ->disable($disable),
+        ]);
     }
 
     public function show(Province $province): Response
     {
         return Inertia::render('builder/show', [
-            'fields' => $this->getFormFields($province, true),
+            'form' => $this->getForm($province, true),
             'routeName' => 'provinces',
             'routeId' => $province->id,
         ]);
@@ -121,7 +122,7 @@ class ProvinceController extends Controller
     public function create(): Response
     {
         return Inertia::render('builder/create', [
-            'fields' => $this->getFormFields(),
+            'form' => $this->getForm(),
             'routeName' => 'provinces',
         ]);
     }
@@ -129,7 +130,7 @@ class ProvinceController extends Controller
     public function edit(Province $province): Response
     {
         return Inertia::render('builder/edit', [
-            'fields' => $this->getFormFields($province),
+            'form' => $this->getForm($province),
             'routeName' => 'provinces',
             'routeId' => $province->id,
         ]);
@@ -141,7 +142,6 @@ class ProvinceController extends Controller
 
         return redirect()
             ->route('provinces.index')
-            ->with('description', $item->id)
             ->with('success', 'Item created successfully.');
     }
 
@@ -151,7 +151,6 @@ class ProvinceController extends Controller
 
         return redirect()
             ->route('provinces.edit', $province)
-            ->with('description', $province->id)
             ->with('success', 'Item updated successfully.');
     }
 
@@ -161,7 +160,6 @@ class ProvinceController extends Controller
 
         return redirect()
             ->route('provinces.index')
-            ->with('description', $province->id)
             ->with('success', 'Item deleted successfully.');
     }
 }

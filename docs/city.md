@@ -50,6 +50,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
+use Jhonoryza\InertiaBuilder\Inertia\Form;
 
 class CityController extends Controller
 {
@@ -106,7 +107,6 @@ class CityController extends Controller
 
                 return redirect()
                     ->route('cities.index')
-                    ->with('description', collect($ids)->implode(', '))
                     ->with('success', 'Items deleted successfully.');
             default:
                 return redirect()
@@ -115,24 +115,25 @@ class CityController extends Controller
         }
     }
 
-    private function getFormFields(?City $city = null, $disable = false): array
+    private function getForm(?City $city = null, $disable = false)
     {
-        return [
-            Field::text('name')
-                ->defaultValue($city?->name)
-                ->disable($disable),
-            Field::select('province_id')
-                ->label('Province')
-                ->relationship(Province::class, 'name')
-                ->defaultValue($city?->province_id)
-                ->disable($disable),
-        ];
+        return Form::make()
+            ->fields([
+                Field::text('name')
+                    ->defaultValue($city?->name)
+                    ->disable($disable),
+                Field::select('province_id')
+                    ->label('Province')
+                    ->relationship(Province::class, 'name')
+                    ->defaultValue($city?->province_id)
+                    ->disable($disable),
+        ]);
     }
 
     public function show(City $city): Response
     {
         return Inertia::render('builder/show', [
-            'fields' => $this->getFormFields($city, true),
+            'form' => $this->getForm($city, true),
             'routeName' => 'cities',
             'routeId' => $city->id,
         ]);
@@ -141,7 +142,7 @@ class CityController extends Controller
     public function create(): Response
     {
         return Inertia::render('builder/create', [
-            'fields' => $this->getFormFields(),
+            'form' => $this->getForm(),
             'routeName' => 'cities',
         ]);
     }
@@ -149,7 +150,7 @@ class CityController extends Controller
     public function edit(City $city): Response
     {
         return Inertia::render('builder/edit', [
-            'fields' => $this->getFormFields($city),
+            'form' => $this->getForm($city),
             'routeName' => 'cities',
             'routeId' => $city->id,
         ]);
@@ -161,7 +162,6 @@ class CityController extends Controller
 
         return redirect()
             ->route('cities.index')
-            ->with('description', $item->id)
             ->with('success', 'Item created successfully.');
     }
 
@@ -171,7 +171,6 @@ class CityController extends Controller
 
         return redirect()
             ->route('cities.edit', $city)
-            ->with('description', $city->id)
             ->with('success', 'Item updated successfully.');
     }
 
@@ -181,7 +180,6 @@ class CityController extends Controller
 
         return redirect()
             ->route('cities.index')
-            ->with('description', $city->id)
             ->with('success', 'Item deleted successfully.');
     }
 }

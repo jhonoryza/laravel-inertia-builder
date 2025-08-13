@@ -30,6 +30,7 @@ use Jhonoryza\InertiaBuilder\Inertia\Tables\Actions\Action;
 use Jhonoryza\InertiaBuilder\Inertia\Tables\Filters\Factory\Filter;
 use Jhonoryza\InertiaBuilder\Inertia\Tables\Table;
 use Jhonoryza\InertiaBuilder\Inertia\Tables\TableColumn;
+use Jhonoryza\InertiaBuilder\Inertia\Form;
 
 class PermissionController extends Controller
 {
@@ -99,22 +100,23 @@ class PermissionController extends Controller
         }
     }
 
-    private function getFormFields(?Permission $permission = null, $disable = false): array
+    private function getForm(?Permission $permission = null, $disable = false)
     {
-        return [
-            Field::text('name')
-                ->defaultValue($permission?->name)
-                ->disable($disable),
-            Field::text('guard_name')
-                ->defaultValue($permission?->guard_name)
-                ->disable($disable),
-        ];
+        return Form::make()
+            ->fields([
+                Field::text('name')
+                    ->defaultValue($permission?->name)
+                    ->disable($disable),
+                Field::text('guard_name')
+                    ->defaultValue($permission?->guard_name)
+                    ->disable($disable),
+        ]);
     }
 
     public function show(Permission $permission): Response
     {
         return Inertia::render('builder/show', [
-            'fields' => $this->getFormFields($permission, true),
+            'form' => $this->getForm($permission, true),
             'routeName' => 'permissions',
             'routeId' => $permission->id,
         ]);
@@ -123,7 +125,7 @@ class PermissionController extends Controller
     public function create(): Response
     {
         return Inertia::render('builder/create', [
-            'fields' => $this->getFormFields(),
+            'form' => $this->getForm(),
             'routeName' => 'permissions',
         ]);
     }
@@ -131,7 +133,7 @@ class PermissionController extends Controller
     public function edit(Permission $permission): Response
     {
         return Inertia::render('builder/edit', [
-            'fields' => $this->getFormFields($permission),
+            'form' => $this->getForm($permission),
             'routeName' => 'permissions',
             'routeId' => $permission->id,
         ]);
@@ -143,7 +145,6 @@ class PermissionController extends Controller
 
         return redirect()
             ->route('permissions.index')
-            ->with('description', $item->id)
             ->with('success', 'Item created successfully.');
     }
 
@@ -153,7 +154,6 @@ class PermissionController extends Controller
 
         return redirect()
             ->route('permissions.edit', $permission)
-            ->with('description', $permission->id)
             ->with('success', 'Item updated successfully.');
     }
 
@@ -163,7 +163,6 @@ class PermissionController extends Controller
 
         return redirect()
             ->route('permissions.index')
-            ->with('description', $permission->id)
             ->with('success', 'Item deleted successfully.');
     }
 }
@@ -190,6 +189,7 @@ use Jhonoryza\InertiaBuilder\Inertia\Tables\Table;
 use Jhonoryza\InertiaBuilder\Inertia\Tables\TableColumn;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
+use Jhonoryza\InertiaBuilder\Inertia\Form;
 
 class RoleController extends Controller
 {
@@ -264,36 +264,37 @@ class RoleController extends Controller
         }
     }
 
-    private function getFormFields(?Role $role = null, $disable = false): array
+    private function getForm(?Role $role = null, $disable = false)
     {
-        return [
-            Field::text('name')
-                ->defaultValue($role?->name)
-                ->disable($disable),
-            Field::text('guard_name')
-                ->defaultValue($role?->guard_name)
-                ->disable($disable),
-            Field::select('permissions')
-                ->defaultValue($role?->permissions->pluck('id')->toArray())
-                ->loadOptionsUsing(function () {
-                    return Permission::query();
-                })
-                ->multiple()
-                ->searchable()
-                ->hidden($disable),
-            Field::checkboxList('permissions')
-                ->defaultValue($role?->permissions->pluck('id')->toArray())
-                ->loadOptionsUsing(function () use ($role) {
-                    return $role?->permissions()->get();
-                })
-                ->hidden(!$disable),
-        ];
+        return Form::make()
+            ->fields([
+                Field::text('name')
+                    ->defaultValue($role?->name)
+                    ->disable($disable),
+                Field::text('guard_name')
+                    ->defaultValue($role?->guard_name)
+                    ->disable($disable),
+                Field::select('permissions')
+                    ->defaultValue($role?->permissions->pluck('id')->toArray())
+                    ->loadOptionsUsing(function () {
+                        return Permission::query();
+                    })
+                    ->multiple()
+                    ->searchable()
+                    ->hidden($disable),
+                Field::checkboxList('permissions')
+                    ->defaultValue($role?->permissions->pluck('id')->toArray())
+                    ->loadOptionsUsing(function () use ($role) {
+                        return $role?->permissions()->get();
+                    })
+                    ->hidden(!$disable),
+        ]);
     }
 
     public function show(Role $role): Response
     {
         return Inertia::render('builder/show', [
-            'fields' => $this->getFormFields($role, true),
+            'form' => $this->getForm($role, true),
             'routeName' => 'roles',
             'routeId' => $role->id,
         ]);
@@ -302,7 +303,7 @@ class RoleController extends Controller
     public function create(): Response
     {
         return Inertia::render('builder/create', [
-            'fields' => $this->getFormFields(),
+            'form' => $this->getForm(),
             'routeName' => 'roles',
         ]);
     }
@@ -310,7 +311,7 @@ class RoleController extends Controller
     public function edit(Role $role): Response
     {
         return Inertia::render('builder/edit', [
-            'fields' => $this->getFormFields($role),
+            'form' => $this->getForm($role),
             'routeName' => 'roles',
             'routeId' => $role->id,
         ]);
@@ -326,7 +327,6 @@ class RoleController extends Controller
 
         return redirect()
             ->route('roles.index')
-            ->with('description', $item->id)
             ->with('success', 'Item created successfully.');
     }
 
@@ -340,7 +340,6 @@ class RoleController extends Controller
 
         return redirect()
             ->route('roles.edit', $role)
-            ->with('description', $role->id)
             ->with('success', 'Item updated successfully.');
     }
 
@@ -350,7 +349,6 @@ class RoleController extends Controller
 
         return redirect()
             ->route('roles.index')
-            ->with('description', $role->id)
             ->with('success', 'Item deleted successfully.');
     }
 }
@@ -389,6 +387,7 @@ use Jhonoryza\InertiaBuilder\Inertia\Tables\Filters\Factory\Filter;
 use Jhonoryza\InertiaBuilder\Inertia\Tables\Table;
 use Jhonoryza\InertiaBuilder\Inertia\Tables\TableColumn;
 use Spatie\Permission\Models\Role;
+use Jhonoryza\InertiaBuilder\Inertia\Form;
 
 class UserController extends Controller implements HasMiddleware
 {
@@ -465,7 +464,6 @@ class UserController extends Controller implements HasMiddleware
 
                 return redirect()
                     ->route('users.index')
-                    ->with('description', collect($ids)->implode(', '))
                     ->with('success', 'Items deleted successfully.');
             default:
                 return redirect()
@@ -474,31 +472,32 @@ class UserController extends Controller implements HasMiddleware
         }
     }
 
-    private function getFormFields(?User $user = null, $disable = false): array
+    private function getForm(?User $user = null, $disable = false)
     {
-        return [
-            Field::text('name')
-                ->defaultValue($user?->name)
-                ->disable($disable),
-            Field::text('email')
-                ->defaultValue($user?->email)
-                ->disable($disable),
-            Field::select('role')
-                ->defaultValue($user?->roleId())
-                ->loadOptionsUsing(function () {
-                    return Role::query();
-                }),
-            Field::password('password')
-                ->hidden($disable),
-            Field::password('password_confirmation')
-                ->hidden($disable),
-        ];
+        return Form::make()
+            ->fields([
+                Field::text('name')
+                    ->defaultValue($user?->name)
+                    ->disable($disable),
+                Field::text('email')
+                    ->defaultValue($user?->email)
+                    ->disable($disable),
+                Field::select('role')
+                    ->defaultValue($user?->roleId())
+                    ->loadOptionsUsing(function () {
+                        return Role::query();
+                    }),
+                Field::password('password')
+                    ->hidden($disable),
+                Field::password('password_confirmation')
+                    ->hidden($disable),
+        ]);
     }
 
     public function show(User $user): Response
     {
         return Inertia::render('builder/show', [
-            'fields' => $this->getFormFields($user, true),
+            'form' => $this->getForm($user, true),
             'routeName' => 'users',
             'routeId' => $user->id,
         ]);
@@ -507,7 +506,7 @@ class UserController extends Controller implements HasMiddleware
     public function create(): Response
     {
         return Inertia::render('builder/create', [
-            'fields' => $this->getFormFields(),
+            'form' => $this->getForm(),
             'routeName' => 'users',
         ]);
     }
@@ -515,7 +514,7 @@ class UserController extends Controller implements HasMiddleware
     public function edit(User $user): Response
     {
         return Inertia::render('builder/edit', [
-            'fields' => $this->getFormFields($user),
+            'form' => $this->getForm($user),
             'routeName' => 'users',
             'routeId' => $user->id,
         ]);
@@ -527,7 +526,6 @@ class UserController extends Controller implements HasMiddleware
 
         return redirect()
             ->route('users.index')
-            ->with('description', $item->id)
             ->with('success', 'Item created successfully.');
     }
 
@@ -545,7 +543,6 @@ class UserController extends Controller implements HasMiddleware
 
         return redirect()
             ->route('users.edit', $user)
-            ->with('description', $user->id)
             ->with('success', 'Item updated successfully.');
     }
 
@@ -555,7 +552,6 @@ class UserController extends Controller implements HasMiddleware
 
         return redirect()
             ->route('users.index')
-            ->with('description', $user->id)
             ->with('success', 'Item deleted successfully.');
     }
 }

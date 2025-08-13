@@ -1,7 +1,7 @@
 # Example field dependent dropdowns
 
 ```php
-private function getFormFields(?Subdistrict $subdistrict = null, $disable = false): array
+private function getForm(?Subdistrict $subdistrict = null, $disable = false)
 {
     $subdistrict?->load('district.city.province');
     $reqProvinceId = request()->input('province_id');
@@ -11,37 +11,38 @@ private function getFormFields(?Subdistrict $subdistrict = null, $disable = fals
     $cityId = $reqCityId ?: ($reqProvinceId ? null : $subdistrict?->district?->city_id);
     $districtId = $reqDistrictId ?: ($reqCityId || $reqProvinceId ? null : $subdistrict?->district_id);
 
-    return [
-        Field::select('province_id')
-            ->label('Province')
-            ->relationship(Province::class, 'name')
-            ->reactive()
-            ->defaultValue($provinceId)
-            ->disable($disable),
-        Field::select('city_id')
-            ->placeholder('Select Province first')
-            ->label('City')
-            ->reactive()
-            //->relationship(City::class, 'name')
-            //->dependsOn(dependencyField: 'province_id', foreignKey: 'province_id', value: $provinceId)
-            ->loadOptionsUsing(function () use ($provinceId) {
-                return City::query()
-                    ->when(
-                        $provinceId,
-                        fn($q) => $q->where('province_id', $provinceId),
-                        fn($q) => $q->whereNull('id'),
-                    );
-            })
-            ->defaultValue($cityId)
-            ->disable($disable),
-        Field::select('district_id')
-            ->label('District')
-            ->reactive()
-            ->relationship(District::class, 'name')
-            ->dependsOn(dependencyField: 'city_id', foreignKey: 'city_id', value: $cityId)
-            ->defaultValue($districtId)
-            ->disable($disable),
-    ];
+    return Form::make()
+        ->fields([
+            Field::select('province_id')
+                ->label('Province')
+                ->relationship(Province::class, 'name')
+                ->reactive()
+                ->defaultValue($provinceId)
+                ->disable($disable),
+            Field::select('city_id')
+                ->placeholder('Select Province first')
+                ->label('City')
+                ->reactive()
+                //->relationship(City::class, 'name')
+                //->dependsOn(dependencyField: 'province_id', foreignKey: 'province_id', value: $provinceId)
+                ->loadOptionsUsing(function () use ($provinceId) {
+                    return City::query()
+                        ->when(
+                            $provinceId,
+                            fn($q) => $q->where('province_id', $provinceId),
+                            fn($q) => $q->whereNull('id'),
+                        );
+                })
+                ->defaultValue($cityId)
+                ->disable($disable),
+            Field::select('district_id')
+                ->label('District')
+                ->reactive()
+                ->relationship(District::class, 'name')
+                ->dependsOn(dependencyField: 'city_id', foreignKey: 'city_id', value: $cityId)
+                ->defaultValue($districtId)
+                ->disable($disable),
+    ]);
 }
 ```
 

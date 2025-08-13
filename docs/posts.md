@@ -79,6 +79,7 @@ use Jhonoryza\InertiaBuilder\Inertia\Tables\Actions\Action;
 use Jhonoryza\InertiaBuilder\Inertia\Tables\Filters\Factory\Filter;
 use Jhonoryza\InertiaBuilder\Inertia\Tables\Table;
 use Jhonoryza\InertiaBuilder\Inertia\Tables\TableColumn;
+use Jhonoryza\InertiaBuilder\Inertia\Form;
 use App\Models\Category;
 use App\Models\Post;
 use App\Models\User;
@@ -196,17 +197,14 @@ class PostController extends Controller
             case 'delete':
                 Post::destroy($ids);
                 return redirect()->route('posts.index')
-                    ->with('description', collect($ids)->implode(', '))
                     ->with('success', 'Post deleted successfully.');
             case 'publish':
                 Post::whereIn('id', $ids)->update(['published' => true]);
                 return redirect()->route('posts.index')
-                    ->with('description', collect($ids)->implode(', '))
                     ->with('success', 'Post published successfully.');
             case 'unpublish':
                 Post::whereIn('id', $ids)->update(['published' => false]);
                 return redirect()->route('posts.index')
-                    ->with('description', collect($ids)->implode(', '))
                     ->with('success', 'Post unpublished successfully.');
             default:
                 return redirect()->route('posts.index')
@@ -215,67 +213,68 @@ class PostController extends Controller
         }
     }
 
-    private function getFormFields(?Post $post = null, $disable = false): array
+    private function getForm(?Post $post = null, $disable = false)
     {
-        return [
-            Field::text('title')
-                ->disable($disable)
-                ->defaultValue($post?->title)
-                ->placeholder('Enter post title'),
-            Field::textarea('description')
-                ->disable($disable)
-                ->defaultValue($post?->description),
-            Field::markdown('content')
-                ->disable($disable)
-                ->defaultValue($post?->content)
-                ->placeholder('Write your content here...'),
-            Field::select('category_id')
-                ->disable($disable)
-                ->defaultValue($post?->category_id)
-                ->label('Category')
-                ->placeholder('Choose an option')
-                ->relationship(Category::class, 'name'),
-            Field::select('author_id')
-                ->disable($disable)
-                ->defaultValue($post?->author_id)
-                ->label('Author')
-                ->placeholder('Choose an option')
-                ->searchable()
-                ->relationship(User::class, 'name'),
-            Field::toggle('published')
-                ->label('Published ?')
-                ->disable($disable)
-                ->defaultValue($post?->published),
-//            Field::select('published')
-//                ->defaultValue($post?->published)
-//                ->options([
-//                    Option::make(true)
-//                        ->label('Published'),
-//                    Option::make(false)
-//                        ->label('Unpublished'),
-//                ]),
-            Field::flatpickr('published_at')
-                ->disable($disable)
-                ->defaultValue($post?->published_at)
-                ->date()
-                ->placeholder('Select published date'),
-            Field::flatpickr('expired_at')
-                ->disable($disable)
-                ->placeholder('Select expired date')
-                ->defaultValue($post?->expired_at),
-            Field::tags('tags')
-                ->disable($disable)
-                ->defaultValue($post?->tags),
-            Field::file('thumbnail')
-                ->disable($disable)
-                ->defaultValue($post?->thumbnail),
-        ];
+        return Form::make()
+            ->fields([
+                Field::text('title')
+                    ->disable($disable)
+                    ->defaultValue($post?->title)
+                    ->placeholder('Enter post title'),
+                Field::textarea('description')
+                    ->disable($disable)
+                    ->defaultValue($post?->description),
+                Field::markdown('content')
+                    ->disable($disable)
+                    ->defaultValue($post?->content)
+                    ->placeholder('Write your content here...'),
+                Field::select('category_id')
+                    ->disable($disable)
+                    ->defaultValue($post?->category_id)
+                    ->label('Category')
+                    ->placeholder('Choose an option')
+                    ->relationship(Category::class, 'name'),
+                Field::select('author_id')
+                    ->disable($disable)
+                    ->defaultValue($post?->author_id)
+                    ->label('Author')
+                    ->placeholder('Choose an option')
+                    ->searchable()
+                    ->relationship(User::class, 'name'),
+                Field::toggle('published')
+                    ->label('Published ?')
+                    ->disable($disable)
+                    ->defaultValue($post?->published),
+    //            Field::select('published')
+    //                ->defaultValue($post?->published)
+    //                ->options([
+    //                    Option::make(true)
+    //                        ->label('Published'),
+    //                    Option::make(false)
+    //                        ->label('Unpublished'),
+    //                ]),
+                Field::flatpickr('published_at')
+                    ->disable($disable)
+                    ->defaultValue($post?->published_at)
+                    ->date()
+                    ->placeholder('Select published date'),
+                Field::flatpickr('expired_at')
+                    ->disable($disable)
+                    ->placeholder('Select expired date')
+                    ->defaultValue($post?->expired_at),
+                Field::tags('tags')
+                    ->disable($disable)
+                    ->defaultValue($post?->tags),
+                Field::file('thumbnail')
+                    ->disable($disable)
+                    ->defaultValue($post?->thumbnail),
+        ]);
     }
 
     public function show(Post $post): Response
     {
         return Inertia::render('builder/show', [
-            'fields' => $this->getFormFields($post, true),
+            'form' => $this->getForm($post, true),
             'routeName' => 'posts',
             'routeId' => $post->id,
         ]);
@@ -284,7 +283,7 @@ class PostController extends Controller
     public function create(): Response
     {
         return Inertia::render('builder/create', [
-            'fields' => $this->getFormFields(),
+            'form' => $this->getForm(),
             'routeName' => 'posts',
         ]);
     }
@@ -292,7 +291,7 @@ class PostController extends Controller
     public function edit(Post $post): Response
     {
         return Inertia::render('builder/edit', [
-            'fields' => $this->getFormFields($post),
+            'form' => $this->getForm($post),
             'routeName' => 'posts',
             'routeId' => $post->id,
         ]);
@@ -303,7 +302,6 @@ class PostController extends Controller
         $post = Post::create($request->validated());
 
         return redirect()->route('posts.index')
-            ->with('description', $post->title)
             ->with('success', 'Post created successfully.');
     }
 
@@ -312,7 +310,6 @@ class PostController extends Controller
         $post->update($request->validated());
 
         return redirect()->route('posts.edit', $post)
-            ->with('description', $post->title)
             ->with('success', 'Post updated successfully.');
     }
 
@@ -321,7 +318,6 @@ class PostController extends Controller
         $post->delete();
 
         return redirect()->route('posts.index')
-            ->with('description', $post->title)
             ->with('success', 'Post deleted successfully.');
     }
 }

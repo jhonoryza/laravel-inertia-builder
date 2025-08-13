@@ -53,6 +53,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
+use Jhonoryza\InertiaBuilder\Inertia\Form;
 
 class SubdistrictController extends Controller
 {
@@ -134,7 +135,6 @@ class SubdistrictController extends Controller
 
                 return redirect()
                     ->route('subdistricts.index')
-                    ->with('description', collect($ids)->implode(', '))
                     ->with('success', 'Items deleted successfully.');
             default:
                 return redirect()
@@ -143,39 +143,40 @@ class SubdistrictController extends Controller
         }
     }
 
-    private function getFormFields(?Subdistrict $subdistrict = null, $disable = false): array
+    private function getForm(?Subdistrict $subdistrict = null, $disable = false)
     {
-        return [
-            Field::select('district_id')
-                ->label('District')
-                ->searchable()
-                ->serverside()
-                ->relationship(District::class, 'name', 'id', function ($query) use ($subdistrict) {
-                    $value = request()->input('district_id_q');
-                    $query
-                        ->when(
-                            $value,
-                            fn($query) => $query->whereRaw('LOWER(name) like ?', '%' . $value . '%'),
-                        )
-                        ->when(
-                            $subdistrict?->district_id && empty($value),
-                            fn($query) => $query->where('id', $subdistrict?->district_id),
-                        )
-                        ->limit(5);
-                })
-                ->defaultValue($subdistrict?->district_id)
-                ->disable($disable),
-            Field::text('name')
-                ->label('Subdistrict')
-                ->defaultValue($subdistrict?->name)
-                ->disable($disable),
-        ];
+        return Form::make()
+            ->fields([
+                Field::select('district_id')
+                    ->label('District')
+                    ->searchable()
+                    ->serverside()
+                    ->relationship(District::class, 'name', 'id', function ($query) use ($subdistrict) {
+                        $value = request()->input('district_id_q');
+                        $query
+                            ->when(
+                                $value,
+                                fn($query) => $query->whereRaw('LOWER(name) like ?', '%' . $value . '%'),
+                            )
+                            ->when(
+                                $subdistrict?->district_id && empty($value),
+                                fn($query) => $query->where('id', $subdistrict?->district_id),
+                            )
+                            ->limit(5);
+                    })
+                    ->defaultValue($subdistrict?->district_id)
+                    ->disable($disable),
+                Field::text('name')
+                    ->label('Subdistrict')
+                    ->defaultValue($subdistrict?->name)
+                    ->disable($disable),
+        ]);
     }
 
     public function show(Subdistrict $subdistrict): Response
     {
         return Inertia::render('builder/show', [
-            'fields' => $this->getFormFields($subdistrict, true),
+            'form' => $this->getForm($subdistrict, true),
             'routeName' => 'subdistricts',
             'routeId' => $subdistrict->id,
         ]);
@@ -184,7 +185,7 @@ class SubdistrictController extends Controller
     public function create(): Response
     {
         return Inertia::render('builder/create', [
-            'fields' => $this->getFormFields(),
+            'form' => $this->getForm(),
             'routeName' => 'subdistricts',
         ]);
     }
@@ -192,7 +193,7 @@ class SubdistrictController extends Controller
     public function edit(Subdistrict $subdistrict): Response
     {
         return Inertia::render('builder/edit', [
-            'fields' => $this->getFormFields($subdistrict),
+            'form' => $this->getForm($subdistrict),
             'routeName' => 'subdistricts',
             'routeId' => $subdistrict->id,
         ]);
@@ -204,7 +205,6 @@ class SubdistrictController extends Controller
 
         return redirect()
             ->route('subdistricts.index')
-            ->with('description', $item->id)
             ->with('success', 'Item created successfully.');
     }
 
@@ -214,7 +214,6 @@ class SubdistrictController extends Controller
 
         return redirect()
             ->route('subdistricts.edit', $subdistrict)
-            ->with('description', $subdistrict->id)
             ->with('success', 'Item updated successfully.');
     }
 
@@ -224,7 +223,6 @@ class SubdistrictController extends Controller
 
         return redirect()
             ->route('subdistricts.index')
-            ->with('description', $subdistrict->id)
             ->with('success', 'Item deleted successfully.');
     }
 }
