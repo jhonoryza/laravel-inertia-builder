@@ -14,12 +14,13 @@ import {customFilterComponents} from '@/components/custom-filters';
 import {router} from "@inertiajs/react";
 
 interface FilterInputProps {
+    name: string;
     filterDef: FilterType;
     activeFilter: ActiveFilter;
     onFilterChange: (field: string, value: string | string[], operator: string) => void;
 }
 
-export function AppDataTableFilterInput({filterDef, activeFilter, onFilterChange}: FilterInputProps) {
+export function AppDataTableFilterInput({name, filterDef, activeFilter, onFilterChange}: FilterInputProps) {
     const handleValueChange = (value: string | string[], operator: string) => {
         // console.log(filterDef.field, value, operator);
         onFilterChange(filterDef.field, value, operator);
@@ -58,7 +59,7 @@ export function AppDataTableFilterInput({filterDef, activeFilter, onFilterChange
                                                                   preserveState: true,
                                                                   preserveScroll: true,
                                                                   replace: true,
-                                                                  only: ['data'],
+                                                                  only: [name]
                                                               })
                                                           }, 500)
                                                       }
@@ -128,7 +129,7 @@ export function AppDataTableFilterInput({filterDef, activeFilter, onFilterChange
                                                               preserveState: true,
                                                               preserveScroll: true,
                                                               replace: true,
-                                                              only: ['data'],
+                                                              only: [name],
                                                           })
                                                       }, 500)
                                                   }

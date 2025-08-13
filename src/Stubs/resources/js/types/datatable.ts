@@ -73,13 +73,26 @@ type Action = {
     needConfirm: boolean;
 }
 
-export type DataTableProps = {
+export type DataTableCommon = {
+    name: string;
+    prefix: string;
     items: PaginatedItems;
     columns: Column[];
     filters: DataTableFilters;
-    routeName: string;
-    tableRoute?: string;
     actions: Action[];
     perPage?: number;
     perPageOptions?: number[];
+};
+
+export type DataTableProps = {
+    name: string;
+    prefix: string;
+    items: PaginatedItems;
+    columns: Column[];
+    filters: DataTableFilters;
+    actions: Action[];
+    perPage?: number;
+    perPageOptions?: number[];
+    routeName: string;
+    tableRoute?: string;
 };

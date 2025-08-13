@@ -4,19 +4,21 @@ import {toast} from 'sonner';
 import {AppDataTableToolbar} from "./app-datatable-toolbar";
 import {AppDataTableContent} from "./app-datatable-content";
 import {AppDataTablePagination} from "./app-datatable-pagination";
-import {ActiveFilter, DataTableProps} from '@/types/datatable';
+import {ActiveFilter, DataTableCommon} from '@/types/datatable';
 import {AppDataTableActiveFilters} from "@/components/builder/app-datatable-active-filters";
 
+type DataTable = {
+    data: DataTableCommon;
+    routeName: string;
+    tableRoute: string;
+};
+
 export default function AppDataTable({
-     items,
-     columns,
-     filters,
+     data,
      routeName,
      tableRoute,
-     actions,
-     perPage,
-     perPageOptions,
- }: DataTableProps) {
+ }: DataTable) {
+    const { name, prefix, items, filters, columns, actions, perPage, perPageOptions } = data;
     const [openFilterPopovers, setOpenFilterPopovers] = useState<Record<string, boolean>>({});
     const openPopover = (field: string) => setOpenFilterPopovers(prev => ({...prev, [field]: true}));
     const closePopover = (field: string) => setOpenFilterPopovers(prev => ({...prev, [field]: false}));
@@ -82,11 +84,11 @@ export default function AppDataTable({
                         const joined = filter.value.length > 1 ? filter.value.join(',') : filter.value.toString();
                         //console.log(joined);
                         //console.log(filter.value);
-                        acc[`filter[${filter.field}]`] = filter.operator
+                        acc[`${prefix}filter[${filter.field}]`] = filter.operator
                             ? `${filter.operator}:${joined}`
                             : joined;
                     } else if (filter.value) {
-                        acc[`filter[${filter.field}]`] = filter.operator
+                        acc[`${prefix}filter[${filter.field}]`] = filter.operator
                             ? `${filter.operator}:${filter.value}`
                             : filter.value as string;
                     }
@@ -101,19 +103,26 @@ export default function AppDataTable({
                 // console.log(params);
 
                 const routeUrl = tableRoute ? tableRoute : route(`${routeName}.index`);
+                const searchParam = prefix + 'q';
+                const sortByParam = prefix + 'sort';
+                const sortDirParam = prefix + 'dir';
                 router.get(
                     routeUrl,
                     {
                         ...(params ? {...params} : {}),
-                        q: searchQuery,
-                        sort: sort,
-                        dir: dir,
+                        [searchParam]: searchQuery,
+                        [sortByParam]: sort,
+                        [sortDirParam]: dir,
                     },
-                    {preserveScroll: true, preserveState: true},
+                    {
+                        preserveScroll: true,
+                        preserveState: true,
+                        only: [name],
+                    },
                 );
             }, 500);
         }
-    }, [sort, dir, searchQuery, activeFilters, tableRoute, routeName]);
+    }, [sort, dir, searchQuery, activeFilters, tableRoute, routeName, prefix]);
 
     useEffect(() => {
         if (flash?.success) {
@@ -191,6 +200,7 @@ export default function AppDataTable({
                 actions={actions}
             />
             <AppDataTableActiveFilters
+                name={name}
                 activeFilters={activeFilters}
                 setActiveFilters={setActiveFilters}
                 filters={filters}
@@ -212,6 +222,8 @@ export default function AppDataTable({
                 routeName={routeName}
             />
             <AppDataTablePagination
+                name={name}
+                prefix={prefix}
                 items={items}
                 perPage={perPage}
                 perPageOptions={perPageOptions}

@@ -6,6 +6,8 @@ import {router, usePage} from '@inertiajs/react';
 import {ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight} from 'lucide-react';
 
 interface AppDataTablePaginationProps {
+    name: DataTableProps['name'];
+    prefix: DataTableProps['prefix'];
     items: DataTableProps['items'];
     perPage?: DataTableProps['perPage'];
     perPageOptions?: DataTableProps['perPageOptions'];
@@ -13,14 +15,23 @@ interface AppDataTablePaginationProps {
     toggleSelectAll: (checked: boolean) => void;
 }
 
-export function AppDataTablePagination({items, perPage, perPageOptions, selectedIds, toggleSelectAll}: AppDataTablePaginationProps) {
+export function AppDataTablePagination({
+                                           name,
+                                           prefix,
+                                           items,
+                                           perPage,
+                                           perPageOptions,
+                                           selectedIds,
+                                           toggleSelectAll
+                                       }: AppDataTablePaginationProps) {
     const hasSimplePagination = true;
     const {url} = usePage();
 
     const handlePerPageChange = (value: string) => {
+        const perPageParam = prefix + 'perPage';
         router.get(
             url,
-            {perPage: value},
+            {[perPageParam]: value},
             {
                 preserveState: true,
                 preserveScroll: true,
@@ -82,7 +93,11 @@ export function AppDataTablePagination({items, perPage, perPageOptions, selected
                             size="sm"
                             onClick={() =>
                                 items.first_page_url &&
-                                router.get(items.first_page_url, {}, {preserveState: true, preserveScroll: true})
+                                router.get(items.first_page_url, {}, {
+                                    preserveState: true,
+                                    preserveScroll: true,
+                                    only: [name]
+                                })
                             }
                             disabled={!items.prev_page_url || !items.first_page_url}>
                             <ChevronsLeft/>
@@ -93,7 +108,11 @@ export function AppDataTablePagination({items, perPage, perPageOptions, selected
                             size="sm"
                             onClick={() =>
                                 items.prev_page_url &&
-                                router.get(items.prev_page_url, {}, {preserveState: true, preserveScroll: true})
+                                router.get(items.prev_page_url, {}, {
+                                    preserveState: true,
+                                    preserveScroll: true,
+                                    only: [name]
+                                })
                             }
                             disabled={!items.prev_page_url}>
                             <ChevronLeft/>
@@ -104,7 +123,11 @@ export function AppDataTablePagination({items, perPage, perPageOptions, selected
                             size="sm"
                             onClick={() =>
                                 items.next_page_url &&
-                                router.get(items.next_page_url, {}, {preserveState: true, preserveScroll: true})
+                                router.get(items.next_page_url, {}, {
+                                    preserveState: true,
+                                    preserveScroll: true,
+                                    only: [name]
+                                })
                             }
                             disabled={!items.next_page_url}>
                             <ChevronRight/>
@@ -115,7 +138,11 @@ export function AppDataTablePagination({items, perPage, perPageOptions, selected
                             size="sm"
                             onClick={() =>
                                 items.last_page_url &&
-                                router.get(items.last_page_url, {}, {preserveState: true, preserveScroll: true})
+                                router.get(items.last_page_url, {}, {
+                                    preserveState: true,
+                                    preserveScroll: true,
+                                    only: [name]
+                                })
                             }
                             disabled={!items.next_page_url || !items.last_page_url}>
                             <ChevronsRight/>
@@ -141,6 +168,7 @@ export function AppDataTablePagination({items, perPage, perPageOptions, selected
                                                         {
                                                             preserveState: true,
                                                             preserveScroll: true,
+                                                            only: [name]
                                                         },
                                                     )
                                                 }

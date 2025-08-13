@@ -13,8 +13,8 @@ export type ColumnDef = {
 };
 
 export type FieldDefinition = {
-    columnSpan: ColumnDef;
-    columnOrder: ColumnDef;
+    columnSpan?: ColumnDef;
+    columnOrder?: ColumnDef;
     name: string;
     label: string;
     type: 'text' | 'email' | 'number' | 'date' | 'datetime-local' | 'password'

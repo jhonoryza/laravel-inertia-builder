@@ -11,6 +11,7 @@ import {AppDatatableFilterOperator} from "@/components/builder/app-datatable-fil
 import {cn} from "@/lib/utils";
 
 interface AppDataTableActiveFiltersProps {
+    name: string;
     activeFilters: ActiveFilter[];
     setActiveFilters: Dispatch<SetStateAction<ActiveFilter[]>>;
     filters: DataTableFilters;
@@ -21,6 +22,7 @@ interface AppDataTableActiveFiltersProps {
 }
 
 export function AppDataTableActiveFilters({
+                                              name,
                                               activeFilters,
                                               setActiveFilters,
                                               filters,
@@ -82,7 +84,7 @@ export function AppDataTableActiveFilters({
                                 onClick={() => removeFilter(filter.field)}
                                 className="absolute -right-2 -top-2 z-10 h-4 w-4 items-center justify-center
                                     rounded-full border bg-background text-foreground/60 hover:cursor-pointer
-                                    hover:text-destructive-foreground hidden group-hover:inline-flex"
+                                    hover:opacity-60 hidden group-hover:inline-flex"
                             >
                                 <XIcon className="h-3 w-3"/>
                             </button>
@@ -97,6 +99,7 @@ export function AppDataTableActiveFilters({
                                 />
                                 <div className="w-full">
                                     <AppDataTableFilterInput
+                                        name={name}
                                         filterDef={filterDef}
                                         activeFilter={filter}
                                         onFilterChange={handleFilterValueChange}

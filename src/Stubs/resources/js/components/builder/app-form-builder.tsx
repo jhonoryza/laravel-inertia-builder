@@ -85,8 +85,8 @@ export function AppFormBuilder({columns, fields, routeName, routeId, mode}: Page
     );
 
     function fieldClasses(field: FieldDefinition) {
-        const span = field.columnSpan || {};
-        const order = field.columnOrder || {};
+        const span = field.columnSpan || {} as ColumnDef;
+        const order = field.columnOrder || {} as ColumnDef;
 
         return [
             span.default && `col-span-${span.default}`,
@@ -136,7 +136,7 @@ export function AppFormBuilder({columns, fields, routeName, routeId, mode}: Page
                         </Button>
                         <Button
                             onClick={() => {
-                                router.visit(route(`${routeName}.index`, routeId));
+                                window.history.back();
                             }}
                             variant="link"
                             type="button"
@@ -157,7 +157,7 @@ export function AppFormBuilder({columns, fields, routeName, routeId, mode}: Page
                         </Button>
                         <Button
                             onClick={() => {
-                                router.visit(route(`${routeName}.show`, routeId));
+                                window.history.back();
                             }}
                             variant="destructive"
                             type="button"

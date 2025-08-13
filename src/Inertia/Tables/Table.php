@@ -18,6 +18,8 @@ class Table implements JsonSerializable
 {
     protected string $paginationMethod = 'paginate';
 
+    protected string $name = 'data';
+
     protected string $model;
 
     protected array $columns = [];
@@ -27,6 +29,14 @@ class Table implements JsonSerializable
             return $this->filters;
         }
     }
+
+    protected string $sortByParam = 'sort';
+    protected string $sortDirParam = 'dir';
+    protected string $searchParam = 'q';
+    protected string $perPageParam = 'perPage';
+    protected string $pageParam = 'page';
+    protected string $filterParam = 'filter';
+    protected string $prefix = '';
 
     protected ?string $defaultSort = null;
 
@@ -54,6 +64,48 @@ class Table implements JsonSerializable
     public function __construct(string $model)
     {
         $this->model = $model;
+    }
+
+    public function name(string $name): static
+    {
+        $this->name = $name;
+        return $this;
+    }
+
+    public function prefix(string $prefix): static
+    {
+        $this->prefix = $prefix;
+        return $this;
+    }
+
+    public function getSortByParam(): string
+    {
+        return $this->prefix . $this->sortByParam;
+    }
+
+    public function getSortDirParam(): string
+    {
+        return $this->prefix . $this->sortDirParam;
+    }
+
+    public function getSearchParam(): string
+    {
+        return $this->prefix . $this->searchParam;
+    }
+
+    public function getPageParam(): string
+    {
+        return $this->prefix . $this->pageParam;
+    }
+
+    public function getPerPageParam(): string
+    {
+        return $this->prefix . $this->perPageParam;
+    }
+
+    public function getFilterParam(): string
+    {
+        return $this->prefix . $this->filterParam;
     }
 
     /**
@@ -131,11 +183,12 @@ class Table implements JsonSerializable
      */
     private function get(): LengthAwarePaginator|Paginator|CursorPaginator
     {
-        $sort = request()->get('sort', $this->defaultSort);
+        $sort = request()->get($this->getSortByParam(), $this->defaultSort);
         request()->merge([
-            'sort' => request()->get('dir', $this->defaultSortDir) === 'desc' ? '-' . $sort : $sort,
+            $this->getSortByParam() => request()->get($this->getSortDirParam(), $this->defaultSortDir) === 'desc' ? '-' . $sort : $sort,
         ]);
 
+        config()->set('query-builder.parameters.filter', $this->getFilterParam());
         $query = QueryBuilder::for($this->model, request())
             ->when(
                 $this->queryUsingCallback,
@@ -153,7 +206,7 @@ class Table implements JsonSerializable
          * default sort handler
          */
         if ($this->defaultSort) {
-            $dir = request()->get('dir', $this->defaultSortDir) === 'desc' ? '-' : '';
+            $dir = request()->get($this->getSortDirParam(), $this->defaultSortDir) === 'desc' ? '-' : '';
             $query
                 ->defaultSort($dir . $this->defaultSort);
         }
@@ -161,7 +214,7 @@ class Table implements JsonSerializable
         /**
          * search handler
          */
-        $search = request()->get('q');
+        $search = request()->get($this->getSearchParam());
         if ($search) {
             $query->where(function ($q) use ($search) {
                 foreach ($this->columns as $col) {
@@ -199,17 +252,17 @@ class Table implements JsonSerializable
         /**
          * pagination handler
          */
-        $perPage = request()->input('perPage', $this->perPage);
+        $perPage = request()->input($this->getPerPageParam(), $this->perPage);
 
         if ($this->paginationMethod === 'cursor') {
-            $items = $query->cursorPaginate($perPage)
+            $items = $query->cursorPaginate(perPage: $perPage, cursorName: $this->getPageParam())
                 ->withQueryString();
         } elseif ($this->paginationMethod === 'simple') {
-            $items = $query->simplePaginate($perPage)
+            $items = $query->simplePaginate(perPage: $perPage, pageName: $this->getPageParam())
                 ->withQueryString();
         } else {
             $items = $query
-                ->paginate($perPage)
+                ->paginate(perPage: $perPage, pageName: $this->getPageParam())
                 ->withQueryString();
         }
 
@@ -219,7 +272,7 @@ class Table implements JsonSerializable
         $items = $this->mapRowsWithRenderUsing($items);
 
         request()->merge([
-            'sort' => $sort,
+            $this->getSortByParam() => $sort,
         ]);
 
         return $items;
@@ -314,15 +367,15 @@ class Table implements JsonSerializable
     private function getAllowedFilters(Request $request): array
     {
         $allowedFilters = [];
-        if (!$request->has('filter')) {
+        if (!$request->has($this->getFilterParam())) {
             return $allowedFilters;
         }
         foreach (collect($this->filters) as $filter) {
             $key = $filter->field;
-            if (!array_key_exists($key, $request->filter)) {
+            if (!array_key_exists($key, $request->{$this->getFilterParam()})) {
                 continue;
             }
-            $oldValue = $request->filter[$key];
+            $oldValue = $request->{$this->getFilterParam()}[$key];
             $temp = str_contains($oldValue, ':') ? explode(':', $oldValue, 2) : [$oldValue];
             $operator = null;
 
@@ -463,6 +516,8 @@ class Table implements JsonSerializable
             'perPageOptions' => $this->perPageOptions,
             'columns' => $this->getColumns(),
             'actions' => $this->getActions(),
+            'prefix' => $this->prefix,
+            'name' => $this->name,
         ];
     }
 
