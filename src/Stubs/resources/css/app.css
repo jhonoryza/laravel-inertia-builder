@@ -1,5 +1,5 @@
 @import 'tailwindcss';
-@import "./theme/default.css";
+@import "./theme/claude.css";
 
 @plugin 'tailwindcss-animate';
 @config "../../tailwind.config.js";
