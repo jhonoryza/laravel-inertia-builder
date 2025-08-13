@@ -82,7 +82,8 @@ class InstallCommand extends Command
 
         // publish generator stubs
         if ((new Filesystem)->exists(base_path('stubs/inertia-builder'))) {
-            rmdir(base_path('stubs/inertia-builder'));
+            $path = base_path('stubs/inertia-builder');
+            Process::run('rm -rf ' . $path);
         }
         $publishResult = Process::run('php artisan vendor:publish --tag=inertia-builder-stubs');
         if ($publishResult->successful()) {
