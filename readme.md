@@ -161,27 +161,28 @@ achieved without custom frontend logic or API endpoints by using Inertia's "Part
 Here is how to set up a dependent dropdown for `City` based on the selected `Province`.
 
 ```php
-private function getFormFields(?Subdistrict $subdistrict = null, $disable = false): array
+private function getForm(?Subdistrict $subdistrict = null, $disable = false)
 {
     // ... logic to get current province_id from request or model
     $provinceId = request()->input('province_id') ?: $subdistrict?->district?->city?->province_id;
 
-    return [
-        Field::select('province_id')
-            ->label('Province')
-            ->relationship(Province::class, 'name')
-            ->reactive() // Mark this field as reactive
-            ->defaultValue($provinceId),
-
-        Field::select('city_id')
-            ->label('City')
-            ->placeholder('Select Province first')
-            ->relationship(City::class, 'name')
-            // This field depends on 'province_id'.
-            // The builder will automatically filter cities based on the selected province.
-            ->dependsOn(dependencyField: 'province_id', foreignKey: 'province_id', value: $provinceId)
-            ->defaultValue($cityId), // Set default value for city
-    ];
+    return Form::make()
+        ->fields([
+            Field::select('province_id')
+                ->label('Province')
+                ->relationship(Province::class, 'name')
+                ->reactive() // Mark this field as reactive
+                ->defaultValue($provinceId),
+    
+            Field::select('city_id')
+                ->label('City')
+                ->placeholder('Select Province first')
+                ->relationship(City::class, 'name')
+                // This field depends on 'province_id'.
+                // The builder will automatically filter cities based on the selected province.
+                ->dependsOn(dependencyField: 'province_id', foreignKey: 'province_id', value: $provinceId)
+                ->defaultValue($cityId), // Set default value for city
+    ]);
 }
 ```
 
