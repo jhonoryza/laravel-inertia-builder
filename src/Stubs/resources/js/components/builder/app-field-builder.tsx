@@ -379,7 +379,7 @@ export function AppFieldBuilder({field, value, setData, error, isProcessing}: Fi
                                                                   preserveState: true,
                                                                   preserveScroll: true,
                                                                   replace: true,
-                                                                  only: ['fields'],
+                                                                  only: ['form'],
                                                               })
                                                           }, 500)
                                                       }
@@ -442,7 +442,7 @@ export function AppFieldBuilder({field, value, setData, error, isProcessing}: Fi
                                                                   preserveState: true,
                                                                   preserveScroll: true,
                                                                   replace: true,
-                                                                  only: ['fields'],
+                                                                  only: ['form'],
                                                               })
                                                           }, 500)
                                                       }
@@ -536,7 +536,7 @@ export function AppFieldBuilder({field, value, setData, error, isProcessing}: Fi
                                                                   preserveState: true,
                                                                   preserveScroll: true,
                                                                   replace: true,
-                                                                  only: ['fields'],
+                                                                  only: ['form'],
                                                               })
                                                           }, 500)
                                                       }
@@ -610,7 +610,7 @@ export function AppFieldBuilder({field, value, setData, error, isProcessing}: Fi
                                                               preserveState: true,
                                                               preserveScroll: true,
                                                               replace: true,
-                                                              only: ['fields'],
+                                                              only: ['form'],
                                                           })
                                                       }, 500)
                                                   }
