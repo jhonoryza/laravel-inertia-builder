@@ -67,8 +67,8 @@ trait HasController
             if ($column['relationName']) {
                 $relationName = $column['relationName'];
                 $relationKey  = $column['relationKey'];
-                $line         = "TableColumn::make('$name')
-                    ->label('$relationName.$relationKey')" . PHP_EOL;
+                $line         = "TableColumn::make('$relationName.$relationKey')
+                    ->label('" . Str::studly($relationName) . "')" . PHP_EOL;
             }
             if (in_array($type, ['varchar', 'text'])) {
                 $line .= '->searchable()' . PHP_EOL;

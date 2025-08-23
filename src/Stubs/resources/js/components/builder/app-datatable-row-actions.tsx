@@ -79,7 +79,7 @@ export default function AppDatatableRowActions({
                 <AlertDialogHeader>
                   <AlertDialogTitle>Confirmation</AlertDialogTitle>
                   <AlertDialogDescription>
-                    Want to delete this row {id}?
+                    Are you sure want to delete this row {id}?
                   </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>

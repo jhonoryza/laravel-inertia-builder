@@ -36,7 +36,7 @@ class {{className}} extends Controller
                     ->needConfirm(false),
                 Action::make('delete')
                     ->label('Batch Delete')
-                    ->message('Delete this item?'),
+                    ->message('Are you sure to delete multiple row?'),
             ]);
 
         return Inertia::render('builder/index', [

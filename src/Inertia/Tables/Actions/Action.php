@@ -28,6 +28,13 @@ class Action implements JsonSerializable
         return new static($name);
     }
 
+    public function label(string $label): static
+    {
+        $this->label = $label;
+
+        return $this;
+    }
+
     public function message(string $message): static
     {
         $this->message = $message;
