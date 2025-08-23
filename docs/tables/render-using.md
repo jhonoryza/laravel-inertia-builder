@@ -1,13 +1,13 @@
 # Column Rendering (`renderUsing`)
 
-Secara default, sebuah kolom tabel hanya menampilkan nilai apa adanya dari database.  
-Jika ingin menyesuaikan tampilan (misalnya menampilkan link, badge, atau komponen UI lain), gunakan method `renderUsing()`.
+By default, a table column only displays the raw value from the database.  
+If you want to customize the display (for example, show a link, badge, or other UI component), use the `renderUsing()` method.
 
 ---
 
-## Render dengan Komponen React
+## Render with React Component
 
-Jika ingin menampilkan cell menggunakan komponen React yang sudah didaftarkan:
+If you want to render a cell using a registered React component:
 
 ```php
 TableColumn::make('status')
@@ -21,26 +21,26 @@ TableColumn::make('status')
     ]);
 ```
 
-Pada contoh di atas:
+In the example above:
 
-- `component`: nama komponen yang sudah diregistrasikan di frontend.
-- `props`: properti yang akan dilempar ke komponen.
+- `component`: the name of the component registered in the frontend.
+- `props`: properties to pass to the component.
 
-Hasil render misalnya:
+Rendered result example:
 
 ```tsx
 <BadgeCell value="Active" variant="success" />
 ```
 
-### Registrasi Komponen
+### Component Registration
 
-Semua komponen custom untuk cell harus diregistrasikan di:
+All custom cell components must be registered in:
 
 `resources/js/components/custom-cell/index.ts`
 
 ```ts
 // Register all custom cell components here.
-// Key (ex: 'badge') adalah nama yang digunakan di backend (PHP).
+// The key (e.g., 'badge') is the name used in backend (PHP).
 
 import BadgeCell from "./badge-cell";
 
@@ -52,9 +52,9 @@ export const customCellComponents: Record<string, React.ComponentType<any>> = {
 
 ---
 
-## Render dengan HTML Langsung
+## Render with Raw HTML
 
-Selain komponen, cell juga bisa di-render dengan raw HTML menggunakan kunci `__html`:
+Besides components, a cell can also be rendered with raw HTML using the `__html` key:
 
 ```php
 TableColumn::make('link')
@@ -66,7 +66,7 @@ TableColumn::make('link')
     });
 ```
 
-Hasilnya:
+Result:
 
 ```html
 <a href="https://example.com" class="hover:text-ring" target="_blank">

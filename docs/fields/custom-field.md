@@ -1,39 +1,39 @@
 # CustomField
 
-CustomField memungkinkan Anda mengintegrasikan komponen React Anda sendiri ke dalam sistem form Inertia. Fitur ini berguna untuk membuat tipe input yang tidak tersedia secara default, seperti rating selector, color picker, atau widget UI khusus lainnya.
+CustomField allows you to integrate your own React components into the Inertia form system. This feature is useful for creating input types not available by default, such as rating selectors, color pickers, or other custom UI widgets.
 
 ---
 
-## Cara Kerja
+## How It Works
 
-Custom field harus didaftarkan secara manual di  
+Custom fields must be registered manually in  
 `resources/js/components/custom-fields/index.ts`.
 
-**Contoh:**
+**Example:**
 ```typescript
 import { ColorPickerField } from "./color-picker-field";
 import { RatingField } from "./rating-field";
 
-// Daftarkan semua komponen custom field di sini.
-// Key (misal: 'rating') harus sesuai dengan nama yang digunakan di PHP.
+// Register all custom field components here.
+// The key (e.g., 'rating') must match the name used in PHP.
 export const customFieldsComponents: Record<string, React.ComponentType<any>> = {
     'color-picker': ColorPickerField,
     'rating': RatingField,
 };
 ```
 
-Di definisi field PHP Anda:
+In your PHP field definition:
 ```php
 Field::custom('rating')
     ->component('rating');
 ```
-Ini akan membuat sistem mencari key `rating` pada registry di atas dan merender `RatingField`.
+This will make the system look for the `rating` key in the registry above and render the `RatingField` component.
 
 ---
 
 ## Database Casting
 
-Jika Anda ingin menyimpan nilai custom field ke database, lakukan casting di model Eloquent Anda:
+If you want to store the custom field value in the database, add a cast in your Eloquent model:
 
 ```php
 class Review extends Model
@@ -46,7 +46,7 @@ class Review extends Model
 
 ---
 
-## Penggunaan Dasar
+## Basic Usage
 
 ```php
 use Jhonoryza\InertiaBuilder\Inertia\Fields\Field;
@@ -58,9 +58,9 @@ Field::custom('rating')
 
 ---
 
-## Menambahkan Atribut Ekstra
+## Adding Extra Attributes
 
-Anda dapat menambahkan props ekstra ke komponen menggunakan `extraAttributes` atau `extraAttribute`:
+You can pass extra props to the component using `extraAttributes` or `extraAttribute`:
 
 ```php
 Field::custom('rating')
@@ -68,11 +68,11 @@ Field::custom('rating')
     ->extraAttributes([
         'maxStars' => 10,
         'size' => 'lg',
-        'activeColor' => '#16a34a', // hijau
+        'activeColor' => '#16a34a', // green
     ]);
 ```
 
-Atau secara individual:
+Or individually:
 ```php
 Field::custom('rating')
     ->component('rating')
@@ -81,21 +81,21 @@ Field::custom('rating')
 
 ---
 
-## State Awal
+## Initial State
 
-Definisikan state awal untuk field:
+Define the initial state for the field:
 
 ```php
 Field::custom('rating')
     ->component('rating')
-    ->state(3); // Default: 3 bintang terpilih
+    ->state(3); // Default: 3 stars selected
 ```
 
 ---
 
 ## Format State
 
-Transformasi state sebelum ditampilkan:
+Transform the state before displaying:
 
 ```php
 Field::custom('rating')
@@ -106,7 +106,7 @@ Field::custom('rating')
 
 ---
 
-## Contoh Komponen RatingField
+## Example RatingField Component
 
 ```typescript
 import React from 'react';
@@ -204,15 +204,15 @@ export function RatingField({
 
 | Method | Description |
 | ------ | ----------- |
-| `component(string $component)` | Set komponen yang digunakan (harus sesuai key di index.ts) |
-| `extraAttributes(array $attributes)` | Kirim beberapa props ekstra ke komponen |
-| `extraAttribute(string $key, mixed $value)` | Kirim satu prop ekstra |
-| `state(mixed $state)` | Definisikan nilai state awal |
-| `formatStateUsing(Closure $callback)` | Transformasi state sebelum render |
+| `component(string $component)` | Set the component to use (must match the key in index.ts) |
+| `extraAttributes(array $attributes)` | Pass multiple extra props to the component |
+| `extraAttribute(string $key, mixed $value)` | Pass a single extra prop |
+| `state(mixed $state)` | Define the initial state value |
+| `formatStateUsing(Closure $callback)` | Transform the state before rendering |
 
 ---
 
-## Contoh UI Preview (Konsep)
+## UI Preview Example (Concept)
 
 ```
 Rating: ★★★☆☆ (3 of 5 stars)
