@@ -65,7 +65,7 @@ export type Column = {
     relationType?: 'belongsTo' | 'hasMany';
 };
 
-type Action = {
+export type Action = {
     label: string;
     name: string;
     message: string;
@@ -95,4 +95,9 @@ export type DataTableProps = {
     perPageOptions?: number[];
     routeName: string;
     tableRoute?: string;
+    edit: boolean;
+    view: boolean;
+    delete: boolean;
+    forceDelete: boolean;
+    restore: boolean;
 };

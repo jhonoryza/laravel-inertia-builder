@@ -92,29 +92,8 @@ export function AppFieldBuilderFile({ field, value, setData }: FileFieldProps) {
 
     return (
         <div className="space-y-2">
-            <input
-                ref={fileInputRef}
-                type="file"
-                id={field.name}
-                name={field.name}
-                accept={acceptAttribute}
-                multiple={field.multiple}
-                onChange={handleFileChange}
-                className="hidden"
-            />
-
-            <Button
-                type="button"
-                variant="outline"
-                onClick={handleButtonClick}
-                className={field.mergeClass}
-            >
-                {field.placeholder || (field.multiple ? 'Choose Files' : 'Choose File')}
-            </Button>
-
             {previewsToShow.length > 0 && (
                 <div className="mt-2 space-y-2">
-                    <Label>Selected {field.multiple ? 'Files' : 'File'}:</Label>
                     <ul className="text-sm text-muted-foreground mt-1 space-y-2">
                         {previewsToShow.map((file, index) => (
                             <li key={index} className="flex flex-col gap-1">
@@ -140,6 +119,25 @@ export function AppFieldBuilderFile({ field, value, setData }: FileFieldProps) {
                     </ul>
                 </div>
             )}
+            <input
+                ref={fileInputRef}
+                type="file"
+                id={field.name}
+                name={field.name}
+                accept={acceptAttribute}
+                multiple={field.multiple}
+                onChange={handleFileChange}
+                className="hidden"
+            />
+
+            <Button
+                type="button"
+                variant="outline"
+                onClick={handleButtonClick}
+                className={field.mergeClass}
+            >
+                {field.placeholder || (field.multiple ? 'Choose Files' : 'Choose File')}
+            </Button>
         </div>
     );
 }

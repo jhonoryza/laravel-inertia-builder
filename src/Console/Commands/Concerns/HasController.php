@@ -68,8 +68,7 @@ trait HasController
                 $relationName = $column['relationName'];
                 $relationKey  = $column['relationKey'];
                 $line         = "TableColumn::make('$name')
-                    ->label('" . Str::studly($relationName) . "')
-                    ->belongsTo('$relationName', '$relationKey')" . PHP_EOL;
+                    ->label('$relationName.$relationKey')" . PHP_EOL;
             }
             if (in_array($type, ['varchar', 'text'])) {
                 $line .= '->searchable()' . PHP_EOL;
@@ -77,13 +76,13 @@ trait HasController
             if (in_array($type, ['timestamp', 'timestamptz'])) {
                 $line .= "->renderUsing(function (\$value) {
                         return \$value
-                            ->format('d/m/Y H:i') ?? '-';
+                            ?->format('d/m/Y H:i') ?? '-';
                     })" . PHP_EOL;
             }
             if ($type == 'date') {
                 $line .= "->renderUsing(function (\$value) {
                         return \$value
-                            ->format('d/m/Y') ?? '-';
+                            ?->format('d/m/Y') ?? '-';
                     })" . PHP_EOL;
             }
             if ($type == 'bool') {

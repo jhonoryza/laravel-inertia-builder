@@ -141,7 +141,7 @@ export function AppFieldBuilderFlatpickr({field, value, operator, setData}: Flat
                 ref={inputRef}
                 id={field.name}
                 name={field.name}
-                placeholder={field.placeholder || field.label}
+                placeholder={field.placeholder || 'Pick a date'}
                 readOnly
                 autoComplete="off"
                 className={cn("cursor-pointer", field.mergeClass)}

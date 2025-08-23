@@ -46,7 +46,7 @@ class InstallCommand extends Command
         }
 
         // install shadcn ui
-        $npxResult = Process::run('npx shadcn@latest add -y -o calendar command pagination popover radio-group slider sonner switch table tabs textarea');
+        $npxResult = Process::run('npx shadcn@latest add -y -o calendar command pagination popover radio-group slider sonner switch table tabs textarea alert-dialog');
         if ($npxResult->successful()) {
             $this->info('required shadcn ui added successfully.');
             echo $npxResult->output();
@@ -56,9 +56,11 @@ class InstallCommand extends Command
         }
 
         // copy inertia builder components
-        (new Filesystem)->copyDirectory(__DIR__ . '/../../Stubs/resources/js/components/builder', resource_path('js/Components/builder'));
-        (new Filesystem)->copyDirectory(__DIR__ . '/../../Stubs/resources/js/components/custom-fields', resource_path('js/Components/custom-fields'));
-        (new Filesystem)->copyDirectory(__DIR__ . '/../../Stubs/resources/js/components/custom-filters', resource_path('js/Components/custom-filters'));
+        (new Filesystem)->copyDirectory(__DIR__ . '/../../Stubs/resources/js/components/builder', resource_path('js/components/builder'));
+        (new Filesystem)->copyDirectory(__DIR__ . '/../../Stubs/resources/js/components/custom-fields', resource_path('js/components/custom-fields'));
+        (new Filesystem)->copyDirectory(__DIR__ . '/../../Stubs/resources/js/components/custom-filters', resource_path('js/components/custom-filters'));
+        (new Filesystem)->copyDirectory(__DIR__ . '/../../Stubs/resources/js/components/custom-cell', resource_path('js/components/custom-cell'));
+        (new Filesystem)->copyDirectory(__DIR__ . '/../../Stubs/resources/js/components/general', resource_path('js/components/general'));
         $this->info('component copied successfully.');
 
         // copy inertia builder pages
@@ -68,7 +70,6 @@ class InstallCommand extends Command
         // copy datatable and field builder type
         copy(__DIR__ . '/../../Stubs/resources/js/types/datatable.ts', resource_path('js/types/datatable.ts'));
         copy(__DIR__ . '/../../Stubs/resources/js/types/field-builder.ts', resource_path('js/types/field-builder.ts'));
-        copy(__DIR__ . '/../../Stubs/resources/js/app-field-builder.d.ts', resource_path('js/app-field-builder.d.ts'));
         $this->info('datatable & field builder type copied successfully.');
 
         // copy css themes

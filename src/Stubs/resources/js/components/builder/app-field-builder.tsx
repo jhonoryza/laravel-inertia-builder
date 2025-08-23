@@ -45,7 +45,7 @@ export function AppFieldBuilder({field, value, setData, error, isProcessing}: Fi
                 preserveState: true,
                 preserveScroll: true,
                 replace: true,
-                only: ['fields'],
+                only: ['form'],
             });
         }
     };
@@ -71,7 +71,7 @@ export function AppFieldBuilder({field, value, setData, error, isProcessing}: Fi
                         onChange={handleChange}
                         cols={field.cols}
                         rows={field.rows}
-                        placeholder={field.placeholder || ''}
+                        placeholder={field.placeholder || 'Fill in here..'}
                         className={field.mergeClass}
                         disabled={field.isDisable || isProcessing}
                     />
@@ -126,7 +126,7 @@ export function AppFieldBuilder({field, value, setData, error, isProcessing}: Fi
                         type={field.type}
                         value={value || ''}
                         onChange={handleChange}
-                        placeholder={field.placeholder || ''}
+                        placeholder={field.placeholder || 'Fill in here..'}
                         className={cn(field.mergeClass)}
                         disabled={field.isDisable || isProcessing}
                     />
@@ -141,7 +141,7 @@ export function AppFieldBuilder({field, value, setData, error, isProcessing}: Fi
                         type={field.type}
                         value={value || ''}
                         onChange={handleChange}
-                        placeholder={field.placeholder || ''}
+                        placeholder={field.placeholder || 'Fill in here..'}
                         className={cn(field.mergeClass, 'hidden')}
                         disabled={field.isDisable || isProcessing}
                     />
@@ -312,7 +312,7 @@ export function AppFieldBuilder({field, value, setData, error, isProcessing}: Fi
                             </PopoverTrigger>
 
                             <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-2">
-                                <div className="flex flex-col gap-2 max-h-64 overflow-y-auto">
+                                <div className="flex flex-col gap-2 max-h-60 overflow-y-auto">
                                     {field.options?.map((opt) => {
                                         const checked = (value || []).includes(opt.value);
                                         return (
@@ -386,7 +386,7 @@ export function AppFieldBuilder({field, value, setData, error, isProcessing}: Fi
                                                   }}
                                     />
                                     <CommandEmpty>No options found.</CommandEmpty>
-                                    <CommandGroup>
+                                    <CommandGroup className="max-h-60 overflow-y-auto">
                                         {field.options?.map((opt) => (
                                             <CommandItem
                                                 key={opt.label.toString()}
@@ -449,7 +449,7 @@ export function AppFieldBuilder({field, value, setData, error, isProcessing}: Fi
                                                   }}
                                     />
                                     <CommandEmpty>No option found.</CommandEmpty>
-                                    <CommandGroup>
+                                    <CommandGroup className="max-h-60 overflow-y-auto">
                                         {field.options?.map((opt) => {
                                             const isChecked = Array.isArray(value)
                                                 ? value.includes(opt.value)
@@ -490,7 +490,7 @@ export function AppFieldBuilder({field, value, setData, error, isProcessing}: Fi
                         <SelectTrigger>
                             <SelectValue placeholder={field.placeholder || 'Select an option'}/>
                         </SelectTrigger>
-                        <SelectContent>
+                        <SelectContent className="max-h-60 overflow-y-auto">
                             {isProcessing && <SelectItem value="loading" disabled>Loading...</SelectItem>}
                             {field.options?.map((opt) => (
                                 <SelectItem key={opt.value as Key} value={opt.value.toString() as string}
@@ -543,7 +543,7 @@ export function AppFieldBuilder({field, value, setData, error, isProcessing}: Fi
                                                   }}
                                     />
                                     <CommandEmpty>No option found.</CommandEmpty>
-                                    <CommandGroup>
+                                    <CommandGroup className="max-h-60 overflow-y-auto">
                                         {field.options?.map((opt) => {
                                             const isChecked = Array.isArray(value)
                                                 ? value.includes(opt.value)
@@ -617,7 +617,7 @@ export function AppFieldBuilder({field, value, setData, error, isProcessing}: Fi
                                               }}
                                 />
                                 <CommandEmpty>No options found.</CommandEmpty>
-                                <CommandGroup>
+                                <CommandGroup className="max-h-60 overflow-y-auto">
                                     {field.options?.map((opt) => (
                                         <CommandItem
                                             key={opt.label.toString()}

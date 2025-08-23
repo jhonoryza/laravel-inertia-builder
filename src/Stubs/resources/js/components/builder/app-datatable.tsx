@@ -4,19 +4,24 @@ import {toast} from 'sonner';
 import {AppDataTableToolbar} from "./app-datatable-toolbar";
 import {AppDataTableContent} from "./app-datatable-content";
 import {AppDataTablePagination} from "./app-datatable-pagination";
-import {ActiveFilter, DataTableCommon} from '@/types/datatable';
+import {ActiveFilter, DataItem, DataTableCommon} from '@/types/datatable';
 import {AppDataTableActiveFilters} from "@/components/builder/app-datatable-active-filters";
 
 type DataTable = {
     data: DataTableCommon;
     routeName: string;
     tableRoute: string;
+    children?: {
+        rowAction: (item: DataItem, routeName: string) => React.ReactNode
+        toolbarAction: React.ReactNode
+    }
 };
 
 export default function AppDataTable({
      data,
      routeName,
      tableRoute,
+     children,
  }: DataTable) {
     const { name, prefix, items, filters, columns, actions, perPage, perPageOptions } = data;
     const [openFilterPopovers, setOpenFilterPopovers] = useState<Record<string, boolean>>({});
@@ -198,7 +203,9 @@ export default function AppDataTable({
                 hiddenColumns={hiddenColumns}
                 routeName={routeName}
                 actions={actions}
-            />
+            >
+                {children && children.toolbarAction}
+            </AppDataTableToolbar>
             <AppDataTableActiveFilters
                 name={name}
                 activeFilters={activeFilters}
@@ -220,7 +227,9 @@ export default function AppDataTable({
                 toggleSelectAll={toggleSelectAll}
                 toggleSelectOne={toggleSelectOne}
                 routeName={routeName}
-            />
+            > 
+                {children && children.rowAction} 
+            </AppDataTableContent>
             <AppDataTablePagination
                 name={name}
                 prefix={prefix}

@@ -1,38 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { cn } from '@/lib/utils';
-import { RatingField } from '@/components/custom-fields/rating-field';
-import { ColorPickerField } from '@/components/custom-fields/color-picker-field';
+import { customFieldsComponents } from '@/components/custom-fields';
 
-interface CustomFieldProps {
-    field: {
-        name: string;
-        label: string;
-        type: string;
-        component?: string;
-        extraAttributes?: Record<string, any>;
-        state?: any;
-        mergeClass?: string;
-    };
-    value: any;
-    setData: (field: string, value: any) => void;
-    error?: string;
-}
-
-// Custom components registry
-const customComponents: Record<string, React.ComponentType<any>> = {
-    'rating-field': RatingField,
-    'color-picker-field': ColorPickerField
-};
-
-/**
- * Register a custom component to be used with custom fields
- */
-export function registerCustomComponent(name: string, component: React.ComponentType<any>) {
-    customComponents[name] = component;
-}
-
-export function AppFieldBuilderCustom({ field, value, setData, error }: CustomFieldProps) {
+export function AppFieldBuilderCustom({ field, value, setData, error }: any) {
     // Use field state as initial value if provided and no value exists yet
     const [initialized, setInitialized] = useState(false);
 
@@ -46,7 +17,7 @@ export function AppFieldBuilderCustom({ field, value, setData, error }: CustomFi
 
     // Render the custom component if specified
     if (field.component) {
-        const Component = customComponents[field.component];
+        const Component = customFieldsComponents[field.component];
 
         if (Component) {
             return (

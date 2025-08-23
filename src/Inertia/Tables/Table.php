@@ -24,11 +24,13 @@ class Table implements JsonSerializable
 
     protected array $columns = [];
 
-    public array $filters = [] {
-        get {
-            return $this->filters;
-        }
-    }
+    protected array $filters = [];
+
+    protected bool $canEdit = true;
+    protected bool $canView = true;
+    protected bool $canDelete = true;
+    protected bool $canForceDelete = true;
+    protected bool $canRestore = true;
 
     protected string $sortByParam = 'sort';
     protected string $sortDirParam = 'dir';
@@ -176,6 +178,36 @@ class Table implements JsonSerializable
     public function getActions(): array
     {
         return $this->actions;
+    }
+
+    public function canEdit($state = true): self
+    {
+        $this->canEdit = $state;
+        return $this;        
+    }
+
+    public function canView($state = true): self
+    {
+        $this->canView = $state;
+        return $this;        
+    }
+
+    public function canDelete($state = true): self
+    {
+        $this->canDelete = $state;
+        return $this;        
+    }
+
+    public function canForceDelete($state = true): self
+    {
+        $this->canForceDelete = $state;
+        return $this;        
+    }
+
+    public function canRestore($state = true): self
+    {
+        $this->canRestore = $state;
+        return $this;        
     }
 
     /**
@@ -518,6 +550,11 @@ class Table implements JsonSerializable
             'actions' => $this->getActions(),
             'prefix' => $this->prefix,
             'name' => $this->name,
+            'edit' => $this->canEdit,
+            'view' => $this->canView,
+            'delete' => $this->canDelete,
+            'forceDelete' => $this->canForceDelete,
+            'restore' => $this->canRestore,
         ];
     }
 

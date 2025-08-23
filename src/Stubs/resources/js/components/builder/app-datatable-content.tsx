@@ -1,8 +1,9 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from '@/components/ui/table';
 import {Checkbox} from '@/components/ui/checkbox';
 import {Column, DataItem, DataTableProps} from '@/types/datatable';
 import {ArrowDown, ArrowUp, ArrowUpDown} from 'lucide-react';
-import {router} from '@inertiajs/react';
+import {customCellComponents} from '@/components/custom-cell';
 
 interface AppDataTableContentProps {
     items: DataTableProps['items'];
@@ -15,6 +16,7 @@ interface AppDataTableContentProps {
     toggleSelectAll: (checked: boolean) => void;
     toggleSelectOne: (id: string | number) => void;
     routeName: string;
+    children?: (item: DataItem, routeName: string) => React.ReactNode;
 }
 
 export function AppDataTableContent({
@@ -27,8 +29,26 @@ export function AppDataTableContent({
                                         handleSort,
                                         toggleSelectAll,
                                         toggleSelectOne,
-                                        routeName
+                                        routeName,
+                                        children,
                                     }: AppDataTableContentProps) {
+
+    function renderCellContent(value: unknown) {
+      if (value === null || value === undefined) return null
+
+      if (value && typeof value === "object" && "component" in value) {
+        const { component, props } = value as { component: string; props?: any }
+        const Cmp = customCellComponents[component]
+        return Cmp ? <Cmp {...props} /> : <span>Unknown component: {component}</span>
+      }
+
+      if (typeof value === "object" && "__html" in (value as any)) {
+        return <span dangerouslySetInnerHTML={value as any} />
+      }
+
+      return <span>{String(value)}</span>
+    }
+
     return (
         <Table className="min-w-full divide-y divide-gray-200 border-t">
             <TableHeader>
@@ -55,6 +75,7 @@ export function AppDataTableContent({
                             </div>
                         </TableHead>
                     ))}
+                    <TableHead>Actions</TableHead>
                 </TableRow>
             </TableHeader>
             <TableBody>
@@ -70,14 +91,14 @@ export function AppDataTableContent({
                                 />
                             </TableCell>
                             {columns.filter(col => !hiddenColumns[col.name]).map((col) => {
-                                const rawHtml = item[col.name] ?? '';
-                                return <TableCell key={`table-cell-${col.name}`}
-                                                  className='cursor-pointer'
-                                                  onClick={() => router.visit(route(`${routeName}.show`, id))}
-                                >
-                                    <span dangerouslySetInnerHTML={{ __html: rawHtml }} />
+                                const value = item[col.name]
+                                return <TableCell key={`table-cell-${col.name}`}>
+                                    {renderCellContent(value)}
                                 </TableCell>;
                             })}
+                            <TableCell>
+                              {children && children(item, routeName)}
+                            </TableCell>
                         </TableRow>
                     );
                 })}
