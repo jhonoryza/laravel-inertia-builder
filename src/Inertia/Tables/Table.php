@@ -8,6 +8,7 @@ use Illuminate\Pagination\CursorPaginator;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 use Jhonoryza\InertiaBuilder\QueryBuilder\Sorts\SortByRelationColumn;
 use JsonSerializable;
 use Spatie\QueryBuilder\AllowedFilter;
@@ -513,6 +514,7 @@ class Table implements JsonSerializable
             }
 
             $allowedFilters[] = AllowedFilter::callback($key, function (Builder $query) use ($key, $operator, $value, $filter) {
+                $isDateType = $filter->type === 'date' && ($filter->withTime ?? false) == false;
                 if ($filter->queryCallback) {
                     $call = $filter->queryCallback;
                     $call($query, $operator, $value);
@@ -524,14 +526,14 @@ class Table implements JsonSerializable
                     [$relationName, $relationAttribute] = extractRelation($key);
                     $query->whereHas(
                         $relationName,
-                        function (Builder $query) use ($relationAttribute, $operator, $value) {
-                            $this->filterQuery($query, $relationAttribute, $operator, $value);
+                        function (Builder $query) use ($relationAttribute, $operator, $value, $isDateType) {
+                            $this->filterQuery($query, $relationAttribute, $operator, $value, $isDateType);
                         });
 
                     return;
                 }
                 // no relation query
-                $this->filterQuery($query, $key, $operator, $value);
+                $this->filterQuery($query, $key, $operator, $value, $isDateType);
             });
         }
 
@@ -541,17 +543,19 @@ class Table implements JsonSerializable
     /**
      * filter operator handler
      */
-    private function filterQuery(Builder $query, string $key, string $operator, mixed $value): void
+    private function filterQuery(Builder $query, string $key, string $operator, mixed $value, bool $isDateType): void
     {
         if ($operator === '><') {
             $tmp = str_contains($value, ',') ? explode(',', $value, 2) : [$value, null];
-            $query->whereBetween($key, [$tmp[0], $tmp[1] ?? null]);
+            $newKey = $isDateType ? DB::raw("DATE($key)") : $key;
+            $query->whereBetween($newKey, [$tmp[0], $tmp[1] ?? null]);
 
             return;
         }
         if ($operator === '!><') {
             $tmp = str_contains($value, ',') ? explode(',', $value, 2) : [$value, null];
-            $query->whereNotBetween($key, [$tmp[0], $tmp[1] ?? null]);
+            $newKey = $isDateType ? DB::raw("DATE($key)") : $key;
+            $query->whereNotBetween($newKey, [$tmp[0], $tmp[1] ?? null]);
 
             return;
         }
@@ -587,13 +591,15 @@ class Table implements JsonSerializable
         }
         if ($operator === 'in') {
             $tmp = str_contains($value, ',') ? explode(',', $value) : [$value];
-            $query->whereIn($key, is_array($tmp) ? $tmp : [$tmp]);
+            $newKey = $isDateType ? DB::raw("DATE($key)") : $key;
+            $query->whereIn($newKey, is_array($tmp) ? $tmp : [$tmp]);
 
             return;
         }
         if ($operator === 'notIn') {
             $tmp = str_contains($value, ',') ? explode(',', $value) : [$value];
-            $query->whereNotIn($key, is_array($tmp) ? $tmp : [$tmp]);
+            $newKey = $isDateType ? DB::raw("DATE($key)") : $key;
+            $query->whereNotIn($newKey, is_array($tmp) ? $tmp : [$tmp]);
 
             return;
         }
@@ -607,8 +613,8 @@ class Table implements JsonSerializable
 
             return;
         }
-
-        $query->where($key, $operator, $value);
+        $newKey = $isDateType ? DB::raw("DATE($key)") : $key;
+        $query->where($newKey, $operator, $value);
     }
 
     public function toArray(): array
