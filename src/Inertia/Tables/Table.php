@@ -402,6 +402,7 @@ class Table implements JsonSerializable
                     $value = $row[$col->name] ?? null;
                     if ($col->renderUsing && is_callable($col->renderUsing)) {
                         $value = $this->evaluate($col->renderUsing, [
+                            'state' => $value,
                             'value' => $value, 
                             'row' => $row,
                             'model' => $row,
