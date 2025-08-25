@@ -1,0 +1,55 @@
+<?php
+
+namespace App\Builder\Tables;
+
+use App\Models\{{modelName}};
+use Illuminate\Http\RedirectResponse;
+use Jhonoryza\InertiaBuilder\Inertia\Concerns\TableContract;
+use Jhonoryza\InertiaBuilder\Inertia\Tables\Actions\Action;
+use Jhonoryza\InertiaBuilder\Inertia\Tables\Filters\Factory\Filter;
+use Jhonoryza\InertiaBuilder\Inertia\Tables\Table;
+use Jhonoryza\InertiaBuilder\Inertia\Tables\TableColumn;
+{{importsRelation}}
+
+class {{modelName}}Table implements TableContract
+{
+    public static function build(): Table 
+    {
+        return Table::make({{modelName}}::class)
+            ->columns([
+{{columns}}
+            ])
+            ->filters([
+{{filters}}
+            ])
+            ->defaultSort('id', 'asc')
+            ->actions([
+                Action::make('new')
+                    ->needRowSelected(false)
+                    ->needConfirm(false),
+                Action::make('delete')
+                    ->label('Batch Delete')
+                    ->message('Are you sure to delete multiple row?'),
+            ]);
+    }
+
+    public static function actions(): RedirectResponse 
+    {
+        $action = request()->get('action');
+        $ids = request()->get('ids');
+
+        switch ($action) {
+            case 'new':
+                return redirect()->route('{{routeName}}.create');
+            case 'delete':
+                {{modelName}}::destroy($ids);
+                return redirect()
+                    ->route('{{routeName}}.index')
+                    ->with('success', 'Items ' . collect($ids)->implode(', ') . ' deleted successfully.');
+            default:
+                return redirect()
+                    ->route('{{routeName}}.index')
+                    ->with('failed', 'undefined action.');
+        }
+    }
+}

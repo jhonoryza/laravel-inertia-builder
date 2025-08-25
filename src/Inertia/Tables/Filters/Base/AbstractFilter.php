@@ -23,6 +23,44 @@ abstract class AbstractFilter implements JsonSerializable
         return new static($field);
     }
 
+    protected function evaluate(mixed $value, array $parameters = [])
+    {
+        if (! $value instanceof \Closure) {
+            return $value;
+        }
+
+        $reflector = new \ReflectionFunction($value);
+        $args = [];
+
+        foreach ($reflector->getParameters() as $param) {
+            $type = $param->getType()?->getName();
+            $name = $param->getName();
+
+            // Inject berdasarkan nama
+            if (array_key_exists($name, $parameters)) {
+                $args[] = $parameters[$name];
+                continue;
+            }
+
+            // Inject berdasarkan type-hint
+            if ($type && array_key_exists($type, $parameters)) {
+                $args[] = $parameters[$type];
+                continue;
+            }
+
+            // Kalau nggak ketemu, coba default value
+            if ($param->isDefaultValueAvailable()) {
+                $args[] = $param->getDefaultValue();
+                continue;
+            }
+
+            // fallback null
+            $args[] = null;
+        }
+
+        return $value(...$args);
+    }
+
     public function __construct(string $field)
     {
         $this->field     = $field;

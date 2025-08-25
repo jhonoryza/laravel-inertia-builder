@@ -70,6 +70,8 @@ class GenerateCommand extends Command
         $this->generateModel($modelName, $schema);
         $this->generateFactory($modelName, $schema);
         $this->generateRequests($modelName, $schema);
+        $this->generateTable($tableName, $modelName, $schema);
+        $this->generateForm($modelName, $schema);
         $this->generateController($tableName, $modelName, $schema);
         $this->addRoutes($tableName, $modelName);
         $this->addAppSidebar($tableName, $modelName);

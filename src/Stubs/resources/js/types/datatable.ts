@@ -82,6 +82,7 @@ export type DataTableCommon = {
     actions: Action[];
     perPage?: number;
     perPageOptions?: number[];
+    disablePagination: boolean;
 };
 
 export type DataTableProps = {

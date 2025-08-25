@@ -13,10 +13,11 @@ type Props = {
         mergeClass?: string;
     };
     value: string;
-    setData: (key: string, value: string) => void;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    onChange: (name: string, value: any, operator?: string) => void;
 };
 
-export function AppFieldBuilderMarkdown({field, value, setData}: Props) {
+export function AppFieldBuilderMarkdown({field, value, onChange}: Props) {
     const [tab, setTab] = useState<'write' | 'preview'>('write');
     const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -27,7 +28,7 @@ export function AppFieldBuilderMarkdown({field, value, setData}: Props) {
     }, [tab]);
 
     const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-        setData(field.name, e.target.value);
+        onChange(field.name, e.target.value);
     };
 
     return (

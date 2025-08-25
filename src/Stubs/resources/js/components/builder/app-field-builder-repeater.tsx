@@ -20,11 +20,11 @@ interface RepeaterFieldProps {
         reorderable?: boolean;
     };
     value: any[];
-    setData: (field: string, value: any) => void;
+    onChange: (name: string, value: any, operator?: string) => void;
     error?: string | Record<string, any>;
 }
 
-export function AppFieldBuilderRepeater({ field, value, setData, error }: RepeaterFieldProps) {
+export function AppFieldBuilderRepeater({ field, value, onChange, error }: RepeaterFieldProps) {
     // Ensure value is an array
     const items = Array.isArray(value) ? value : [];
 
@@ -63,7 +63,7 @@ export function AppFieldBuilderRepeater({ field, value, setData, error }: Repeat
 
         // Add the new item to the array
         const updatedItems = [...items, newItem];
-        setData(field.name, updatedItems);
+        onChange(field.name, updatedItems);
 
         // Auto-open the new item if collapsible
         if (field.collapsible) {
@@ -82,7 +82,7 @@ export function AppFieldBuilderRepeater({ field, value, setData, error }: Repeat
 
         const updatedItems = [...items];
         updatedItems.splice(index, 1);
-        setData(field.name, updatedItems);
+        onChange(field.name, updatedItems);
     };
 
     const updateItemField = (index: number, fieldName: string, fieldValue: any) => {
@@ -91,7 +91,7 @@ export function AppFieldBuilderRepeater({ field, value, setData, error }: Repeat
             ...updatedItems[index],
             [fieldName]: fieldValue,
         };
-        setData(field.name, updatedItems);
+        onChange(field.name, updatedItems);
     };
 
     const toggleCollapse = (index: number) => {
@@ -108,7 +108,7 @@ export function AppFieldBuilderRepeater({ field, value, setData, error }: Repeat
         const [movedItem] = updatedItems.splice(fromIndex, 1);
         updatedItems.splice(toIndex, 0, movedItem);
 
-        setData(field.name, updatedItems);
+        onChange(field.name, updatedItems);
     };
 
     const handleDragStart = (index: number) => {
@@ -200,7 +200,7 @@ export function AppFieldBuilderRepeater({ field, value, setData, error }: Repeat
                                                     key={`${index}-${schemaField.name}`}
                                                     field={schemaField}
                                                     value={item[schemaField.name]}
-                                                    setData={(fieldName, fieldValue) => updateItemField(index, fieldName, fieldValue)}
+                                                    onChange={(fieldName, fieldValue) => updateItemField(index, fieldName, fieldValue)}
                                                     error={itemErrors && itemErrors[schemaField.name]}
                                                 />
                                             ))}
@@ -233,7 +233,7 @@ export function AppFieldBuilderRepeater({ field, value, setData, error }: Repeat
                                                 key={`${index}-${schemaField.name}`}
                                                 field={schemaField}
                                                 value={item[schemaField.name]}
-                                                setData={(fieldName, fieldValue) => updateItemField(index, fieldName, fieldValue)}
+                                                onChange={(fieldName, fieldValue) => updateItemField(index, fieldName, fieldValue)}
                                                 error={itemErrors && itemErrors[schemaField.name]}
                                             />
                                         ))}

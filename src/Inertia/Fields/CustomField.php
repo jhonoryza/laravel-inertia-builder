@@ -10,10 +10,6 @@ class CustomField extends AbstractField
 
     public array $extraAttributes = [];
 
-    public mixed $state = null;
-
-    public ?\Closure $formatStateUsing = null;
-
     protected static function getType(): string
     {
         return 'custom';
@@ -52,42 +48,16 @@ class CustomField extends AbstractField
     }
 
     /**
-     * Set the initial state for the field
-     */
-    public function state(mixed $state): static
-    {
-        $this->state = $state;
-
-        return $this;
-    }
-
-    /**
-     * Format the state before it's displayed
-     */
-    public function formatStateUsing(\Closure $callback): static
-    {
-        $this->formatStateUsing = $callback;
-
-        return $this;
-    }
-
-    /**
      * Convert the field to an array
      */
     public function toArray(): array
     {
         $data = parent::toArray();
 
-        $state = $this->state;
-
-        if ($this->formatStateUsing && is_callable($this->formatStateUsing)) {
-            $state = call_user_func($this->formatStateUsing, $state);
-        }
-
         return array_merge($data, [
             'component'       => $this->component,
             'extraAttributes' => $this->extraAttributes,
-            'state'           => $state,
+            'state'           => $this->getState(),
         ]);
     }
 }

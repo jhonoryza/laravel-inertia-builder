@@ -39,7 +39,11 @@ trait HasRelationship
             $query = (new $modelClass)::query();
 
             if ($modifyQueryUsing) {
-                $modifyQueryUsing($query);
+                $this->evaluate($modifyQueryUsing, [
+                    'q' => $query,
+                    'query' => $query
+                ]);
+                //$modifyQueryUsing($query);
             } elseif ($this->dependencyField) {
                 $dependencyValue = request()->input($this->dependencyField) ?? $this->dependencyValue;
 

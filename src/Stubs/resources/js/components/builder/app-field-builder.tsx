@@ -31,23 +31,25 @@ import {router} from "@inertiajs/react";
 interface FieldBuilderProps {
     field: FieldDefinition;
     value: any;
-    setData: (field: string, value: any) => void;
+    setFields: React.Dispatch<React.SetStateAction<FieldDefinition[]>>;
+    onReactive: (name: string, value: any, operator?: string) => void;
     error?: string;
     isProcessing?: boolean;
 }
 
-export function AppFieldBuilder({field, value, setData, error, isProcessing}: FieldBuilderProps) {
+export function AppFieldBuilder({ field, setFields, value, onReactive, error, isProcessing }: FieldBuilderProps) {
     const handleReactiveChange = (newValue: any) => {
-        setData(field.name, newValue);
-        if (field.reactive && newValue) {
-            const data = {[field.name]: newValue};
-            router.get(window.location.href, data, {
-                preserveState: true,
-                preserveScroll: true,
-                replace: true,
-                only: ['form'],
-            });
-        }
+        onChange(field.name, newValue);
+        // setData(field.name, newValue);
+        // if (field.reactive && newValue) {
+        //     const data = {[field.name]: newValue};
+        //     router.get(window.location.href, data, {
+        //         preserveState: true,
+        //         preserveScroll: true,
+        //         replace: true,
+        //         only: ['form'],
+        //     });
+        // }
     };
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
@@ -56,8 +58,12 @@ export function AppFieldBuilder({field, value, setData, error, isProcessing}: Fi
         handleReactiveChange(newValue);
     };
 
+    const onChange = (name: string, value: any, operator?: string) => {
+        onReactive(name, value, operator);
+    };
+
     if (field.hidden) {
-        return (<></>);
+        return <></>;
     }
 
     switch (field.type) {
@@ -77,7 +83,7 @@ export function AppFieldBuilder({field, value, setData, error, isProcessing}: Fi
                     />
                     {error && <div className="text-sm text-destructive">{error}</div>}
                 </div>
-            )
+            );
         case 'slider':
             return (
                 <div key={field.name} className={`'space-y-2' ${field.isInline ? 'flex items-center space-x-2' : ''}`}>
@@ -93,7 +99,7 @@ export function AppFieldBuilder({field, value, setData, error, isProcessing}: Fi
                             className={field.mergeClass}
                             disabled={field.isDisable || isProcessing}
                         />
-                        <div className="flex justify-between text-xs text-muted-foreground mt-1">
+                        <div className="mt-1 flex justify-between text-xs text-muted-foreground">
                             <span>{field.min || 0}</span>
                             <span>{value || 0}</span>
                             <span>{field.max || 100}</span>
@@ -101,19 +107,15 @@ export function AppFieldBuilder({field, value, setData, error, isProcessing}: Fi
                     </div>
                     {error && <div className="text-sm text-destructive">{error}</div>}
                 </div>
-            )
+            );
         case 'file':
             return (
                 <div key={field.name} className={`'space-y-2' ${field.isInline ? 'flex items-center space-x-2' : ''}`}>
                     <Label htmlFor={field.name}>{field.label}</Label>
-                    <AppFieldBuilderFile
-                        field={field}
-                        value={value}
-                        setData={setData}
-                    />
+                    <AppFieldBuilderFile field={field} value={value} onChange={onChange} />
                     {error && <div className="text-sm text-destructive">{error}</div>}
                 </div>
-            )
+            );
         case 'text':
         case 'number':
         case 'email':
@@ -132,7 +134,7 @@ export function AppFieldBuilder({field, value, setData, error, isProcessing}: Fi
                     />
                     {error && <div className="text-sm text-destructive">{error}</div>}
                 </div>
-            )
+            );
         case 'hidden':
             return (
                 <div key={field.name} className={`'space-y-2' ${field.isInline ? 'flex items-center space-x-2' : ''}`}>
@@ -147,107 +149,71 @@ export function AppFieldBuilder({field, value, setData, error, isProcessing}: Fi
                     />
                     {error && <div className="text-sm text-destructive">{error}</div>}
                 </div>
-            )
+            );
         case 'markdown':
             return (
                 <div key={field.name} className={`'space-y-2' ${field.isInline ? 'flex items-center space-x-2' : ''}`}>
                     <Label htmlFor={field.name}>{field.label}</Label>
-                    <AppFieldBuilderMarkdown
-                        field={field}
-                        value={value}
-                        setData={setData}
-                    />
+                    <AppFieldBuilderMarkdown field={field} value={value} onChange={onChange} />
                     {error && <div className="text-sm text-destructive">{error}</div>}
                 </div>
-            )
+            );
         case 'checkbox-list':
             return (
                 <div key={field.name} className={`'space-y-2' ${field.isInline ? 'flex items-center space-x-2' : ''}`}>
                     <Label htmlFor={field.name}>{field.label}</Label>
-                    <AppFieldBuilderCheckboxList
-                        field={field}
-                        value={value}
-                        setData={setData}
-                    />
+                    <AppFieldBuilderCheckboxList field={field} value={value} onChange={onChange} />
                     {error && <div className="text-sm text-destructive">{error}</div>}
                 </div>
-            )
+            );
         case 'rich-text':
             return (
                 <div key={field.name} className={`'space-y-2' ${field.isInline ? 'flex items-center space-x-2' : ''}`}>
                     <Label htmlFor={field.name}>{field.label}</Label>
-                    <AppFieldBuilderRichText
-                        field={field}
-                        value={value}
-                        setData={setData}
-                    />
+                    <AppFieldBuilderRichText field={field} value={value} onChange={onChange} />
                     {error && <div className="text-sm text-destructive">{error}</div>}
                 </div>
-            )
+            );
         case 'repeater':
             return (
                 <div key={field.name} className={`'space-y-2' ${field.isInline ? 'flex items-center space-x-2' : ''}`}>
                     <Label htmlFor={field.name}>{field.label}</Label>
-                    <AppFieldBuilderRepeater
-                        field={field}
-                        value={value || []}
-                        setData={setData}
-                        error={error}
-                    />
+                    <AppFieldBuilderRepeater field={field} value={value || []} onChange={onChange} error={error} />
                     {error && <div className="text-sm text-destructive">{error}</div>}
                 </div>
-            )
+            );
         case 'key-value':
             return (
                 <div key={field.name} className={`'space-y-2' ${field.isInline ? 'flex items-center space-x-2' : ''}`}>
                     <Label htmlFor={field.name}>{field.label}</Label>
-                    <AppFieldBuilderKeyValue
-                        field={field}
-                        value={value || {}}
-                        setData={setData}
-                        error={error}
-                    />
+                    <AppFieldBuilderKeyValue field={field} value={value || {}} onChange={onChange} error={error} />
                     {error && <div className="text-sm text-destructive">{error}</div>}
                 </div>
-            )
+            );
         case 'tags':
             return (
                 <div key={field.name} className={`'space-y-2' ${field.isInline ? 'flex items-center space-x-2' : ''}`}>
                     <Label htmlFor={field.name}>{field.label}</Label>
-                    <AppFieldBuilderTags
-                        field={field}
-                        value={value || []}
-                        setData={setData}
-                        error={error}
-                    />
+                    <AppFieldBuilderTags field={field} value={value || []} onChange={onChange} error={error} />
                     {error && <div className="text-sm text-destructive">{error}</div>}
                 </div>
-            )
+            );
         case 'custom':
             return (
                 <div key={field.name} className={`'space-y-2' ${field.isInline ? 'flex items-center space-x-2' : ''}`}>
                     <Label htmlFor={field.name}>{field.label}</Label>
-                    <AppFieldBuilderCustom
-                        field={field}
-                        value={value}
-                        setData={setData}
-                        error={error}
-                    />
+                    <AppFieldBuilderCustom field={field} value={value} onChange={onChange} error={error} />
                     {error && <div className="text-sm text-destructive">{error}</div>}
                 </div>
-            )
+            );
         case 'flatpickr':
             return (
                 <div key={field.name} className={`'space-y-2' ${field.isInline ? 'flex items-center space-x-2' : ''}`}>
                     <Label htmlFor={field.name}>{field.label}</Label>
-                    <AppFieldBuilderFlatpickr
-                        field={field}
-                        value={value}
-                        setData={setData}
-                    />
+                    <AppFieldBuilderFlatpickr field={field} value={value} onChange={onChange} />
                     {error && <div className="text-sm text-destructive">{error}</div>}
                 </div>
-            )
+            );
         case 'date':
             return (
                 <div key={field.name} className={`'space-y-2' ${field.isInline ? 'flex items-center space-x-2' : ''}`}>
@@ -255,47 +221,33 @@ export function AppFieldBuilder({field, value, setData, error, isProcessing}: Fi
                     <Popover>
                         <PopoverTrigger asChild>
                             <Button
-                                variant={"outline"}
+                                variant={'outline'}
                                 id={field.name}
                                 disabled={field.isDisable || isProcessing}
-                                className={cn(
-                                    "w-full justify-start text-left font-normal",
-                                    !value && "text-muted-foreground",
-                                    field.mergeClass
-                                )}
+                                className={cn('w-full justify-start text-left font-normal', !value && 'text-muted-foreground', field.mergeClass)}
                             >
-                                {value ? format(new Date(value), "dd/MM/yyyy") : "select date"}
+                                {value ? format(new Date(value), 'dd/MM/yyyy') : 'select date'}
                             </Button>
                         </PopoverTrigger>
-                        <PopoverContent className="w-auto p-0 overflow-hidden" align="start">
-                            <Calendar
-                                mode="single"
-                                selected={value}
-                                captionLayout="dropdown"
-                                onSelect={(date) => handleReactiveChange(date)}
-                            />
+                        <PopoverContent className="w-auto overflow-hidden p-0" align="start">
+                            <Calendar mode="single" selected={value} captionLayout="dropdown" onSelect={(date) => handleReactiveChange(date)} />
                         </PopoverContent>
                     </Popover>
                     {error && <div className="text-sm text-destructive">{error}</div>}
                 </div>
-            )
+            );
         case 'datetime-local':
             return (
                 <div key={field.name} className={`'space-y-2' ${field.isInline ? 'flex items-center space-x-2' : ''}`}>
                     <Label htmlFor={field.name}>{field.label}</Label>
-                    <AppFieldBuilderDatetime
-                        field={field}
-                        value={value}
-                        setData={setData}
-                    />
+                    <AppFieldBuilderDatetime field={field} value={value} onChange={onChange} />
                     {error && <div className="text-sm text-destructive">{error}</div>}
                 </div>
-            )
+            );
         case 'select':
             if (field.multiple && !field.searchable) {
                 return (
-                    <div key={field.name}
-                         className={`'space-y-2' ${field.isInline ? 'flex items-center space-x-2' : ''}`}>
+                    <div key={field.name} className={`'space-y-2' ${field.isInline ? 'flex items-center space-x-2' : ''}`}>
                         <Label htmlFor={field.name}>{field.label}</Label>
                         <Popover>
                             <PopoverTrigger asChild>
@@ -303,31 +255,26 @@ export function AppFieldBuilder({field, value, setData, error, isProcessing}: Fi
                                     variant="outline"
                                     role="combobox"
                                     disabled={field.isDisable || isProcessing}
-                                    className={cn("w-full justify-between text-muted-foreground hover:text-muted-foreground", field.mergeClass)}
+                                    className={cn('w-full justify-between text-muted-foreground hover:text-muted-foreground', field.mergeClass)}
                                 >
-                                    {(value?.length > 0
-                                        ? `${value.length} selected`
-                                        : field.placeholder || 'Select options')}
+                                    {value?.length > 0 ? `${value.length} selected` : field.placeholder || 'Select options'}
                                 </Button>
                             </PopoverTrigger>
 
                             <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-2">
-                                <div className="flex flex-col gap-2 max-h-60 overflow-y-auto">
+                                <div className="flex max-h-60 flex-col gap-2 overflow-y-auto">
                                     {field.options?.map((opt) => {
                                         const checked = (value || []).includes(opt.value);
                                         return (
-                                            <label
-                                                key={opt.value.toString()}
-                                                className="flex items-center space-x-2 cursor-pointer"
-                                            >
+                                            <label key={opt.value.toString()} className="flex cursor-pointer items-center space-x-2">
                                                 <Checkbox
                                                     checked={checked}
                                                     onCheckedChange={(isChecked) => {
                                                         const newValue = new Set(value || []);
                                                         if (isChecked) {
-                                                            newValue.add(opt.value)
+                                                            newValue.add(opt.value);
                                                         } else {
-                                                            newValue.delete(opt.value)
+                                                            newValue.delete(opt.value);
                                                         }
                                                         handleReactiveChange(Array.from(newValue));
                                                     }}
@@ -341,12 +288,11 @@ export function AppFieldBuilder({field, value, setData, error, isProcessing}: Fi
                         </Popover>
                         {error && <div className="text-sm text-destructive">{error}</div>}
                     </div>
-                )
+                );
             }
             if (!field.multiple && field.searchable) {
                 return (
-                    <div key={field.name}
-                         className={`'space-y-2' ${field.isInline ? 'flex items-center space-x-2' : ''}`}>
+                    <div key={field.name} className={`'space-y-2' ${field.isInline ? 'flex items-center space-x-2' : ''}`}>
                         <Label htmlFor={field.name}>{field.label}</Label>
                         <Popover>
                             <PopoverTrigger asChild>
@@ -355,35 +301,46 @@ export function AppFieldBuilder({field, value, setData, error, isProcessing}: Fi
                                     role="combobox"
                                     aria-expanded="false"
                                     disabled={field.isDisable || isProcessing}
-                                    className={cn("w-full justify-between", field.mergeClass)}
+                                    className={cn('w-full justify-between', field.mergeClass)}
                                 >
-                                    {isProcessing ? 'Loading...' : field.options?.find((opt) => opt.value === value)?.label || (
-                                        <span className="text-muted-foreground">
-                                      {field.placeholder || 'Select an option'}
-                                    </span>
-                                    )}
-                                    <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50"/>
+                                    {isProcessing
+                                        ? 'Loading...'
+                                        : field.options?.find((opt) => opt.value === value)?.label || (
+                                              <span className="text-muted-foreground">{field.placeholder || 'Select an option'}</span>
+                                          )}
+                                    <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                                 </Button>
                             </PopoverTrigger>
 
                             <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0">
                                 <Command>
-                                    <CommandInput placeholder="Search..." className="h-9"
-                                                  onValueChange={(val) => {
-                                                      if (val && field.serverside) {
-                                                          setTimeout(() => {
-                                                              const key = `${field.name}_q`;
-                                                              router.get(window.location.href, {
-                                                                  [key]: val,
-                                                              }, {
-                                                                  preserveState: true,
-                                                                  preserveScroll: true,
-                                                                  replace: true,
-                                                                  only: ['form'],
-                                                              })
-                                                          }, 500)
-                                                      }
-                                                  }}
+                                    <CommandInput
+                                        placeholder="Search..."
+                                        className="h-9"
+                                        onValueChange={(val) => {
+                                            if (val && field.serverside) {
+                                                setTimeout(() => {
+                                                    const key = `${field.name}_q`;
+                                                    router.get(
+                                                        window.location.href,
+                                                        {
+                                                            [key]: val,
+                                                        },
+                                                        {
+                                                            preserveState: true,
+                                                            preserveScroll: true,
+                                                            replace: true,
+                                                            onSuccess: (page) => {
+                                                                const fields = (page.props as any)?.form?.fields as FieldDefinition[];
+                                                                if (fields) {
+                                                                    setFields(fields);
+                                                                }
+                                                            },
+                                                        },
+                                                    );
+                                                }, 300);
+                                            }
+                                        }}
                                     />
                                     <CommandEmpty>No options found.</CommandEmpty>
                                     <CommandGroup className="max-h-60 overflow-y-auto">
@@ -393,12 +350,7 @@ export function AppFieldBuilder({field, value, setData, error, isProcessing}: Fi
                                                 value={opt.label.toString()}
                                                 onSelect={() => handleReactiveChange(opt.value)}
                                             >
-                                                <Check
-                                                    className={cn(
-                                                        'mr-2 h-4 w-4',
-                                                        opt.value === value ? 'opacity-100' : 'opacity-0'
-                                                    )}
-                                                />
+                                                <Check className={cn('mr-2 h-4 w-4', opt.value === value ? 'opacity-100' : 'opacity-0')} />
                                                 {opt.label}
                                             </CommandItem>
                                         ))}
@@ -408,12 +360,11 @@ export function AppFieldBuilder({field, value, setData, error, isProcessing}: Fi
                         </Popover>
                         {error && <div className="text-sm text-destructive">{error}</div>}
                     </div>
-                )
+                );
             }
             if (field.multiple && field.searchable) {
                 return (
-                    <div key={field.name}
-                         className={`'space-y-2' ${field.isInline ? 'flex items-center space-x-2' : ''}`}>
+                    <div key={field.name} className={`'space-y-2' ${field.isInline ? 'flex items-center space-x-2' : ''}`}>
                         <Label htmlFor={field.name}>{field.label}</Label>
                         <Popover>
                             <PopoverTrigger asChild>
@@ -423,37 +374,44 @@ export function AppFieldBuilder({field, value, setData, error, isProcessing}: Fi
                                     disabled={field.isDisable || isProcessing}
                                     className={cn('w-full justify-between', field.mergeClass)}
                                 >
-                                    {value
-                                        ? `${value.length} selected`
-                                        : field.placeholder || 'Select options'}
+                                    {value ? `${value.length} selected` : field.placeholder || 'Select options'}
                                 </Button>
                             </PopoverTrigger>
 
                             <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0">
                                 <Command>
-                                    <CommandInput placeholder="Search..." className="h-9"
-                                                  onValueChange={(val) => {
-                                                      if (val && field.serverside) {
-                                                          setTimeout(() => {
-                                                              const key = `${field.name}_q`;
-                                                              router.get(window.location.href, {
-                                                                  [key]: val,
-                                                              }, {
-                                                                  preserveState: true,
-                                                                  preserveScroll: true,
-                                                                  replace: true,
-                                                                  only: ['form'],
-                                                              })
-                                                          }, 500)
-                                                      }
-                                                  }}
+                                    <CommandInput
+                                        placeholder="Search..."
+                                        className="h-9"
+                                        onValueChange={(val) => {
+                                            if (val && field.serverside) {
+                                                setTimeout(() => {
+                                                    const key = `${field.name}_q`;
+                                                    router.get(
+                                                        window.location.href,
+                                                        {
+                                                            [key]: val,
+                                                        },
+                                                        {
+                                                            preserveState: true,
+                                                            preserveScroll: true,
+                                                            replace: true,
+                                                            onSuccess: (page) => {
+                                                                const fields = (page.props as any)?.form?.fields as FieldDefinition[];
+                                                                if (fields) {
+                                                                    setFields(fields);
+                                                                }
+                                                            },
+                                                        },
+                                                    );
+                                                }, 300);
+                                            }
+                                        }}
                                     />
                                     <CommandEmpty>No option found.</CommandEmpty>
                                     <CommandGroup className="max-h-60 overflow-y-auto">
                                         {field.options?.map((opt) => {
-                                            const isChecked = Array.isArray(value)
-                                                ? value.includes(opt.value)
-                                                : String(value) === String(opt.value);
+                                            const isChecked = Array.isArray(value) ? value.includes(opt.value) : String(value) === String(opt.value);
                                             return (
                                                 <CommandItem
                                                     key={opt.label.toString()}
@@ -469,7 +427,7 @@ export function AppFieldBuilder({field, value, setData, error, isProcessing}: Fi
                                                         handleReactiveChange(Array.from(newSet));
                                                     }}
                                                 >
-                                                    <Checkbox checked={isChecked} className="mr-2"/>
+                                                    <Checkbox checked={isChecked} className="mr-2" />
                                                     {opt.label}
                                                 </CommandItem>
                                             );
@@ -480,21 +438,27 @@ export function AppFieldBuilder({field, value, setData, error, isProcessing}: Fi
                         </Popover>
                         {error && <div className="text-sm text-destructive">{error}</div>}
                     </div>
-                )
+                );
             }
             return (
                 <div key={field.name} className={`'space-y-2' ${field.isInline ? 'flex items-center space-x-2' : ''}`}>
                     <Label htmlFor={field.name}>{field.label}</Label>
-                    <Select value={value.toString() || ''} onValueChange={(val) => handleReactiveChange(val)}
-                            disabled={field.isDisable || isProcessing}>
+                    <Select
+                        value={value.toString() || ''}
+                        onValueChange={(val) => handleReactiveChange(val)}
+                        disabled={field.isDisable || isProcessing}
+                    >
                         <SelectTrigger>
-                            <SelectValue placeholder={field.placeholder || 'Select an option'}/>
+                            <SelectValue placeholder={field.placeholder || 'Select an option'} />
                         </SelectTrigger>
                         <SelectContent className="max-h-60 overflow-y-auto">
-                            {isProcessing && <SelectItem value="loading" disabled>Loading...</SelectItem>}
+                            {isProcessing && (
+                                <SelectItem value="loading" disabled>
+                                    Loading...
+                                </SelectItem>
+                            )}
                             {field.options?.map((opt) => (
-                                <SelectItem key={opt.value as Key} value={opt.value.toString() as string}
-                                            className={field.mergeClass}>
+                                <SelectItem key={opt.value as Key} value={opt.value.toString() as string} className={field.mergeClass}>
                                     {opt.label}
                                 </SelectItem>
                             ))}
@@ -502,12 +466,11 @@ export function AppFieldBuilder({field, value, setData, error, isProcessing}: Fi
                     </Select>
                     {error && <div className="text-sm text-destructive">{error}</div>}
                 </div>
-            )
+            );
         case 'combobox':
             if (field.multiple) {
                 return (
-                    <div key={field.name}
-                         className={`'space-y-2' ${field.isInline ? 'flex items-center space-x-2' : ''}`}>
+                    <div key={field.name} className={`'space-y-2' ${field.isInline ? 'flex items-center space-x-2' : ''}`}>
                         <Label htmlFor={field.name}>{field.label}</Label>
                         <Popover>
                             <PopoverTrigger asChild>
@@ -517,37 +480,44 @@ export function AppFieldBuilder({field, value, setData, error, isProcessing}: Fi
                                     disabled={field.isDisable || isProcessing}
                                     className={cn('w-full justify-between', field.mergeClass)}
                                 >
-                                    {value
-                                        ? `${value.length} selected`
-                                        : field.placeholder || 'Select options'}
+                                    {value ? `${value.length} selected` : field.placeholder || 'Select options'}
                                 </Button>
                             </PopoverTrigger>
 
                             <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0">
                                 <Command>
-                                    <CommandInput placeholder="Search..." className="h-9"
-                                                  onValueChange={(val) => {
-                                                      if (val && field.serverside) {
-                                                          setTimeout(() => {
-                                                              const key = `${field.name}_q`;
-                                                              router.get(window.location.href, {
-                                                                  [key]: val,
-                                                              }, {
-                                                                  preserveState: true,
-                                                                  preserveScroll: true,
-                                                                  replace: true,
-                                                                  only: ['form'],
-                                                              })
-                                                          }, 500)
-                                                      }
-                                                  }}
+                                    <CommandInput
+                                        placeholder="Search..."
+                                        className="h-9"
+                                        onValueChange={(val) => {
+                                            if (val && field.serverside) {
+                                                setTimeout(() => {
+                                                    const key = `${field.name}_q`;
+                                                    router.get(
+                                                        window.location.href,
+                                                        {
+                                                            [key]: val,
+                                                        },
+                                                        {
+                                                            preserveState: true,
+                                                            preserveScroll: true,
+                                                            replace: true,
+                                                            onSuccess: (page) => {
+                                                                const fields = (page.props as any)?.form?.fields as FieldDefinition[];
+                                                                if (fields) {
+                                                                    setFields(fields);
+                                                                }
+                                                            },
+                                                        },
+                                                    );
+                                                }, 300);
+                                            }
+                                        }}
                                     />
                                     <CommandEmpty>No option found.</CommandEmpty>
                                     <CommandGroup className="max-h-60 overflow-y-auto">
                                         {field.options?.map((opt) => {
-                                            const isChecked = Array.isArray(value)
-                                                ? value.includes(opt.value)
-                                                : String(value) === String(opt.value);
+                                            const isChecked = Array.isArray(value) ? value.includes(opt.value) : String(value) === String(opt.value);
                                             return (
                                                 <CommandItem
                                                     key={opt.label.toString()}
@@ -563,7 +533,7 @@ export function AppFieldBuilder({field, value, setData, error, isProcessing}: Fi
                                                         handleReactiveChange(Array.from(newSet));
                                                     }}
                                                 >
-                                                    <Checkbox checked={isChecked} className="mr-2"/>
+                                                    <Checkbox checked={isChecked} className="mr-2" />
                                                     {opt.label}
                                                 </CommandItem>
                                             );
@@ -574,7 +544,7 @@ export function AppFieldBuilder({field, value, setData, error, isProcessing}: Fi
                         </Popover>
                         {error && <div className="text-sm text-destructive">{error}</div>}
                     </div>
-                )
+                );
             }
             return (
                 <div key={field.name} className={`'space-y-2' ${field.isInline ? 'flex items-center space-x-2' : ''}`}>
@@ -586,35 +556,46 @@ export function AppFieldBuilder({field, value, setData, error, isProcessing}: Fi
                                 role="combobox"
                                 aria-expanded="false"
                                 disabled={field.isDisable || isProcessing}
-                                className={cn("w-full justify-between", field.mergeClass)}
+                                className={cn('w-full justify-between', field.mergeClass)}
                             >
-                                {isProcessing ? 'Loading...' : field.options?.find((opt) => opt.value === value)?.label || (
-                                    <span className="text-muted-foreground">
-                                      {field.placeholder || 'Select an option'}
-                                    </span>
-                                )}
-                                <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50"/>
+                                {isProcessing
+                                    ? 'Loading...'
+                                    : field.options?.find((opt) => opt.value === value)?.label || (
+                                          <span className="text-muted-foreground">{field.placeholder || 'Select an option'}</span>
+                                      )}
+                                <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                             </Button>
                         </PopoverTrigger>
 
                         <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0">
                             <Command>
-                                <CommandInput placeholder="Search..." className="h-9"
-                                              onValueChange={(val) => {
-                                                  if (val && field.serverside) {
-                                                      setTimeout(() => {
-                                                          const key = `${field.name}_q`;
-                                                          router.get(window.location.href, {
-                                                              [key]: val,
-                                                          }, {
-                                                              preserveState: true,
-                                                              preserveScroll: true,
-                                                              replace: true,
-                                                              only: ['form'],
-                                                          })
-                                                      }, 500)
-                                                  }
-                                              }}
+                                <CommandInput
+                                    placeholder="Search..."
+                                    className="h-9"
+                                    onValueChange={(val) => {
+                                        if (val && field.serverside) {
+                                            setTimeout(() => {
+                                                const key = `${field.name}_q`;
+                                                router.get(
+                                                    window.location.href,
+                                                    {
+                                                        [key]: val,
+                                                    },
+                                                    {
+                                                        preserveState: true,
+                                                        preserveScroll: true,
+                                                        replace: true,
+                                                        onSuccess: (page) => {
+                                                            const fields = (page.props as any)?.form?.fields as FieldDefinition[];
+                                                            if (fields) {
+                                                                setFields(fields);
+                                                            }
+                                                        },
+                                                    },
+                                                );
+                                            }, 300);
+                                        }
+                                    }}
                                 />
                                 <CommandEmpty>No options found.</CommandEmpty>
                                 <CommandGroup className="max-h-60 overflow-y-auto">
@@ -624,12 +605,7 @@ export function AppFieldBuilder({field, value, setData, error, isProcessing}: Fi
                                             value={opt.label.toString()}
                                             onSelect={() => handleReactiveChange(opt.value)}
                                         >
-                                            <Check
-                                                className={cn(
-                                                    'mr-2 h-4 w-4',
-                                                    opt.value === value ? 'opacity-100' : 'opacity-0'
-                                                )}
-                                            />
+                                            <Check className={cn('mr-2 h-4 w-4', opt.value === value ? 'opacity-100' : 'opacity-0')} />
                                             {opt.label}
                                         </CommandItem>
                                     ))}
@@ -639,28 +615,22 @@ export function AppFieldBuilder({field, value, setData, error, isProcessing}: Fi
                     </Popover>
                     {error && <div className="text-sm text-destructive">{error}</div>}
                 </div>
-            )
+            );
         case 'radio':
             return (
                 <div key={field.name} className={`'space-y-2' ${field.isInline ? 'flex items-center space-x-2' : ''}`}>
                     <Label htmlFor={field.name}>{field.label}</Label>
-                    <RadioGroup value={value || ''} onValueChange={(val) => handleReactiveChange(val)}
-                                disabled={field.isDisable || isProcessing}>
+                    <RadioGroup value={value || ''} onValueChange={(val) => handleReactiveChange(val)} disabled={field.isDisable || isProcessing}>
                         {field.options?.map((opt) => (
-                            <div key={opt.value.toString()}
-                                 className={cn(
-                                     "flex items-center space-x-2",
-                                     field.mergeClass
-                                 )}
-                            >
-                                <RadioGroupItem value={opt.value.toString()} id={`${field.name}-${opt.value}`}/>
+                            <div key={opt.value.toString()} className={cn('flex items-center space-x-2', field.mergeClass)}>
+                                <RadioGroupItem value={opt.value.toString()} id={`${field.name}-${opt.value}`} />
                                 <Label htmlFor={`${field.name}-${opt.value}`}>{opt.label}</Label>
                             </div>
                         ))}
                     </RadioGroup>
                     {error && <div className="text-sm text-destructive">{error}</div>}
                 </div>
-            )
+            );
         case 'checkbox':
             return (
                 <div key={field.name} className={`'space-y-2' ${field.isInline ? 'flex items-center space-x-2' : ''}`}>
@@ -674,7 +644,7 @@ export function AppFieldBuilder({field, value, setData, error, isProcessing}: Fi
                     />
                     {error && <div className="text-sm text-destructive">{error}</div>}
                 </div>
-            )
+            );
         case 'toggle':
             return (
                 <div key={field.name} className={`'space-y-2' ${field.isInline ? 'flex items-center space-x-2' : ''}`}>
@@ -690,8 +660,8 @@ export function AppFieldBuilder({field, value, setData, error, isProcessing}: Fi
                     </div>
                     {error && <div className="text-sm text-destructive">{error}</div>}
                 </div>
-            )
+            );
         default:
-            return (<></>);
+            return <></>;
     }
 }

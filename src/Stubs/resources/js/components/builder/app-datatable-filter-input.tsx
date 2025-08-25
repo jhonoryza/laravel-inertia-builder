@@ -270,7 +270,7 @@ export function AppDataTableFilterInput({name, filterDef, activeFilter, onFilter
                         }}
                         value={activeFilter.value ?? ''}
                         operator={activeFilter.operator}
-                        setData={(field, value, operator) => {
+                        onChange={(name, value, operator) => {
                             handleValueChange(value, operator ?? '');
                         }}
                     />

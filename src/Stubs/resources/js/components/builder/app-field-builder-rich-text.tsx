@@ -22,10 +22,10 @@ interface RichTextFieldProps {
         mergeClass?: string;
     };
     value: string;
-    setData: (field: string, value: any) => void;
+    onChange: (name: string, value: any, operator?: string) => void;
 }
 
-export function AppFieldBuilderRichText({ field, value, setData }: RichTextFieldProps) {
+export function AppFieldBuilderRichText({ field, value, onChange }: RichTextFieldProps) {
     const editor = useEditor({
         extensions: [
             StarterKit,
@@ -43,7 +43,7 @@ export function AppFieldBuilderRichText({ field, value, setData }: RichTextField
         ],
         content: value || '',
         onUpdate: ({ editor }) => {
-            setData(field.name, editor.getHTML());
+            onChange(field.name, editor.getHTML());
         },
         editorProps: {
             attributes: {

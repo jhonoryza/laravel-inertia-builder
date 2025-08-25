@@ -11,10 +11,10 @@ import {FieldDefinition} from "@/types/field-builder";
 type Props = {
     field: FieldDefinition;
     value: string | null;
-    setData: (key: string, value: any) => void;
+    onChange: (name: string, value: any, operator?: string) => void;
 };
 
-export function AppFieldBuilderDatetime({field, value, setData}: Props) {
+export function AppFieldBuilderDatetime({field, value, onChange}: Props) {
     const [datePart, setDatePart] = useState<Date | null>(value ? new Date(value) : null);
     const [timePart, setTimePart] = useState<string>(() => {
         if (value) {
@@ -31,7 +31,7 @@ export function AppFieldBuilderDatetime({field, value, setData}: Props) {
             fullDate.setHours(hours);
             fullDate.setMinutes(minutes);
             fullDate.setSeconds(seconds);
-            setData(field.name, fullDate.toISOString());
+            onChange(field.name, fullDate.toISOString());
         }
     }, [datePart, timePart]);
 

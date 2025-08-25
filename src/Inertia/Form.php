@@ -2,16 +2,51 @@
 
 namespace Jhonoryza\InertiaBuilder\Inertia;
 
+use Illuminate\Database\Eloquent\Model;
 use JsonSerializable;
+use Jhonoryza\InertiaBuilder\Inertia\Fields\Base\AbstractField;
 
 class Form implements JsonSerializable
 {
-    private array $columns = [];
-    private array $fields = [];
+    protected array $columns = [];
+    
+    protected array $fields = [];
+    
+    public array $state = [];
+
+    protected ?Model $model = null;
 
     public static function make(): static
     {
         return new static();
+    }
+
+    public function model(Model | null $model): self
+    {
+        if ($model) {
+            $this->model = $model;
+        }
+        return $this;
+    }
+
+    public function schema(array $fields): static
+    {
+        $this->fields = $fields;
+        return $this;
+    }
+
+    public function fields(array $fields): self
+    {
+        $this->fields = $fields;
+        return $this;
+    }
+
+    public function state(array $state): static
+    {
+        if (!empty($state)) {
+            $this->state = $state;            
+        }
+        return $this;
     }
 
     public function columns(int|array $columns): self
@@ -24,17 +59,92 @@ class Form implements JsonSerializable
         return $this;
     }
 
-    public function fields(array $fields): self
+    public function findField(string $name)
     {
-        $this->fields = $fields;
-        return $this;
+        return collect($this->getFields())
+            ->first(fn($field) => $field->getName() === $name);
+    }
+
+    // di panggil saat ada perubahan dari frontend
+    public function handleLiveUpdate(string $name, $value, array &$state): array
+    {
+        /** @var AbstractField|null $field */
+        $field = $this->findField($name);
+
+        if (! $field || ! $field->getIsReactive()) {
+            return $state;
+        }
+
+        $field->triggerAfterStateUpdated($value, $state);
+
+        // update form state
+        foreach ($this->getFields() as $f) {
+            /** @var AbstractField $f */
+            if (isset($state[$f->getName()])) {
+                $this->state[$f->getName()] = $state[$f->getName()];
+            }
+        }
+
+        return $state;
+    }
+
+    // di panggil saat initial loads atau ada perubahan dari frontend
+    public function evaluateFields(): array
+    {
+        return collect($this->getFields())
+            ->map(function(AbstractField $field) {
+
+                // set form state to field state
+                $field->form($this);
+                $formState = $this->state[$field->getName()];
+                $field->state($formState);
+
+                return $field;
+            })
+            ->toArray();
+    }
+
+    public function getModel(): ?Model
+    {
+        return $this->model;        
+    }
+
+    public function getSchema(): array
+    {
+        return $this->fields;
+    }
+
+    public function getFields(): array
+    {
+        return $this->fields;   
+    }
+
+    public function getState(): array
+    {
+        return $this->state;   
+    }
+
+    public function getColumns(): array
+    {
+        return $this->columns;        
+    }
+
+    private function checkisStateEmpty(): void
+    {
+        if (empty($this->state)) {
+            foreach ($this->getFields() as $field) {
+                // take value from state if not exist take from model property
+                $this->state[$field->getName()] = $this->model?->{$field->getName()} ?? $field->getState();
+            }
+        }
     }
 
     public function jsonSerialize(): array
     {
+        $this->checkisStateEmpty();
         return [
-            'columns' => $this->columns,
-            'fields' => $this->fields,
+            'columns' => $this->getColumns(),
+            'fields' => $this->evaluateFields(),
         ];
     }
 }

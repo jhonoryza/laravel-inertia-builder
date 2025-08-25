@@ -18,11 +18,11 @@ interface TagsFieldProps {
         mergeClass?: string;
     };
     value: string[] | null;
-    setData: (field: string, value: any) => void;
+    onChange: (name: string, value: any, operator?: string) => void;
     error?: string;
 }
 
-export function AppFieldBuilderTags({ field, value, setData, error }: TagsFieldProps) {
+export function AppFieldBuilderTags({ field, value, onChange, error }: TagsFieldProps) {
     const [tags, setTags] = useState<string[]>(value || []);
     const [inputValue, setInputValue] = useState('');
     const [showSuggestions, setShowSuggestions] = useState(false);
@@ -31,7 +31,7 @@ export function AppFieldBuilderTags({ field, value, setData, error }: TagsFieldP
 
     const updateTags = (newTags: string[]) => {
         setTags(newTags);
-        setData(field.name, newTags);
+        onChange(field.name, newTags);
     };
 
     // Close suggestions when clicking outside

@@ -22,11 +22,11 @@ interface KeyValueFieldProps {
         mergeClass?: string;
     };
     value: Record<string, string> | null;
-    setData: (field: string, value: any) => void;
+    onChange: (name: string, value: any, operator?: string) => void;
     error?: string | Record<string, string>;
 }
 
-export function AppFieldBuilderKeyValue({ field, value, setData, error }: KeyValueFieldProps) {
+export function AppFieldBuilderKeyValue({ field, value, onChange, error }: KeyValueFieldProps) {
     // Convert object to array of key-value pairs for easier manipulation
     const [items, setItems] = useState<Array<{ key: string; value: string }>>(() => {
         if (!value) return [];
@@ -46,7 +46,7 @@ export function AppFieldBuilderKeyValue({ field, value, setData, error }: KeyVal
         }, {} as Record<string, string>);
 
         setItems(newItems);
-        setData(field.name, newData);
+        onChange(field.name, newData);
     };
 
     const addItem = () => {

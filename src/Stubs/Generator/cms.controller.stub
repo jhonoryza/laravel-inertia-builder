@@ -3,12 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use Jhonoryza\InertiaBuilder\Inertia\Fields\Factory\Field;
-use Jhonoryza\InertiaBuilder\Inertia\Tables\Actions\Action;
-use Jhonoryza\InertiaBuilder\Inertia\Tables\Filters\Factory\Filter;
-use Jhonoryza\InertiaBuilder\Inertia\Tables\Table;
-use Jhonoryza\InertiaBuilder\Inertia\Tables\TableColumn;
-use Jhonoryza\InertiaBuilder\Inertia\Form;
 use App\Models\{{modelName}};
 use App\Http\Requests\{{modelName}}StoreRequest;
 use App\Http\Requests\{{modelName}}UpdateRequest;
@@ -16,28 +10,15 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
-{{imports}}
+{{importsRelation}}
+{{importTableClass}}
+{{importFormClass}}
 
 class {{className}} extends Controller
 {
     public function index(): Response
     {
-        $table = Table::make({{modelName}}::class)
-            ->columns([
-{{columns}}
-            ])
-            ->filters([
-{{filters}}
-            ])
-            ->defaultSort('id', 'asc')
-            ->actions([
-                Action::make('new')
-                    ->needRowSelected(false)
-                    ->needConfirm(false),
-                Action::make('delete')
-                    ->label('Batch Delete')
-                    ->message('Are you sure to delete multiple row?'),
-            ]);
+        $table = {{TableClass}}::build();
 
         return Inertia::render('builder/index', [
             'data' => $table,
@@ -46,64 +27,44 @@ class {{className}} extends Controller
         ]);
     }
 
-    public function actions(Request $request): RedirectResponse
+    public function actions(): RedirectResponse
     {
-        $action = $request->get('action');
-        $ids = $request->get('ids');
-
-        switch ($action) {
-            case 'new':
-                return redirect()->route('{{routeName}}.create');
-            case 'delete':
-                {{modelName}}::destroy($ids);
-                return redirect()
-                    ->route('{{routeName}}.index')
-                    ->with('success', 'Items ' . collect($ids)->implode(', ') . ' deleted successfully.');
-            default:
-                return redirect()
-                    ->route('{{routeName}}.index')
-                    ->with('failed', 'undefined action.');
-        }
-    }
-
-    private function getForm(?{{modelName}} ${{modelVariable}} = null, $disable = false)
-    {
-        return Form::make()
-            ->columns(1)
-            ->fields([
-{{fields}}
-        ]);
+        return {{TableClass}}::actions();
     }
 
     public function show({{modelName}} ${{modelVariable}}): Response
     {
         return Inertia::render('builder/show', [
-            'form' => $this->getForm(${{modelVariable}}, true),
+            'form' => {{FormClass}}::build(${{modelVariable}}, 'view'),
             'routeName' => '{{routeName}}',
             'routeId' => ${{modelVariable}}->id,
+            'formClass' => {{FormClass}}::class,
         ]);
     }
 
     public function create(): Response
     {
         return Inertia::render('builder/create', [
-            'form' => $this->getForm(),
+            'form' => {{FormClass}}::build(),
             'routeName' => '{{routeName}}',
+            'formClass' => {{FormClass}}::class,
         ]);
     }
 
     public function edit({{modelName}} ${{modelVariable}}): Response
     {
         return Inertia::render('builder/edit', [
-            'form' => $this->getForm(${{modelVariable}}),
+            'form' => {{FormClass}}::build(${{modelVariable}}),
             'routeName' => '{{routeName}}',
             'routeId' => ${{modelVariable}}->id,
+            'formClass' => {{FormClass}}::class,
         ]);
     }
 
     public function store({{modelName}}StoreRequest $request): RedirectResponse
     {
-        $item = {{modelName}}::create($request->validated());
+        $data = $request->validated();
+        $item = {{modelName}}::create($data);
 
         return redirect()
             ->route('{{routeName}}.index')
@@ -112,7 +73,8 @@ class {{className}} extends Controller
 
     public function update({{modelName}}UpdateRequest $request, {{modelName}} ${{modelVariable}}): RedirectResponse
     {
-        ${{modelVariable}}->update($request->validated());
+        $data = $request->validated();
+        ${{modelVariable}}->update($data);
 
         return redirect()
             ->route('{{routeName}}.edit', ${{modelVariable}})

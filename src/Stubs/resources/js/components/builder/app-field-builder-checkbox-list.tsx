@@ -14,10 +14,10 @@ interface CheckboxListFieldProps {
         mergeClass?: string;
     };
     value: any;
-    setData: (field: string, value: any) => void;
+    onChange: (name: string, value: any, operator?: string) => void;
 }
 
-export function AppFieldBuilderCheckboxList({ field, value, setData }: CheckboxListFieldProps) {
+export function AppFieldBuilderCheckboxList({ field, value, onChange }: CheckboxListFieldProps) {
     // Ensure value is an array
     const selectedValues = Array.isArray(value) ? value : (value ? [value] : []);
 
@@ -32,7 +32,7 @@ export function AppFieldBuilderCheckboxList({ field, value, setData }: CheckboxL
             newValues = selectedValues.filter(v => v !== checkboxValue);
         }
 
-        setData(field.name, newValues);
+        onChange(field.name, newValues);
     };
 
     return (

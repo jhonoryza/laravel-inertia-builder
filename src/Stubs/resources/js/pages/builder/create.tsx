@@ -13,9 +13,10 @@ type Form = {
 type PageProps = {
     form: Form;
     routeName: string;
+    formClass: string;
 };
 
-export default function Create({form, routeName}: PageProps) {
+export default function Create({form, routeName, formClass}: PageProps) {
     const {columns, fields} = form;
     const breadcrumbs: BreadcrumbItem[] = [
         {title: `${routeName}`, href: route(routeName + ".index")},
@@ -28,7 +29,7 @@ export default function Create({form, routeName}: PageProps) {
             <div className="p-4">
                 <Card className="p-4 max-w-full">
                     <CardContent>
-                        <AppFormBuilder columns={columns} fields={fields} routeName={routeName} mode="create"/>
+                        <AppFormBuilder columns={columns} fields={fields} routeName={routeName} mode="create" formClass={formClass} />
                     </CardContent>
                 </Card>
             </div>

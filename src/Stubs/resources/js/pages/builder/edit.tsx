@@ -14,9 +14,10 @@ type PageProps = {
     form: Form;
     routeName: string;
     routeId?: string;
+    formClass: string;
 };
 
-export default function Edit({form, routeName, routeId}: PageProps) {
+export default function Edit({form, routeName, routeId, formClass}: PageProps) {
     const {columns, fields} = form;
 
     const breadcrumbs: BreadcrumbItem[] = [
@@ -32,7 +33,7 @@ export default function Edit({form, routeName, routeId}: PageProps) {
                 <Card className="p-4 max-w-full">
                     <CardContent>
                         <AppFormBuilder columns={columns} fields={fields} routeName={routeName} routeId={routeId}
-                                        mode="edit"/>
+                                        mode="edit" formClass={formClass} />
                     </CardContent>
                 </Card>
             </div>

@@ -4,7 +4,7 @@ namespace Jhonoryza\InertiaBuilder\Inertia\Fields\Concerns;
 
 trait HasReactive
 {
-    public bool $isReactive = false;
+    protected bool $isReactive = false;
 
     /**
      * Mark this field as reactive.
@@ -16,5 +16,10 @@ trait HasReactive
         $this->isReactive = true;
 
         return $this;
+    }
+
+    public function getIsReactive(): bool
+    {
+        return $this->isReactive;
     }
 }

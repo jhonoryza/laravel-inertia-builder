@@ -2,130 +2,75 @@
 
 namespace Jhonoryza\InertiaBuilder\Inertia\Fields\Base;
 
+use Jhonoryza\InertiaBuilder\Inertia\Fields\Concerns\HasDebounce;
+use Jhonoryza\InertiaBuilder\Inertia\Fields\Concerns\HasForm;
+use Jhonoryza\InertiaBuilder\Inertia\Fields\Concerns\HasLabel;
+use Jhonoryza\InertiaBuilder\Inertia\Fields\Concerns\HasName;
+use Jhonoryza\InertiaBuilder\Inertia\Fields\Concerns\HasPlaceholder;
 use Jhonoryza\InertiaBuilder\Inertia\Fields\Concerns\HasReactive;
+use Jhonoryza\InertiaBuilder\Inertia\Fields\Concerns\HasReadOnly;
+use Jhonoryza\InertiaBuilder\Inertia\Fields\Concerns\HasState;
+use Jhonoryza\InertiaBuilder\Inertia\Fields\Concerns\HasStyle;
+use Jhonoryza\InertiaBuilder\Inertia\Fields\Concerns\HasType;
+use Jhonoryza\InertiaBuilder\Inertia\Fields\Concerns\HasVisibility;
 use JsonSerializable;
 
 abstract class AbstractField implements JsonSerializable
 {
-    use HasReactive;
+    use HasReactive, HasState;
+    use HasVisibility, HasDebounce, HasPlaceholder, HasReadOnly, HasStyle;
+    use HasForm, HasLabel, HasName, HasType;
+
+    abstract protected static function getType(): string;
+
+    public function __construct(string $name)
+    {
+        $this->name($name);
+        $this->label(ucwords(str_replace('_', ' ', $name)));
+        $this->type(static::getType());
+    }
 
     public static function make(string $name): static
     {
         return new static($name);
     }
 
-    public string $name;
-
-    public string $label;
-
-    public string $type;
-
-    public ?string $placeholder = null;
-
-    public bool $isInline = false;
-
-    public ?string $mergeClass = null;
-
-    public bool $isDisable = false;
-
-    public bool $hidden = false;
-
-    public \Closure|array|string|int|bool|null $defaultValue = null;
-
-    public array $columnSpan = ['default' => 1];
-
-    public array $columnOrder = [];
-
-    public function __construct(string $name)
+    protected function evaluate(mixed $value, array $parameters = [])
     {
-        $this->name  = $name;
-        $this->label = ucwords(str_replace('_', ' ', $name));
-        $this->type  = static::getType();
-    }
-
-    abstract protected static function getType(): string;
-
-    public function label(string $label): static
-    {
-        $this->label = $label;
-
-        return $this;
-    }
-
-    public function defaultValue(array|string|bool|int|callable|null $value = null): static
-    {
-        if (is_callable($value)) {
-            $this->defaultValue = call_user_func($value);
-            return $this;
+        if (! $value instanceof \Closure) {
+            return $value;
         }
-        $this->defaultValue = $value;
 
-        return $this;
-    }
+        $reflector = new \ReflectionFunction($value);
+        $args = [];
 
-    /**
-     * Set the placeholder text for the field
-     */
-    public function placeholder(string $placeholder): static
-    {
-        $this->placeholder = $placeholder;
+        foreach ($reflector->getParameters() as $param) {
+            $type = $param->getType()?->getName();
+            $name = $param->getName();
 
-        return $this;
-    }
+            // Inject berdasarkan nama
+            if (array_key_exists($name, $parameters)) {
+                $args[] = $parameters[$name];
+                continue;
+            }
 
-    public function inline(): static
-    {
-        $this->isInline = true;
+            // Inject berdasarkan type-hint
+            if ($type && array_key_exists($type, $parameters)) {
+                $args[] = $parameters[$type];
+                continue;
+            }
 
-        return $this;
-    }
+            // Kalau nggak ketemu, coba default value
+            if ($param->isDefaultValueAvailable()) {
+                $args[] = $param->getDefaultValue();
+                continue;
+            }
 
-    public function mergeClass(string $class): static
-    {
-        $this->mergeClass = $class;
-
-        return $this;
-    }
-
-    public function disable(bool|callable $state = true): static
-    {
-        if (is_callable($state)) {
-            $this->isDisable = call_user_func($state);
-            return $this;
+            // fallback null
+            $args[] = null;
         }
-        $this->isDisable = $state;
 
-        return $this;
-    }
-
-    public function hidden(bool|callable $state = true): static
-    {
-        if (is_callable($state)) {
-            $this->hidden = call_user_func($state);
-            return $this;
-        }
-        $this->hidden = $state;
-
-        return $this;
-    }
-
-    public function disableUsing(callable $func): static
-    {
-        $this->isDisable = $func();
-
-        return $this;
-    }
-
-    public function columnSpan(array $columnSpan): static
-    {
-        $this->columnSpan = $columnSpan;
-        return $this;
-    }
-
-    public function columnOrder(array $columnOrder): static
-    {
-        $this->columnOrder = $columnOrder;
-        return $this;
+        return $value(...$args);
     }
 
     /**
@@ -134,18 +79,19 @@ abstract class AbstractField implements JsonSerializable
     public function toArray(): array
     {
         return [
-            'name'         => $this->name,
-            'label'        => $this->label,
-            'type'         => $this->type,
-            'placeholder'  => $this->placeholder,
-            'isInline'     => $this->isInline,
-            'mergeClass'   => $this->mergeClass,
-            'isDisable'    => $this->isDisable,
-            'hidden'       => $this->hidden,
-            'reactive'     => $this->isReactive,
-            'defaultValue' => $this->defaultValue,
-            'columnSpan'   => $this->columnSpan,
-            'columnOrder'   => $this->columnOrder,
+            'name'         => $this->getName(),
+            'type'         => $this->getType(),
+            'label'        => $this->getLabel(),
+            'placeholder'  => $this->getPlaceholder(),
+            'isInline'     => $this->getIsInline(),
+            'mergeClass'   => $this->getMergeClass(),
+            'isDisable'    => $this->getIsDisable(),
+            'hidden'       => $this->getHidden(),
+            'reactive'     => $this->getIsReactive(),
+            'defaultValue' => $this->getState(),
+            'columnSpan'   => $this->getColumnSpan(),
+            'columnOrder'  => $this->getColumnOrder(),
+            'debounce'     => $this->getDebounce(),
         ];
     }
 

@@ -65,4 +65,5 @@ export type FieldDefinition = {
     serverside?: boolean;
     defaultValue?: any;
     reactive?: boolean;
+    debounce?: number;
 };

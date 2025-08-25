@@ -15,6 +15,8 @@ class ServiceProvider extends LaravelServiceProvider
 
     public function boot(): void
     {
+        $this->loadRoutesFrom(__DIR__.'/Routes/web.php');
+
         if (! $this->app->runningInConsole()) {
             return;
         }

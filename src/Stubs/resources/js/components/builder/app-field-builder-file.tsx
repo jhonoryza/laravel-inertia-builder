@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, {useEffect, useRef, useState} from 'react';
-import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import {FieldDefinition} from "@/types/field-builder";
 
@@ -10,7 +9,7 @@ interface FileFieldProps {
         multiple?: boolean;
     };
     value: any;
-    setData: (field: string, value: any) => void;
+    onChange: (name: string, value: any, operator?: string) => void;
 }
 
 interface FilePreview {
@@ -20,7 +19,7 @@ interface FilePreview {
     isFromServer?: boolean;
 }
 
-export function AppFieldBuilderFile({ field, value, setData }: FileFieldProps) {
+export function AppFieldBuilderFile({ field, value, onChange }: FileFieldProps) {
     const fileInputRef = useRef<HTMLInputElement>(null);
     const [serverPreviews, setServerPreviews] = useState<FilePreview[]>([]);
     const [localPreviews, setLocalPreviews] = useState<FilePreview[]>([]);
@@ -63,7 +62,7 @@ export function AppFieldBuilderFile({ field, value, setData }: FileFieldProps) {
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const files = e.target.files;
         if (files) {
-            setData(field.name, field.multiple ? files : files[0]);
+            onChange(field.name, field.multiple ? files : files[0]);
 
             // buat preview URL
             const previews: FilePreview[] = Array.from(files).map(file => ({

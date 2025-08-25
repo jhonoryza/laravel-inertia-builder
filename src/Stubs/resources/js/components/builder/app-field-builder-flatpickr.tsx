@@ -11,10 +11,10 @@ interface FlatpickrFieldProps {
     field: FieldDefinition;
     value: any;
     operator?: string;
-    setData: (field: string, value: any, operator?: string) => void;
+    onChange: (name: string, value: any, operator?: string) => void;
 }
 
-export function AppFieldBuilderFlatpickr({field, value, operator, setData}: FlatpickrFieldProps) {
+export function AppFieldBuilderFlatpickr({field, value, operator, onChange}: FlatpickrFieldProps) {
     const operatorRef = useRef(operator);
     operatorRef.current = operator;
 
@@ -95,23 +95,23 @@ export function AppFieldBuilderFlatpickr({field, value, operator, setData}: Flat
                             selectedDates[1],
                             field.withTime === false ? 'yyyy-MM-dd' : 'yyyy-MM-dd HH:mm:ss'
                         );
-                        setData(field.name, `${formattedOne},${formattedTwo}`, currentOperator);
+                        onChange(field.name, `${formattedOne},${formattedTwo}`, currentOperator);
                         return;
                     }
                     const tmpValue = `${selectedDates[0].toISOString()},${selectedDates[1].toISOString()}`;
-                    setData(field.name, tmpValue, currentOperator);
+                    onChange(field.name, tmpValue, currentOperator);
                 } else if (selectedDates.length == 1) {
                     if (field.utcConvert === false) {
                         const formatted = format(
                             selectedDates[0],
                             field.withTime === false ? 'yyyy-MM-dd' : 'yyyy-MM-dd HH:mm:ss'
                         );
-                        setData(field.name, formatted, currentOperator);
+                        onChange(field.name, formatted, currentOperator);
                         return;
                     }
-                    setData(field.name, selectedDates[0].toISOString(), currentOperator);
+                    onChange(field.name, selectedDates[0].toISOString(), currentOperator);
                 } else {
-                    setData(field.name, null, currentOperator);
+                    onChange(field.name, null, currentOperator);
                 }
             },
         };
@@ -127,7 +127,7 @@ export function AppFieldBuilderFlatpickr({field, value, operator, setData}: Flat
             flatpickrInstance.current.setDate(initialDate);
         }
 
-    }, [field.config, field.name, operator, field.utcConvert, field.withTime, parseValue, setData, value]);
+    }, [field.config, field.name, operator, field.utcConvert, field.withTime, parseValue, onChange, value]);
 
     useEffect(() => {
         if (flatpickrInstance.current && flatpickrInstance.current.operator !== operatorRef.current) {

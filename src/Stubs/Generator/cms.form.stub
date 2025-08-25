@@ -1,0 +1,35 @@
+<?php
+
+namespace App\Builder\Forms;
+
+use App\Models\{{modelName}};
+use Illuminate\Database\Eloquent\Model;
+use Jhonoryza\InertiaBuilder\Inertia\Concerns\FormContract;
+use Jhonoryza\InertiaBuilder\Inertia\Fields\Factory\Field;
+use Jhonoryza\InertiaBuilder\Inertia\Form;
+use Jhonoryza\InertiaBuilder\Inertia\Forms\Get;
+{{importsRelation}}
+
+class {{modelName}}Form implements FormContract
+{
+    public static function build(Model|array|null $model = null, string $action = 'create or edit'): Form 
+    {
+        $state = is_array($model) ? 'state' : 'model';
+
+        $form = Form::make()
+            ->columns(1)
+            ->$state($model)    
+            ->schema([
+{{fields}} 
+        ]);
+
+        if ($action == 'view') {
+            foreach ($form->getFields() as $field) {
+                /** @var AbstractField $field */
+                $field->disable();
+            }
+        }
+
+        return $form;
+    }
+}

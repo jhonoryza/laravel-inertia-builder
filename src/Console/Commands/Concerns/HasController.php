@@ -8,6 +8,90 @@ use Illuminate\Support\Str;
 
 trait HasController
 {
+    protected function generateTable($tableName, $modelName, $schema): void
+    {
+        $className = "{$modelName}Table";
+        $classPath = app_path("Builder/Tables/$className.php");
+        Process::run('mkdir -p app/Builder/Tables');
+
+        if (File::exists($classPath)) {
+            $this->warn("Table $className already exists. Skipping.");
+
+            return;
+        }
+
+        $stub = File::get(base_path('stubs/inertia-builder/cms.table.stub'));
+
+        $content = str_replace(
+            [
+                '{{modelName}}',
+                '{{routeName}}',
+                '{{columns}}',
+                '{{filters}}',
+            ],
+            [
+                $modelName,
+                $tableName,
+                $this->generateTableColumns($schema),
+                $this->generateTableFilters($schema),
+            ],
+            $stub
+        );
+
+        $import = collect($schema)->map(function ($column) {
+            if ($column['relationName']) {
+                $relatedModel = Str::studly($column['relationName']);
+
+                return 'use App\\Models\\' . $relatedModel . ';';
+            }
+        })->filter(fn($item) => ! is_null($item));
+        $content = str_replace('{{importsRelation}}', $import->implode(PHP_EOL), $content);
+
+        File::put($classPath, $content);
+        Process::run('./vendor/bin/pint ' . $classPath);
+        $this->info("Table $className created.");
+    }
+
+    protected function generateForm($modelName, $schema): void
+    {
+        $className = "{$modelName}Form";
+        $classPath = app_path("Builder/Forms/$className.php");
+        Process::run('mkdir -p app/Builder/Forms');
+
+        if (File::exists($classPath)) {
+            $this->warn("Form $className already exists. Skipping.");
+
+            return;
+        }
+
+        $stub = File::get(base_path('stubs/inertia-builder/cms.form.stub'));
+
+        $content = str_replace(
+            [
+                '{{modelName}}',
+                '{{fields}}',
+            ],
+            [
+                $modelName,
+                $this->generateFormFields($schema),
+            ],
+            $stub
+        );
+
+        $import = collect($schema)->map(function ($column) {
+            if ($column['relationName']) {
+                $relatedModel = Str::studly($column['relationName']);
+
+                return 'use App\\Models\\' . $relatedModel . ';';
+            }
+        })->filter(fn($item) => ! is_null($item));
+        $content = str_replace('{{importsRelation}}', $import->implode(PHP_EOL), $content);
+
+        File::put($classPath, $content);
+        Process::run('./vendor/bin/pint ' . $classPath);
+        $this->info("Form $className created.");
+    }
+
     protected function generateController($tableName, $modelName, $schema): void
     {
         $controllerName = "{$modelName}Controller";
@@ -21,27 +105,32 @@ trait HasController
 
         $stub = File::get(base_path('stubs/inertia-builder/cms.controller.stub'));
 
+        $importTableClass = 'use App\\Builder\\Tables\\' . $modelName . 'Table;';
+        $importFormClass = 'use App\\Builder\\Forms\\' . $modelName . 'Form;';
+
         $content = str_replace(
             [
                 '{{className}}',
                 '{{modelName}}',
                 '{{routeName}}',
-                '{{columns}}',
-                '{{filters}}',
-                '{{fields}}',
+                '{{importTableClass}}',
+                '{{importFormClass}}',
+                '{{TableClass}}',
+                '{{FormClass}}',
+                '{{modelVariable}}',
             ],
             [
                 $controllerName,
                 $modelName,
                 $tableName,
-                $this->generateTableColumns($schema),
-                $this->generateTableFilters($schema),
-                $this->generateFormFields($schema),
+                $importTableClass,
+                $importFormClass,
+                $modelName . 'Table',
+                $modelName . 'Form',
+                Str::camel($modelName),
             ],
             $stub
         );
-
-        $content = str_replace('{{modelVariable}}', Str::camel($modelName), $content);
 
         $import = collect($schema)->map(function ($column) {
             if ($column['relationName']) {
@@ -51,7 +140,7 @@ trait HasController
             }
 
         })->filter(fn ($item) => ! is_null($item));
-        $content = str_replace('{{imports}}', $import->implode(PHP_EOL), $content);
+        $content = str_replace('{{importsRelation}}', $import->implode(PHP_EOL), $content);
 
         File::put($controllerPath, $content);
         Process::run('./vendor/bin/pint ' . $controllerPath);
@@ -159,9 +248,7 @@ trait HasController
                 };
             }
 
-            return "$field
-                ->defaultValue(\${{modelVariable}}?->$name)
-                ->disable(\$disable),";
+            return "$field,";
         })->filter()->implode("\n");
     }
 }

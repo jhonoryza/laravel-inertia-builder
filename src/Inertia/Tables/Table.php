@@ -17,6 +17,7 @@ use Spatie\QueryBuilder\QueryBuilder;
 class Table implements JsonSerializable
 {
     protected string $paginationMethod = 'paginate';
+    protected bool $disablePagination = false;
 
     protected string $name = 'data';
 
@@ -57,6 +58,8 @@ class Table implements JsonSerializable
     ];
 
     protected ?\Closure $queryUsingCallback = null;
+
+    protected ?\Closure $baseQuery = null;
 
     public static function make(string $model): static
     {
@@ -125,9 +128,23 @@ class Table implements JsonSerializable
         return $this;
     }
 
+    public function disablePagination($state = true): static
+    {
+        $this->disablePagination = $state;
+
+        return $this;
+    }
+
     public function modifyQueryUsing(callable $modifiedQuery): static
     {
         $this->queryUsingCallback = $modifiedQuery;
+
+        return $this;
+    }
+
+    public function defineBaseQuery(callable $baseQuery): static
+    {
+        $this->baseQuery = $baseQuery;
 
         return $this;
     }
@@ -210,37 +227,88 @@ class Table implements JsonSerializable
         return $this;        
     }
 
+    protected function evaluate(mixed $value, array $parameters = [])
+    {
+        if (! $value instanceof \Closure) {
+            return $value;
+        }
+
+        $reflector = new \ReflectionFunction($value);
+        $args = [];
+
+        foreach ($reflector->getParameters() as $param) {
+            $type = $param->getType()?->getName();
+            $name = $param->getName();
+
+            // Inject berdasarkan nama
+            if (array_key_exists($name, $parameters)) {
+                $args[] = $parameters[$name];
+                continue;
+            }
+
+            // Inject berdasarkan type-hint
+            if ($type && array_key_exists($type, $parameters)) {
+                $args[] = $parameters[$type];
+                continue;
+            }
+
+            // Kalau nggak ketemu, coba default value
+            if ($param->isDefaultValueAvailable()) {
+                $args[] = $param->getDefaultValue();
+                continue;
+            }
+
+            // fallback null
+            $args[] = null;
+        }
+
+        return $value(...$args);
+    }
+
     /**
      * get datatable data in pagination format
      */
-    private function get(): LengthAwarePaginator|Paginator|CursorPaginator
+    private function get(): LengthAwarePaginator|Paginator|CursorPaginator|Collection
     {
         $sort = request()->get($this->getSortByParam(), $this->defaultSort);
         request()->merge([
             $this->getSortByParam() => request()->get($this->getSortDirParam(), $this->defaultSortDir) === 'desc' ? '-' . $sort : $sort,
         ]);
 
-        config()->set('query-builder.parameters.filter', $this->getFilterParam());
-        $query = QueryBuilder::for($this->model, request())
-            ->when(
-                $this->queryUsingCallback,
-                function (Builder $query) {
-                    $call = $this->queryUsingCallback;
+        if ($this->baseQuery == null) {
+            config()->set('query-builder.parameters.filter', $this->getFilterParam());
+        }
 
-                    return $call($query, request());
-                }
-            )
-            ->allowedFilters($this->getAllowedFilters(request()))
-            ->allowedSorts($this->getAllowedSorts())
-            ->with(array_filter(array_map(fn($c) => $c->relation, $this->columns)));
+        $query = $this->baseQuery == null ? 
+            QueryBuilder::for($this->model, request())
+                ->when(
+                    $this->queryUsingCallback,
+                    function (Builder $query) {
+                        return $this->evaluate($this->queryUsingCallback, [
+                            'query' => $query,
+                            'request' => request(),
+                        ]);
+                    }
+                )
+                ->allowedFilters($this->getAllowedFilters(request()))
+                ->allowedSorts($this->getAllowedSorts())
+                ->with(array_filter(array_map(fn($c) => $c->relation, $this->columns)))
+            : $this->evaluate($this->baseQuery, [
+                'request' => request(),
+            ]);
+        
 
         /**
          * default sort handler
          */
         if ($this->defaultSort) {
-            $dir = request()->get($this->getSortDirParam(), $this->defaultSortDir) === 'desc' ? '-' : '';
-            $query
-                ->defaultSort($dir . $this->defaultSort);
+            $dirStr = request()->get($this->getSortDirParam(), $this->defaultSortDir);
+            $dir = $dirStr === 'desc' ? '-' : '';
+            if ($this->baseQuery == null) {
+                $query->defaultSort($dir . $this->defaultSort);
+            } else {
+                $query->orderBy($this->defaultSort, $dirStr);
+            }
         }
 
         /**
@@ -281,21 +349,26 @@ class Table implements JsonSerializable
             });
         }
 
-        /**
-         * pagination handler
-         */
-        $perPage = request()->input($this->getPerPageParam(), $this->perPage);
+        if ($this->disablePagination == false) {
+            /**
+             * pagination handler
+             */
+            $perPage = request()->input($this->getPerPageParam(), $this->perPage);
 
-        if ($this->paginationMethod === 'cursor') {
-            $items = $query->cursorPaginate(perPage: $perPage, cursorName: $this->getPageParam())
-                ->withQueryString();
-        } elseif ($this->paginationMethod === 'simple') {
-            $items = $query->simplePaginate(perPage: $perPage, pageName: $this->getPageParam())
-                ->withQueryString();
+            if ($this->paginationMethod === 'cursor') {
+                $items = $query->cursorPaginate(perPage: $perPage, cursorName: $this->getPageParam())
+                    ->withQueryString();
+            } elseif ($this->paginationMethod === 'simple') {
+                $items = $query->simplePaginate(perPage: $perPage, pageName: $this->getPageParam())
+                    ->withQueryString();
+            } else {
+                $items = $query
+                    ->paginate(perPage: $perPage, pageName: $this->getPageParam())
+                    ->withQueryString();
+            }
         } else {
             $items = $query
-                ->paginate(perPage: $perPage, pageName: $this->getPageParam())
-                ->withQueryString();
+                ->get();
         }
 
         /**
@@ -314,50 +387,57 @@ class Table implements JsonSerializable
      * datatable rendering handler
      */
     private function mapRowsWithRenderUsing(
-        LengthAwarePaginator|Paginator|CursorPaginator $items,
-    ): LengthAwarePaginator|Paginator|CursorPaginator
+        LengthAwarePaginator|Paginator|CursorPaginator|Collection $items,
+    ): LengthAwarePaginator|Paginator|CursorPaginator|Collection
     {
         $columns = $this->columns;
-        $items->getCollection()->transform(function ($row) use ($columns) {
-            $arr = [];
-            /** @var TableColumn $col */
-            foreach ($columns as $col) {
-                $value = $row[$col->name] ?? null;
-                if ($col->renderUsing && is_callable($col->renderUsing)) {
-                    $value = call_user_func($col->renderUsing, $value, $row);
-                } elseif ($col->relation && $col->relationKey && $col->relationType === 'belongsTo') {
-                    if (str_contains($col->relation, '.')) {
-                        $tmps = explode('.', $col->relation);
-                        $value = $row;
-                        foreach ($tmps as $tmp) {
-                            $value = $value->{$tmp};
+        $collections = $items instanceof Collection ? $items : $items->getCollection();
+
+        $collections
+            ->transform(function ($row) use ($columns) {
+                $arr = [];
+                /** @var TableColumn $col */
+                foreach ($columns as $col) {
+                    $value = $row[$col->name] ?? null;
+                    if ($col->renderUsing && is_callable($col->renderUsing)) {
+                        $value = $this->evaluate($col->renderUsing, [
+                            'value' => $value, 
+                            'row' => $row,
+                            'model' => $row,
+                        ]);
+                    } elseif ($col->relation && $col->relationKey && $col->relationType === 'belongsTo') {
+                        if (str_contains($col->relation, '.')) {
+                            $tmps = explode('.', $col->relation);
+                            $value = $row;
+                            foreach ($tmps as $tmp) {
+                                $value = $value->{$tmp};
+                            }
+                            $value = $value->{$col->relationKey} ?? null;
+                        } else {
+                            $value = $row->{$col->relation}->{$col->relationKey} ?? null;
                         }
-                        $value = $value->{$col->relationKey} ?? null;
-                    } else {
-                        $value = $row->{$col->relation}->{$col->relationKey} ?? null;
-                    }
-                } elseif ($col->relation && $col->relationKey && $col->relationType === 'hasMany') {
-                    $value = $row->{$col->relation}->implode($col->relationKey, ' ');
-                    $value = str($value)
-                        ->wordWrap(break: '<br>');
-                } elseif (str_contains($col->name, '.')) {
-                    [$relationName, $relationAttribute] = extractRelation($col->name);
-                    $value = $row->{$relationName};
-                    if ($value instanceof Collection) {
-                        $value = $value
-                            ->pluck($relationAttribute)
-                            ->implode(' ');
+                    } elseif ($col->relation && $col->relationKey && $col->relationType === 'hasMany') {
+                        $value = $row->{$col->relation}->implode($col->relationKey, ' ');
                         $value = str($value)
                             ->wordWrap(break: '<br>');
-                    } else {
-                        $value = $value->{$relationAttribute};
+                    } elseif (str_contains($col->name, '.')) {
+                        [$relationName, $relationAttribute] = extractRelation($col->name);
+                        $value = $row->{$relationName};
+                        if ($value instanceof Collection) {
+                            $value = $value
+                                ->pluck($relationAttribute)
+                                ->implode(' ');
+                            $value = str($value)
+                                ->wordWrap(break: '<br>');
+                        } else {
+                            $value = $value->{$relationAttribute};
+                        }
                     }
+                    $arr[$col->name] = $value;
                 }
-                $arr[$col->name] = $value;
-            }
 
-            return $arr;
-        });
+                return $arr;
+            });
 
         return $items;
     }
@@ -544,8 +624,8 @@ class Table implements JsonSerializable
                 'opt' => $this->filters,
                 'filter' => request()->input('filter'),
             ],
-            'perPage' => (int)$items->perPage(),
-            'perPageOptions' => $this->perPageOptions,
+            'perPage' => $this->disablePagination ? 0 : (int)$items->perPage(),
+            'perPageOptions' => $this->disablePagination ? 0 : $this->perPageOptions,
             'columns' => $this->getColumns(),
             'actions' => $this->getActions(),
             'prefix' => $this->prefix,
@@ -555,6 +635,7 @@ class Table implements JsonSerializable
             'delete' => $this->canDelete,
             'forceDelete' => $this->canForceDelete,
             'restore' => $this->canRestore,
+            'disablePagination' => $this->disablePagination,
         ];
     }
 

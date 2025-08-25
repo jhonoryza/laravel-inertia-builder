@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import {Link, router, useForm, usePage} from '@inertiajs/react';
 import {AppFieldBuilder} from "@/components/builder/app-field-builder";
-import React, {useEffect} from "react";
+import React, {useEffect, useState} from "react";
 import {Button} from "@/components/ui/button";
 import {toast} from "sonner";
 import {ColumnDef, FieldDefinition} from "@/types/field-builder";
@@ -14,10 +14,15 @@ type PageProps = {
     routeName: string;
     routeId?: string;
     mode: string; // create, edit, show
+    formClass: string;
 };
 
-export function AppFormBuilder({columns, fields, routeName, routeId, mode}: PageProps) {
+export function AppFormBuilder({columns, fields: initialFields, routeName, routeId, mode, formClass}: PageProps) {
     const {flash} = usePage().props as { flash?: { success?: string, error?: string, description?: string } };
+    
+    // local state fields agar bisa diupdate saat reactive/live
+    const [fields, setFields] = useState<FieldDefinition[]>(initialFields);
+
     useEffect(() => {
         if (flash?.error) {
             toast.error('error', {
@@ -66,6 +71,74 @@ export function AppFormBuilder({columns, fields, routeName, routeId, mode}: Page
         setData(newInitialValues);
     }, [fields]);
 
+    const debounceTimeouts = React.useRef<Record<string, NodeJS.Timeout>>({});
+
+    const onReactive = async (name: string, value: any, operator?: string) => {
+        setData((prev: any) => ({ ...prev, [name]: value, operator }));
+        const field = fields.find((f) => f.name === name);
+        if (!field) return;
+        if (!field.reactive || false) return;
+
+        // jika ada debounce
+        if (field.debounce && field.debounce > 0) {
+            // clear timeout sebelumnya
+            if (debounceTimeouts.current[name]) clearTimeout(debounceTimeouts.current[name]);
+
+            // set timeout baru
+            debounceTimeouts.current[name] = setTimeout(() => {
+                sendLiveUpdate(name, value);
+            }, field.debounce);
+        } else {
+            sendLiveUpdate(name, value);
+        }
+    }
+
+    function getCookie(name: string): string {
+        return (
+            document.cookie
+                .split('; ')
+                .find((row) => row.startsWith(name + '='))
+                ?.split('=')[1] || ''
+        );
+    }
+
+    const sendLiveUpdate = async (name: string, value: any) => {
+        try {
+            const res = await fetch('/inertia-builder/reactive', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-XSRF-TOKEN': getCookie('XSRF-TOKEN'),
+                    // 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
+                },
+                body: JSON.stringify({
+                    name,
+                    value,
+                    state: { ...data, [name]: value },
+                    formClass,
+                }),
+            });
+
+            if (!res.ok) {
+                console.error(`HTTP error! status: ${res.status}`);
+                return;
+            }
+
+            const result = await res.json();
+            if (result.fields) {
+                const newState = result.fields.reduce((acc: any, field: any) => {
+                    acc[field.name] = field.defaultValue ?? data[field.name] ?? '';
+                    return acc;
+                }, {} as Record<string, any>);
+
+                setData(newState);
+                setFields(result.fields);
+            }
+        } catch (error) {
+            console.error('Live update failed:', error);
+        }
+    }
+
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         if (routeId) {
@@ -103,9 +176,7 @@ export function AppFormBuilder({columns, fields, routeName, routeId, mode}: Page
     }
 
     return (
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4"
-              encType="multipart/form-data">
-
+        <form onSubmit={handleSubmit} className="flex flex-col gap-4" encType="multipart/form-data">
             <div className={gridClass}>
                 {fields.map((field) => (
                     <div key={field.name} className={fieldClasses(field)}>
@@ -113,9 +184,10 @@ export function AppFormBuilder({columns, fields, routeName, routeId, mode}: Page
                             key={field.name}
                             field={field}
                             value={data[field.name]}
-                            setData={setData}
+                            onReactive={onReactive}
                             error={errors[field.name]}
                             isProcessing={processing}
+                            setFields={setFields}
                         />
                     </div>
                 ))}
@@ -146,13 +218,9 @@ export function AppFormBuilder({columns, fields, routeName, routeId, mode}: Page
                         </Button>
                     </div>
                 )}
-                {(mode === "edit" || mode === "create") && (
+                {(mode === 'edit' || mode === 'create') && (
                     <div className="flex items-center gap-2">
-                        <Button
-                            type="submit"
-                            disabled={processing}
-                            className="hover:cursor-pointer"
-                        >
+                        <Button type="submit" disabled={processing} className="hover:cursor-pointer">
                             save
                         </Button>
                         <Button
@@ -167,11 +235,13 @@ export function AppFormBuilder({columns, fields, routeName, routeId, mode}: Page
                         </Button>
                     </div>
                 )}
-                {mode === "edit" && (<div className="mb-2">
-                        <Link href={route(`${routeName}.edit`, routeId)}
-                              className="flex items-center gap-2 text-sm hover:cursor-pointer hover:opacity-60"
+                {mode === 'edit' && (
+                    <div className="mb-2">
+                        <Link
+                            href={route(`${routeName}.edit`, routeId)}
+                            className="flex items-center gap-2 text-sm hover:cursor-pointer hover:opacity-60"
                         >
-                            <RefreshCw className="h-4 w-4 text-destructive"/>
+                            <RefreshCw className="h-4 w-4 text-destructive" />
                             <span>reset</span>
                         </Link>
                     </div>
