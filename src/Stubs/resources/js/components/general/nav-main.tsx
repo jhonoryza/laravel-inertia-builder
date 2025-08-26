@@ -44,7 +44,7 @@ export function NavMain({ items = [] }: { items: NavItem[] }) {
                     {item.children.map((child) => (
                       <SidebarMenuSubItem key={child.title}>
                         <SidebarMenuButton asChild isActive={page.url.startsWith(child.href || '')}>
-                          <Link href={child.href || '#'} prefetch>
+                          <Link href={child.href || '#'}>
                             {child.icon && <child.icon />}
                             <span>{child.title}</span>
                           </Link>
@@ -62,7 +62,7 @@ export function NavMain({ items = [] }: { items: NavItem[] }) {
                 isActive={page.url.startsWith(item.href || '')}
                 tooltip={{ children: item.title }}
               >
-                <Link href={item.href || '#'} prefetch>
+                <Link href={item.href || '#'}>
                   {item.icon && <item.icon />}
                   <span>{item.title}</span>
                 </Link>
