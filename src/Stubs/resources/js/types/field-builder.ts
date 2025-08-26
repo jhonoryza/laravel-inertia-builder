@@ -16,6 +16,7 @@ export type FieldDefinition = {
     columnSpan?: ColumnDef;
     columnOrder?: ColumnDef;
     name: string;
+    key: string;
     label: string;
     type: 'text' | 'email' | 'number' | 'date' | 'datetime-local' | 'password'
         | 'textarea' | 'select' | 'combobox' | 'radio' | 'checkbox' | 'toggle'

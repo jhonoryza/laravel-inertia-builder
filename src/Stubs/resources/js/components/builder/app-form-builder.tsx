@@ -179,9 +179,9 @@ export function AppFormBuilder({columns, fields: initialFields, routeName, route
         <form onSubmit={handleSubmit} className="flex flex-col gap-4" encType="multipart/form-data">
             <div className={gridClass}>
                 {fields.map((field) => (
-                    <div key={field.name} className={fieldClasses(field)}>
+                    <div key={field.key} className={fieldClasses(field)}>
                         <AppFieldBuilder
-                            key={field.name}
+                            key={field.key}
                             field={field}
                             value={data[field.name]}
                             onReactive={onReactive}

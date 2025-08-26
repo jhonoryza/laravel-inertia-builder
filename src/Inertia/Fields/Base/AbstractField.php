@@ -4,6 +4,7 @@ namespace Jhonoryza\InertiaBuilder\Inertia\Fields\Base;
 
 use Jhonoryza\InertiaBuilder\Inertia\Fields\Concerns\HasDebounce;
 use Jhonoryza\InertiaBuilder\Inertia\Fields\Concerns\HasForm;
+use Jhonoryza\InertiaBuilder\Inertia\Fields\Concerns\HasKey;
 use Jhonoryza\InertiaBuilder\Inertia\Fields\Concerns\HasLabel;
 use Jhonoryza\InertiaBuilder\Inertia\Fields\Concerns\HasName;
 use Jhonoryza\InertiaBuilder\Inertia\Fields\Concerns\HasPlaceholder;
@@ -17,7 +18,7 @@ use JsonSerializable;
 
 abstract class AbstractField implements JsonSerializable
 {
-    use HasReactive, HasState;
+    use HasReactive, HasState, HasKey;
     use HasVisibility, HasDebounce, HasPlaceholder, HasReadOnly, HasStyle;
     use HasForm, HasLabel, HasName, HasType;
 
@@ -26,6 +27,7 @@ abstract class AbstractField implements JsonSerializable
     public function __construct(string $name)
     {
         $this->name($name);
+        $this->key($name);
         $this->label(ucwords(str_replace('_', ' ', $name)));
         $this->type(static::getType());
     }
@@ -80,6 +82,7 @@ abstract class AbstractField implements JsonSerializable
     {
         return [
             'name'         => $this->getName(),
+            'key'          => $this->getKey(),
             'type'         => $this->getType(),
             'label'        => $this->getLabel(),
             'placeholder'  => $this->getPlaceholder(),

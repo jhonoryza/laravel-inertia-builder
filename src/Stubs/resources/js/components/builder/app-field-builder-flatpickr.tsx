@@ -145,6 +145,7 @@ export function AppFieldBuilderFlatpickr({field, value, operator, onChange}: Fla
                 readOnly
                 autoComplete="off"
                 className={cn("cursor-pointer", field.mergeClass)}
+                disabled={field.isDisable}
             />
         </div>
     );

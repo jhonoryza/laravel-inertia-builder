@@ -3,15 +3,10 @@ import {Textarea} from '@/components/ui/textarea';
 import {Tabs, TabsList, TabsTrigger, TabsContent} from '@/components/ui/tabs';
 import {cn} from '@/lib/utils';
 import {marked} from 'marked';
+import { FieldDefinition } from '@/types/field-builder';
 
 type Props = {
-    field: {
-        name: string;
-        label: string;
-        type: string;
-        placeholder?: string;
-        mergeClass?: string;
-    };
+    field: FieldDefinition;
     value: string;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     onChange: (name: string, value: any, operator?: string) => void;
@@ -47,6 +42,7 @@ export function AppFieldBuilderMarkdown({field, value, onChange}: Props) {
                         placeholder="Write markdown here..."
                         rows={10}
                         className={field.mergeClass}
+                        disabled={field.isDisable}
                     />
                 </TabsContent>
 
@@ -54,7 +50,6 @@ export function AppFieldBuilderMarkdown({field, value, onChange}: Props) {
                     <div
                         className={cn("prose-sm dark:prose-dark max-w-none p-3 border rounded bg-muted")}
                         dangerouslySetInnerHTML={{__html: marked.parse(value || '')}}
-                        placeholder={field.placeholder || 'Write markdown content here...'}
                     />
                 </TabsContent>
             </Tabs>

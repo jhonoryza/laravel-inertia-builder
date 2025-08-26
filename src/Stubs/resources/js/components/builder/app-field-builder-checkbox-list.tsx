@@ -2,17 +2,10 @@
 import React from 'react';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
-import {FieldOption} from "@/types/field-builder";
+import {FieldDefinition} from "@/types/field-builder";
 
 interface CheckboxListFieldProps {
-    field: {
-        name: string;
-        label: string;
-        type: string;
-        options?: FieldOption[];
-        placeholder?: string;
-        mergeClass?: string;
-    };
+    field: FieldDefinition;
     value: any;
     onChange: (name: string, value: any, operator?: string) => void;
 }
@@ -44,6 +37,7 @@ export function AppFieldBuilderCheckboxList({ field, value, onChange }: Checkbox
                         checked={selectedValues.includes(option.value)}
                         onCheckedChange={(checked) => handleCheckboxChange(option.value, !!checked)}
                         className={field.mergeClass}
+                        disabled={field.isDisable}
                     />
                     <Label
                         htmlFor={`${field.name}-${option.value}`}

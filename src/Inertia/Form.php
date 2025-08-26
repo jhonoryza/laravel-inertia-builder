@@ -35,9 +35,22 @@ class Form implements JsonSerializable
         return $this;
     }
 
-    public function fields(array $fields): self
+    public function fields(array $fields): static
     {
         $this->fields = $fields;
+        return $this;
+    }
+
+    public function appendFieldToSchema(AbstractField|iterable $field): static
+    {
+        if ($field instanceof AbstractField) {
+            $this->fields[] = $field;
+        } else {
+            foreach ($field as $f) {
+                $this->fields[] = $f;
+            }
+        }
+        
         return $this;
     }
 
@@ -133,8 +146,11 @@ class Form implements JsonSerializable
     {
         if (empty($this->state)) {
             foreach ($this->getFields() as $field) {
-                // take value from state if not exist take from model property
-                $this->state[$field->getName()] = $this->model?->{$field->getName()} ?? $field->getState();
+                $state = $field->getState();
+                if (empty($state)) {
+                    $state = $this->model?->{$field->getName()} ?? null;
+                }
+                $this->state[$field->getName()] = $state;
             }
         }
     }
