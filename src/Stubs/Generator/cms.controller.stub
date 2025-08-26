@@ -18,10 +18,8 @@ class {{className}} extends Controller
 {
     public function index(): Response
     {
-        $table = {{TableClass}}::build();
-
         return Inertia::render('builder/index', [
-            'data' => $table,
+            'data' => {{TableClass}}::build(),
             'tableRoute' => route('{{routeName}}.index'),
             'routeName' => '{{routeName}}',
         ]);
@@ -64,11 +62,11 @@ class {{className}} extends Controller
     public function store({{modelName}}StoreRequest $request): RedirectResponse
     {
         $data = $request->validated();
-        $item = {{modelName}}::create($data);
+        ${{modelVariable}} = {{modelName}}::create($data);
 
         return redirect()
             ->route('{{routeName}}.index')
-            ->with('success', 'Item ' . $item->id . ' created successfully.');
+            ->with('success', 'Item ' . ${{modelVariable}}->id . ' created successfully.');
     }
 
     public function update({{modelName}}UpdateRequest $request, {{modelName}} ${{modelVariable}}): RedirectResponse
