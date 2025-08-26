@@ -18,6 +18,8 @@ export type FieldDefinition = {
     name: string;
     key: string;
     label: string;
+    prefix?: string;
+    suffix?: string;
     type: 'text' | 'email' | 'number' | 'date' | 'datetime-local' | 'password'
         | 'textarea' | 'select' | 'combobox' | 'radio' | 'checkbox' | 'toggle'
         | 'markdown' | 'flatpickr' | 'hidden' | 'slider' | 'file'

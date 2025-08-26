@@ -1,32 +1,33 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, {Key} from 'react';
-import {Input} from '@/components/ui/input';
-import {Textarea} from '@/components/ui/textarea';
-import {Label} from '@/components/ui/label';
-import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from '@/components/ui/select';
-import {Switch} from '@/components/ui/switch';
-import {RadioGroup, RadioGroupItem} from '@/components/ui/radio-group';
-import {Checkbox} from '@/components/ui/checkbox';
-import {Popover, PopoverContent, PopoverTrigger} from "@/components/ui/popover";
-import {Button} from "@/components/ui/button";
-import {cn} from "@/lib/utils";
-import {format} from "date-fns";
-import {Calendar} from "@/components/ui/calendar";
-import {AppFieldBuilderDatetime} from "@/components/builder/app-field-builder-datetime";
-import {AppFieldBuilderMarkdown} from "@/components/builder/app-field-builder-markdown";
-import {AppFieldBuilderFlatpickr} from "@/components/builder/app-field-builder-flatpickr";
-import {AppFieldBuilderFile} from "@/components/builder/app-field-builder-file";
-import {AppFieldBuilderCheckboxList} from "@/components/builder/app-field-builder-checkbox-list";
-import {AppFieldBuilderRichText} from "@/components/builder/app-field-builder-rich-text";
-import {AppFieldBuilderRepeater} from "@/components/builder/app-field-builder-repeater";
-import {AppFieldBuilderKeyValue} from "@/components/builder/app-field-builder-key-value";
-import {AppFieldBuilderTags} from "@/components/builder/app-field-builder-tags";
-import {AppFieldBuilderCustom} from "@/components/builder/app-field-builder-custom";
-import {Slider} from "@/components/ui/slider";
-import {Check, ChevronsUpDown} from "lucide-react";
-import {Command, CommandEmpty, CommandGroup, CommandInput, CommandItem} from "@/components/ui/command";
-import {FieldDefinition} from "@/types/field-builder";
-import {router} from "@inertiajs/react";
+import { AppFieldBuilderCheckboxList } from '@/components/builder/app-field-builder-checkbox-list';
+import { AppFieldBuilderCustom } from '@/components/builder/app-field-builder-custom';
+import { AppFieldBuilderDatetime } from '@/components/builder/app-field-builder-datetime';
+import { AppFieldBuilderFile } from '@/components/builder/app-field-builder-file';
+import { AppFieldBuilderFlatpickr } from '@/components/builder/app-field-builder-flatpickr';
+import { AppFieldBuilderKeyValue } from '@/components/builder/app-field-builder-key-value';
+import { AppFieldBuilderMarkdown } from '@/components/builder/app-field-builder-markdown';
+import { AppFieldBuilderRepeater } from '@/components/builder/app-field-builder-repeater';
+import { AppFieldBuilderRichText } from '@/components/builder/app-field-builder-rich-text';
+import { AppFieldBuilderTags } from '@/components/builder/app-field-builder-tags';
+import { Button } from '@/components/ui/button';
+import { Calendar } from '@/components/ui/calendar';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from '@/components/ui/command';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Slider } from '@/components/ui/slider';
+import { Switch } from '@/components/ui/switch';
+import { Textarea } from '@/components/ui/textarea';
+import { cn } from '@/lib/utils';
+import { FieldDefinition } from '@/types/field-builder';
+import { router } from '@inertiajs/react';
+import { format } from 'date-fns';
+import { Check, ChevronsUpDown } from 'lucide-react';
+import React, { Key } from 'react';
+import { AppFieldBuilderPassword } from './app-field-builder-password';
 
 interface FieldBuilderProps {
     field: FieldDefinition;
@@ -119,22 +120,31 @@ export function AppFieldBuilder({ field, setFields, value, onReactive, error, is
         case 'text':
         case 'number':
         case 'email':
-        case 'password':
             return (
-                <div key={field.name} className={`'space-y-2' ${field.isInline ? 'flex items-center space-x-2' : ''}`}>
+                <div key={field.name} className={`space-y-2 ${field.isInline ? 'flex items-center space-x-2' : ''}`}>
                     <Label htmlFor={field.name}>{field.label}</Label>
-                    <Input
-                        id={field.name}
-                        type={field.type}
-                        value={value || ''}
-                        onChange={handleChange}
-                        placeholder={field.placeholder || 'Fill in here..'}
-                        className={cn(field.mergeClass)}
-                        disabled={field.isDisable || isProcessing}
-                    />
+                    <div className="flex w-full rounded-md border border-input bg-background shadow-sm focus-within:ring-1 focus-within:ring-ring">
+                        {field.prefix && (
+                            <span className="flex items-center border-r border-input px-3 text-sm text-muted-foreground">{field.prefix}</span>
+                        )}
+                        <Input
+                            id={field.name}
+                            type={field.type}
+                            value={value || ''}
+                            onChange={handleChange}
+                            placeholder={field.placeholder || 'Fill in here..'}
+                            className={cn(field.mergeClass, 'flex-1 border-0 shadow-none focus-visible:ring-0 focus-visible:ring-offset-0')}
+                            disabled={field.isDisable || isProcessing}
+                        />
+                        {field.suffix && (
+                            <span className="flex items-center border-l border-input px-3 text-sm text-muted-foreground">{field.suffix}</span>
+                        )}
+                    </div>
                     {error && <div className="text-sm text-destructive">{error}</div>}
                 </div>
             );
+        case 'password':
+            return <AppFieldBuilderPassword field={field} value={value} error={error} handleChange={handleChange} />;
         case 'hidden':
             return (
                 <div key={field.name} className={`'space-y-2' ${field.isInline ? 'flex items-center space-x-2' : ''}`}>
