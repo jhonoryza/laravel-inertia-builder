@@ -25,8 +25,8 @@ import { cn } from '@/lib/utils';
 import { FieldDefinition } from '@/types/field-builder';
 import { router } from '@inertiajs/react';
 import { format } from 'date-fns';
-import { Check, ChevronsUpDown } from 'lucide-react';
-import React, { Key } from 'react';
+import { Check, ChevronsUpDown, Copy } from 'lucide-react';
+import React, { Key, useState } from 'react';
 import { AppFieldBuilderPassword } from './app-field-builder-password';
 
 interface FieldBuilderProps {
@@ -61,6 +61,33 @@ export function AppFieldBuilder({ field, setFields, value, onReactive, error, is
 
     const onChange = (name: string, value: any, operator?: string) => {
         onReactive(name, value, operator);
+    };
+
+    const [copied, setCopied] = useState(false);
+
+    const handleCopy = async () => {
+        if (!value) return;
+
+        try {
+            if (navigator?.clipboard?.writeText) {
+                await navigator.clipboard.writeText(value);
+            } else {
+                // fallback lama
+                const textarea = document.createElement('textarea');
+                textarea.value = value;
+                textarea.style.position = 'fixed'; // biar gak geser scroll
+                document.body.appendChild(textarea);
+                textarea.focus();
+                textarea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textarea);
+            }
+
+            setCopied(true);
+            setTimeout(() => setCopied(false), 1500);
+        } catch (err) {
+            console.error('Copy failed', err);
+        }
     };
 
     if (field.hidden) {
@@ -141,7 +168,14 @@ export function AppFieldBuilder({ field, setFields, value, onReactive, error, is
                         {field.suffix && (
                             <span className="flex items-center border-l border-input px-3 text-sm text-muted-foreground">{field.suffix}</span>
                         )}
+                        {field.copyable && (
+                            <Button type="button" variant="ghost" size="icon" onClick={handleCopy} className="ml-1 h-9 w-9" disabled={!value}>
+                                <Copy className="h-4 w-4" />
+                                <span className="sr-only">Copy</span>
+                            </Button>
+                        )}
                     </div>
+                    {copied && <div className="text-xs text-muted-foreground">Copied!</div>}
                     {error && <div className="text-xs text-destructive">{error}</div>}
                 </div>
             );

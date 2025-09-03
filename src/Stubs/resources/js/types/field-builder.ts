@@ -69,4 +69,5 @@ export type FieldDefinition = {
     defaultValue?: any;
     reactive?: boolean;
     debounce?: number;
+    copyable?: boolean;
 };

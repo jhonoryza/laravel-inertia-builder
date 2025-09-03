@@ -29,20 +29,21 @@ trait HasState
 
     public function evaluateState(): static
     {
-        $this->state = is_callable($this->state) ?
-            $this->evaluate($this->state, [
-                'state' => $this->state,
-                'get'   => new Get($this),
-                'model' => $this->form?->getModel(),
-            ]) : $this->state;
-
         if ($this->formatStateUsing) {
             $this->state = $this->evaluate($this->formatStateUsing, [
                 'state' => $this->state,
                 'get'   => new Get($this),
                 'model' => $this->form?->getModel(),
             ]);
+            return $this;
         }
+
+        $this->state = is_callable($this->state) ?
+            $this->evaluate($this->state, [
+                'state' => $this->state,
+                'get'   => new Get($this),
+                'model' => $this->form?->getModel(),
+            ]) : $this->state;
 
         return $this;
     }
