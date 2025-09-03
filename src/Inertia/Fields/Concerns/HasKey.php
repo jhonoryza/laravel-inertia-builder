@@ -9,7 +9,7 @@ trait HasKey
     public function key(string $key): static
     {
         $this->key = $key;
-        
+
         return $this;
     }
 

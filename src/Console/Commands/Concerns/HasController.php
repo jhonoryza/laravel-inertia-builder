@@ -44,7 +44,7 @@ trait HasController
 
                 return 'use App\\Models\\' . $relatedModel . ';';
             }
-        })->filter(fn($item) => ! is_null($item));
+        })->filter(fn ($item) => ! is_null($item));
         $content = str_replace('{{importsRelation}}', $import->implode(PHP_EOL), $content);
 
         File::put($classPath, $content);
@@ -84,7 +84,7 @@ trait HasController
 
                 return 'use App\\Models\\' . $relatedModel . ';';
             }
-        })->filter(fn($item) => ! is_null($item));
+        })->filter(fn ($item) => ! is_null($item));
         $content = str_replace('{{importsRelation}}', $import->implode(PHP_EOL), $content);
 
         File::put($classPath, $content);
@@ -106,7 +106,7 @@ trait HasController
         $stub = File::get(base_path('stubs/inertia-builder/cms.controller.stub'));
 
         $importTableClass = 'use App\\Builder\\Tables\\' . $modelName . 'Table;';
-        $importFormClass = 'use App\\Builder\\Forms\\' . $modelName . 'Form;';
+        $importFormClass  = 'use App\\Builder\\Forms\\' . $modelName . 'Form;';
 
         $content = str_replace(
             [
@@ -165,13 +165,13 @@ trait HasController
             if (in_array($type, ['timestamp', 'timestamptz'])) {
                 $line .= "->renderUsing(function (\$value) {
                         return \$value
-                            ?->format('d/m/Y H:i') ?? '-';
+                            ?->format('d/m/Y H:i') ?? '';
                     })" . PHP_EOL;
             }
             if ($type == 'date') {
                 $line .= "->renderUsing(function (\$value) {
                         return \$value
-                            ?->format('d/m/Y') ?? '-';
+                            ?->format('d/m/Y') ?? '';
                     })" . PHP_EOL;
             }
             if ($type == 'bool') {

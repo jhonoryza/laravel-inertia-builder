@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from '@/components/ui/table';
-import {Checkbox} from '@/components/ui/checkbox';
-import {Column, DataItem, DataTableProps} from '@/types/datatable';
-import {ArrowDown, ArrowUp, ArrowUpDown} from 'lucide-react';
-import {customCellComponents} from '@/components/custom-cell';
+import { customCellComponents } from '@/components/custom-cell';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Column, DataItem, DataTableProps } from '@/types/datatable';
+import { ArrowDown, ArrowUp, ArrowUpDown } from 'lucide-react';
 
 interface AppDataTableContentProps {
     items: DataTableProps['items'];
@@ -90,23 +90,38 @@ export function AppDataTableContent({
                 </TableRow>
             </TableHeader>
             <TableBody>
-                {data.map((item: DataItem, index: number) => {
-                    const id = item.id as string | number;
-                    return (
-                        <TableRow key={`table-row-${index}`} className={selectedIds.includes(id) ? 'bg-muted' : ''}>
-                            <TableCell>
-                                <Checkbox checked={selectedIds.includes(id)} onCheckedChange={() => toggleSelectOne(id)} aria-label="Select row" />
-                            </TableCell>
-                            {columns
-                                .filter((col) => !hiddenColumns[col.name])
-                                .map((col) => {
-                                    const value = item[col.name];
-                                    return <TableCell key={`table-cell-${col.name}`}>{renderCellContent(value)}</TableCell>;
-                                })}
-                            <TableCell>{children && children(item, routeName)}</TableCell>
-                        </TableRow>
-                    );
-                })}
+                {data.length > 0 ? (
+                    data.map((item: DataItem, index: number) => {
+                        const id = item.id as string | number;
+                        return (
+                            <TableRow key={`table-row-${index}`} className={selectedIds.includes(id) ? 'bg-muted' : ''}>
+                                <TableCell>
+                                    <Checkbox
+                                        checked={selectedIds.includes(id)}
+                                        onCheckedChange={() => toggleSelectOne(id)}
+                                        aria-label="Select row"
+                                    />
+                                </TableCell>
+                                {columns
+                                    .filter((col) => !hiddenColumns[col.name])
+                                    .map((col) => {
+                                        const value = item[col.name];
+                                        return <TableCell key={`table-cell-${col.name}`}>{renderCellContent(value)}</TableCell>;
+                                    })}
+                                <TableCell>{children && children(item, routeName)}</TableCell>
+                            </TableRow>
+                        );
+                    })
+                ) : (
+                    <TableRow>
+                        <TableCell
+                            colSpan={columns.length + 2}
+                            className="h-96 text-center text-muted-foreground"
+                        >
+                            Empty results.
+                        </TableCell>
+                    </TableRow>
+                )}
             </TableBody>
         </Table>
     );

@@ -21,7 +21,7 @@ trait HasPrefix
             $this->evaluate($this->prefix, [
                 'state' => $this->getState(),
                 'model' => $this->form?->getModel(),
-                'get' => new Get($this),
-            ]) : $this->prefix;        
+                'get'   => new Get($this),
+            ]) : $this->prefix;
     }
 }

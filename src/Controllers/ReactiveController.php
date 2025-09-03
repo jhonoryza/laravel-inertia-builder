@@ -13,12 +13,12 @@ class ReactiveController extends Controller
      */
     public function __invoke(Request $request)
     {
-        $state = $request->input('state', []);
-        $name = $request->input('name');
-        $value = $request->input('value');
+        $state     = $request->input('state', []);
+        $name      = $request->input('name');
+        $value     = $request->input('value');
         $formClass = $request->input('formClass');
 
-        /** @var Form form **/
+        /** @var Form form * */
         $form = $formClass::build($state);
 
         $form->handleLiveUpdate($name, $value, $state);

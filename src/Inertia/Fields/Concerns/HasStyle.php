@@ -29,12 +29,14 @@ trait HasStyle
     public function columnSpan(array $columnSpan): static
     {
         $this->columnSpan = $columnSpan;
+
         return $this;
     }
 
     public function columnOrder(array $columnOrder): static
     {
         $this->columnOrder = $columnOrder;
+
         return $this;
     }
 
@@ -45,16 +47,16 @@ trait HasStyle
 
     public function getMergeClass(): ?string
     {
-		return $this->mergeClass;        
+        return $this->mergeClass;
     }
 
     public function getColumnSpan(): array
     {
-		return $this->columnSpan;        
+        return $this->columnSpan;
     }
 
     public function getColumnOrder(): array
     {
-		return $this->columnOrder;        
+        return $this->columnOrder;
     }
 }

@@ -33,7 +33,7 @@ class {{className}} extends Controller
     public function show({{modelName}} ${{modelVariable}}): Response
     {
         return Inertia::render('builder/show', [
-            'form' => {{FormClass}}::build(${{modelVariable}}, 'view'),
+            'form' => {{FormClass}}::build(${{modelVariable}}, action: 'view'),
             'routeName' => '{{routeName}}',
             'routeId' => ${{modelVariable}}->id,
             'formClass' => {{FormClass}}::class,

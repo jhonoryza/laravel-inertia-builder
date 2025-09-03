@@ -8,8 +8,10 @@ use Jhonoryza\InertiaBuilder\Inertia\Forms\Set;
 trait HasState
 {
     public \Closure|array|string|int|bool|null $state = null;
-    protected \Closure|null $afterStateUpdated = null;
-    protected \Closure|null $formatStateUsing = null;
+
+    protected ?\Closure $afterStateUpdated = null;
+
+    protected ?\Closure $formatStateUsing = null;
 
     public function state(array|string|bool|int|callable|null $state): static
     {
@@ -27,17 +29,17 @@ trait HasState
 
     public function evaluateState(): static
     {
-        $this->state = is_callable($this->state) ? 
+        $this->state = is_callable($this->state) ?
             $this->evaluate($this->state, [
                 'state' => $this->state,
-                'get' => new Get($this),
+                'get'   => new Get($this),
                 'model' => $this->form?->getModel(),
             ]) : $this->state;
 
         if ($this->formatStateUsing) {
             $this->state = $this->evaluate($this->formatStateUsing, [
                 'state' => $this->state,
-                'get' => new Get($this),
+                'get'   => new Get($this),
                 'model' => $this->form?->getModel(),
             ]);
         }
@@ -61,9 +63,9 @@ trait HasState
 
     public function afterStateUpdated(callable $state): static
     {
-    	$this->afterStateUpdated = $state;
+        $this->afterStateUpdated = $state;
 
-		return $this;        
+        return $this;
     }
 
     public function triggerAfterStateUpdated($state, array &$formState): void
@@ -72,8 +74,8 @@ trait HasState
             $set = new Set($this, $formState);
             $this->evaluate($this->afterStateUpdated, [
                 'state' => $state,
-                'set' => $set,
-                'get' => new Get($this),
+                'set'   => $set,
+                'get'   => new Get($this),
                 'model' => $this->form?->getModel(),
             ]);
         }

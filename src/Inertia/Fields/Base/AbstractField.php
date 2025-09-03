@@ -18,9 +18,9 @@ use JsonSerializable;
 
 abstract class AbstractField implements JsonSerializable
 {
-    use HasReactive, HasState, HasKey;
-    use HasVisibility, HasDebounce, HasPlaceholder, HasReadOnly, HasStyle;
+    use HasDebounce, HasPlaceholder, HasReadOnly, HasStyle, HasVisibility;
     use HasForm, HasLabel, HasName, HasType;
+    use HasKey, HasReactive, HasState;
 
     abstract protected static function getType(): string;
 
@@ -44,7 +44,7 @@ abstract class AbstractField implements JsonSerializable
         }
 
         $reflector = new \ReflectionFunction($value);
-        $args = [];
+        $args      = [];
 
         foreach ($reflector->getParameters() as $param) {
             $type = $param->getType()?->getName();
@@ -53,18 +53,21 @@ abstract class AbstractField implements JsonSerializable
             // Inject berdasarkan nama
             if (array_key_exists($name, $parameters)) {
                 $args[] = $parameters[$name];
+
                 continue;
             }
 
             // Inject berdasarkan type-hint
             if ($type && array_key_exists($type, $parameters)) {
                 $args[] = $parameters[$type];
+
                 continue;
             }
 
             // Kalau nggak ketemu, coba default value
             if ($param->isDefaultValueAvailable()) {
                 $args[] = $param->getDefaultValue();
+
                 continue;
             }
 

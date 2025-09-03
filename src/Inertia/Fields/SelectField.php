@@ -26,7 +26,7 @@ class SelectField extends AbstractField
     {
         return array_merge(parent::toArray(), [
             'multiple'   => $this->multiple,
-            'options'    => $this->relation ? $this->getRelationshipData() : $this->options,
+            'options'    => $this->relation ? $this->getRelationshipData() : $this->getOptions(),
             'searchable' => $this->searchable,
             'serverside' => $this->serverside,
         ]);

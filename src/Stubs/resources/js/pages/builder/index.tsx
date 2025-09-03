@@ -5,6 +5,7 @@ import AppLayout from "@/layouts/app-layout";
 import {BreadcrumbItem} from "@/types";
 import {DataTableProps} from "@/types/datatable";
 import AppDatatableRowActions from '@/components/builder/app-datatable-row-actions';
+import { route } from 'ziggy-js';
 
 interface Props {
     data: DataTableProps;

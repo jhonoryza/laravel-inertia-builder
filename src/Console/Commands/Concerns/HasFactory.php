@@ -45,7 +45,7 @@ trait HasFactory
             }
 
             if (Str::endsWith($name, '_id')) {
-                $relatedModel = 'App\\Models\\' . Str::studly(Str::beforeLast($name, '_id'));
+                $relatedModel = '\App\\Models\\' . Str::studly(Str::beforeLast($name, '_id'));
 
                 return "'$name' => $relatedModel::factory(),";
             }

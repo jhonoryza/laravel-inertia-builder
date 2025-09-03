@@ -25,8 +25,9 @@ trait HasVisibility
     public function evaluateHidden(): static
     {
         // jika boolean, kembalikan langsung
-        if (!is_callable($this->hidden)) {
+        if (! is_callable($this->hidden)) {
             $this->hidden = (bool) $this->hidden;
+
             return $this;
         }
 
@@ -34,17 +35,19 @@ trait HasVisibility
         $reflection = new \ReflectionFunction($this->hidden);
         if ($reflection->getNumberOfParameters() === 0) {
             $this->hidden = $this->evaluate($this->hidden, [
-                'get' => new Get($this),
+                'get'   => new Get($this),
                 'model' => $this->form?->getModel(),
             ]);
+
             return $this;
         }
 
         // jika menerima parameter, inject Get
         $this->hidden = $this->evaluate($this->hidden, [
-            'get' => new Get($this),
+            'get'   => new Get($this),
             'model' => $this->form?->getModel(),
         ]);
+
         return $this;
     }
 }

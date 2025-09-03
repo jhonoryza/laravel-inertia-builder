@@ -6,12 +6,12 @@ use Jhonoryza\InertiaBuilder\Inertia\Form;
 
 trait HasForm
 {
-    public Form|null $form = null;
+    public ?Form $form = null;
 
     public function form(Form $form): static
     {
         $this->form = $form;
-        
-        return $this;        
+
+        return $this;
     }
 }

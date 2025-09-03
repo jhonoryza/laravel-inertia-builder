@@ -40,10 +40,10 @@ trait HasRelationship
 
             if ($modifyQueryUsing) {
                 $this->evaluate($modifyQueryUsing, [
-                    'q' => $query,
-                    'query' => $query
+                    'q'     => $query,
+                    'query' => $query,
                 ]);
-                //$modifyQueryUsing($query);
+                // $modifyQueryUsing($query);
             } elseif ($this->dependencyField) {
                 $dependencyValue = request()->input($this->dependencyField) ?? $this->dependencyValue;
 

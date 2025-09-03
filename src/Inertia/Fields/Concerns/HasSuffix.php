@@ -21,7 +21,7 @@ trait HasSuffix
             $this->evaluate($this->suffix, [
                 'state' => $this->getState(),
                 'model' => $this->form?->getModel(),
-                'get' => new Get($this),
+                'get'   => new Get($this),
             ]) : $this->suffix;
     }
 }

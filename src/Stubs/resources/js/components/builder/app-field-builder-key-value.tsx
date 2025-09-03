@@ -4,23 +4,10 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { PlusCircle, Trash2, GripVertical } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { FieldDefinition } from '@/types/field-builder';
 
 interface KeyValueFieldProps {
-    field: {
-        name: string;
-        label: string;
-        type: string;
-        addable?: boolean;
-        editable?: boolean;
-        removable?: boolean;
-        reorderable?: boolean;
-        keyLabel?: string;
-        valueLabel?: string;
-        addButtonLabel?: string;
-        keyPlaceholder?: string;
-        valuePlaceholder?: string;
-        mergeClass?: string;
-    };
+    field: FieldDefinition;
     value: Record<string, string> | null;
     onChange: (name: string, value: any, operator?: string) => void;
     error?: string | Record<string, string>;
@@ -168,6 +155,7 @@ export function AppFieldBuilderKeyValue({ field, value, onChange, error }: KeyVa
                     size="sm"
                     onClick={addItem}
                     className="mt-2"
+                    disabled={field.isDisable}
                 >
                     <PlusCircle className="h-4 w-4 mr-2" />
                     {field.addButtonLabel || 'Add Item'}

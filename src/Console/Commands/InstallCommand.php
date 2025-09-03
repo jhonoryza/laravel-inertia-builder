@@ -33,6 +33,8 @@ class InstallCommand extends Command
             'next-themes@^0.4.6',
             'react-day-picker@^9.7.0',
             'sonner@^2.0.5',
+            'ziggy-js@^2.5.3',
+            '@types/ziggy-js@^1.8.0',
         ];
         $command   = 'npm install ' . implode(' ', $packages);
         $npmResult = Process::run($command);
@@ -55,6 +57,9 @@ class InstallCommand extends Command
             echo $npxResult->errorOutput();
         }
 
+        // copy app blade
+        copy(__DIR__ . '/../../Stubs/resources/views/app.blade.php', resource_path('views/app.blade.php'));
+
         // copy inertia builder components
         (new Filesystem)->copyDirectory(__DIR__ . '/../../Stubs/resources/js/components/builder', resource_path('js/components/builder'));
         (new Filesystem)->copyDirectory(__DIR__ . '/../../Stubs/resources/js/components/custom-fields', resource_path('js/components/custom-fields'));
@@ -68,6 +73,7 @@ class InstallCommand extends Command
         $this->info('page copied successfully.');
 
         // copy datatable and field builder type
+        copy(__DIR__ . '/../../Stubs/resources/js/types/index.d.ts', resource_path('js/types/index.d.ts'));
         copy(__DIR__ . '/../../Stubs/resources/js/types/datatable.ts', resource_path('js/types/datatable.ts'));
         copy(__DIR__ . '/../../Stubs/resources/js/types/field-builder.ts', resource_path('js/types/field-builder.ts'));
         $this->info('datatable & field builder type copied successfully.');

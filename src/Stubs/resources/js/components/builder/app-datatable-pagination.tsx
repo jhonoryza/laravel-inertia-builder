@@ -40,7 +40,7 @@ export function AppDataTablePagination({
     };
 
     return (
-        <div className="flex items-center justify-between border-t px-4 py-1 text-sm">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-2 space-y-2 sm:space-y-0 border-t px-4 py-3 text-sm">
             <div className="flex flex-col items-start">
                 <div>
                     {selectedIds.length > 0 && (

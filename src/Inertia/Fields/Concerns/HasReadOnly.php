@@ -15,10 +15,10 @@ trait HasReadOnly
 
     public function evaluateDisable(): static
     {
-		$this->isReadOnly = is_callable($this->isReadOnly) ?
-			call_user_func($this->isReadOnly) : $this->isReadOnly;
+        $this->isReadOnly = is_callable($this->isReadOnly) ?
+            call_user_func($this->isReadOnly) : $this->isReadOnly;
 
-		return $this;        
+        return $this;
     }
 
     public function disableUsing(callable $callable): static
@@ -30,6 +30,6 @@ trait HasReadOnly
 
     public function getIsDisable(): bool
     {
-		return $this->isReadOnly;        
+        return $this->isReadOnly;
     }
 }

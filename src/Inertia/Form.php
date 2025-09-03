@@ -3,41 +3,44 @@
 namespace Jhonoryza\InertiaBuilder\Inertia;
 
 use Illuminate\Database\Eloquent\Model;
-use JsonSerializable;
 use Jhonoryza\InertiaBuilder\Inertia\Fields\Base\AbstractField;
+use JsonSerializable;
 
 class Form implements JsonSerializable
 {
     protected array $columns = [];
-    
+
     protected array $fields = [];
-    
+
     public array $state = [];
 
     protected ?Model $model = null;
 
     public static function make(): static
     {
-        return new static();
+        return new static;
     }
 
-    public function model(Model | null $model): self
+    public function model(?Model $model): self
     {
         if ($model) {
             $this->model = $model;
         }
+
         return $this;
     }
 
     public function schema(array $fields): static
     {
         $this->fields = $fields;
+
         return $this;
     }
 
     public function fields(array $fields): static
     {
         $this->fields = $fields;
+
         return $this;
     }
 
@@ -50,15 +53,16 @@ class Form implements JsonSerializable
                 $this->fields[] = $f;
             }
         }
-        
+
         return $this;
     }
 
     public function state(array $state): static
     {
-        if (!empty($state)) {
-            $this->state = $state;            
+        if (! empty($state)) {
+            $this->state = $state;
         }
+
         return $this;
     }
 
@@ -66,16 +70,18 @@ class Form implements JsonSerializable
     {
         if (is_int($columns)) {
             $this->columns = ['default' => $columns];
+
             return $this;
         }
         $this->columns = $columns;
+
         return $this;
     }
 
     public function findField(string $name)
     {
         return collect($this->getFields())
-            ->first(fn($field) => $field->getName() === $name);
+            ->first(fn ($field) => $field->getName() === $name);
     }
 
     // di panggil saat ada perubahan dari frontend
@@ -105,7 +111,7 @@ class Form implements JsonSerializable
     public function evaluateFields(): array
     {
         return collect($this->getFields())
-            ->map(function(AbstractField $field) {
+            ->map(function (AbstractField $field) {
 
                 // set form state to field state
                 $field->form($this);
@@ -119,7 +125,7 @@ class Form implements JsonSerializable
 
     public function getModel(): ?Model
     {
-        return $this->model;        
+        return $this->model;
     }
 
     public function getSchema(): array
@@ -129,23 +135,24 @@ class Form implements JsonSerializable
 
     public function getFields(): array
     {
-        return $this->fields;   
+        return $this->fields;
     }
 
     public function getState(): array
     {
-        return $this->state;   
+        return $this->state;
     }
 
     public function getColumns(): array
     {
-        return $this->columns;        
+        return $this->columns;
     }
 
     private function checkisStateEmpty(): void
     {
         if (empty($this->state)) {
             foreach ($this->getFields() as $field) {
+                $field->form($this);
                 $state = $field->getState();
                 if (empty($state)) {
                     $state = $this->model?->{$field->getName()} ?? null;
@@ -158,9 +165,10 @@ class Form implements JsonSerializable
     public function jsonSerialize(): array
     {
         $this->checkisStateEmpty();
+
         return [
             'columns' => $this->getColumns(),
-            'fields' => $this->evaluateFields(),
+            'fields'  => $this->evaluateFields(),
         ];
     }
 }

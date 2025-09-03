@@ -19,7 +19,7 @@ class RadioField extends AbstractField
     public function toArray(): array
     {
         return array_merge(parent::toArray(), [
-            'options' => $this->relation ? $this->getRelationshipData() : $this->options,
+            'options' => $this->relation ? $this->getRelationshipData() : $this->getOptions(),
         ]);
     }
 }

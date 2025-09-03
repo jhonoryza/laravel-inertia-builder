@@ -7,6 +7,7 @@ import {toast} from "sonner";
 import {ColumnDef, FieldDefinition} from "@/types/field-builder";
 import {RefreshCw} from "lucide-react";
 import {clsx} from "clsx";
+import { route } from 'ziggy-js';
 
 type PageProps = {
     columns?: ColumnDef;

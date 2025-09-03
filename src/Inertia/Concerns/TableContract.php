@@ -7,6 +7,7 @@ use Jhonoryza\InertiaBuilder\Inertia\Tables\Table;
 
 interface TableContract
 {
-	public static function build(): Table;
-	public static function actions(): RedirectResponse;
+    public static function build(): Table;
+
+    public static function actions(): RedirectResponse;
 }

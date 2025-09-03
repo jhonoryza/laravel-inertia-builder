@@ -6,16 +6,15 @@ trait HasType
 {
     protected string $type;
 
-	public function type(string $type): static
-	{
-		$this->type = $type;
+    public function type(string $type): static
+    {
+        $this->type = $type;
 
-		return $this;	    
-	}
+        return $this;
+    }
 
-	public function getType(): string
-	{
-		return $this->type;	    
-	}
-
+    public function getType(): string
+    {
+        return $this->type;
+    }
 }

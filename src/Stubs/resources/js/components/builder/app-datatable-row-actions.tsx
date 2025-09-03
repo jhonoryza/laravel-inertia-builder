@@ -15,6 +15,7 @@ import { Button } from "@/components/ui/button";
 import { Eye, Pencil, Trash2, RefreshCw, XCircle } from "lucide-react";
 import { router } from "@inertiajs/react";
 import { DataItem } from "@/types/datatable";
+import { route } from 'ziggy-js';
 
 interface RowActionsProps {
   item: DataItem;

@@ -101,4 +101,5 @@ export type DataTableProps = {
     delete: boolean;
     forceDelete: boolean;
     restore: boolean;
+    disablePagination: boolean;
 };

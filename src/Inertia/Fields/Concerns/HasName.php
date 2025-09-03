@@ -6,15 +6,15 @@ trait HasName
 {
     protected string $name;
 
-	public function name($name): static
-	{
-		$this->name = $name;
+    public function name($name): static
+    {
+        $this->name = $name;
 
-		return $this;	    
-	}
+        return $this;
+    }
 
-	public function getName(): string
-	{
-		return $this->name;	    
-	}
+    public function getName(): string
+    {
+        return $this->name;
+    }
 }

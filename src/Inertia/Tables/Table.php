@@ -18,6 +18,7 @@ use Spatie\QueryBuilder\QueryBuilder;
 class Table implements JsonSerializable
 {
     protected string $paginationMethod = 'paginate';
+
     protected bool $disablePagination = false;
 
     protected string $name = 'data';
@@ -29,17 +30,27 @@ class Table implements JsonSerializable
     protected array $filters = [];
 
     protected bool $canEdit = true;
+
     protected bool $canView = true;
+
     protected bool $canDelete = true;
+
     protected bool $canForceDelete = true;
+
     protected bool $canRestore = true;
 
     protected string $sortByParam = 'sort';
+
     protected string $sortDirParam = 'dir';
+
     protected string $searchParam = 'q';
+
     protected string $perPageParam = 'perPage';
+
     protected string $pageParam = 'page';
+
     protected string $filterParam = 'filter';
+
     protected string $prefix = '';
 
     protected ?string $defaultSort = null;
@@ -75,12 +86,14 @@ class Table implements JsonSerializable
     public function name(string $name): static
     {
         $this->name = $name;
+
         return $this;
     }
 
     public function prefix(string $prefix): static
     {
         $this->prefix = $prefix;
+
         return $this;
     }
 
@@ -115,13 +128,13 @@ class Table implements JsonSerializable
     }
 
     /**
-     * @param string $method paginate, simple, cursor
+     * @param  string  $method  paginate, simple, cursor
      *
      * @throws \Exception
      */
     public function pagination(string $method): static
     {
-        if (!in_array($method, ['paginate', 'simple', 'cursor'])) {
+        if (! in_array($method, ['paginate', 'simple', 'cursor'])) {
             throw new \Exception('Invalid pagination method: ' . $method);
         }
         $this->paginationMethod = $method;
@@ -166,7 +179,7 @@ class Table implements JsonSerializable
 
     public function defaultSort(string $column, string $dir = 'asc'): static
     {
-        $this->defaultSort = $column;
+        $this->defaultSort    = $column;
         $this->defaultSortDir = $dir;
 
         return $this;
@@ -201,31 +214,36 @@ class Table implements JsonSerializable
     public function canEdit($state = true): self
     {
         $this->canEdit = $state;
-        return $this;        
+
+        return $this;
     }
 
     public function canView($state = true): self
     {
         $this->canView = $state;
-        return $this;        
+
+        return $this;
     }
 
     public function canDelete($state = true): self
     {
         $this->canDelete = $state;
-        return $this;        
+
+        return $this;
     }
 
     public function canForceDelete($state = true): self
     {
         $this->canForceDelete = $state;
-        return $this;        
+
+        return $this;
     }
 
     public function canRestore($state = true): self
     {
         $this->canRestore = $state;
-        return $this;        
+
+        return $this;
     }
 
     protected function evaluate(mixed $value, array $parameters = [])
@@ -235,7 +253,7 @@ class Table implements JsonSerializable
         }
 
         $reflector = new \ReflectionFunction($value);
-        $args = [];
+        $args      = [];
 
         foreach ($reflector->getParameters() as $param) {
             $type = $param->getType()?->getName();
@@ -244,18 +262,21 @@ class Table implements JsonSerializable
             // Inject berdasarkan nama
             if (array_key_exists($name, $parameters)) {
                 $args[] = $parameters[$name];
+
                 continue;
             }
 
             // Inject berdasarkan type-hint
             if ($type && array_key_exists($type, $parameters)) {
                 $args[] = $parameters[$type];
+
                 continue;
             }
 
             // Kalau nggak ketemu, coba default value
             if ($param->isDefaultValueAvailable()) {
                 $args[] = $param->getDefaultValue();
+
                 continue;
             }
 
@@ -280,31 +301,30 @@ class Table implements JsonSerializable
             config()->set('query-builder.parameters.filter', $this->getFilterParam());
         }
 
-        $query = $this->baseQuery == null ? 
+        $query = $this->baseQuery == null ?
             QueryBuilder::for($this->model, request())
                 ->when(
                     $this->queryUsingCallback,
                     function (Builder $query) {
                         return $this->evaluate($this->queryUsingCallback, [
-                            'query' => $query,
+                            'query'   => $query,
                             'request' => request(),
                         ]);
                     }
                 )
                 ->allowedFilters($this->getAllowedFilters(request()))
                 ->allowedSorts($this->getAllowedSorts())
-                ->with(array_filter(array_map(fn($c) => $c->relation, $this->columns)))
+                ->with(array_filter(array_map(fn ($c) => $c->relation, $this->columns)))
             : $this->evaluate($this->baseQuery, [
                 'request' => request(),
             ]);
-        
 
         /**
          * default sort handler
          */
         if ($this->defaultSort) {
             $dirStr = request()->get($this->getSortDirParam(), $this->defaultSortDir);
-            $dir = $dirStr === 'desc' ? '-' : '';
+            $dir    = $dirStr === 'desc' ? '-' : '';
             if ($this->baseQuery == null) {
                 $query->defaultSort($dir . $this->defaultSort);
             } else {
@@ -319,7 +339,7 @@ class Table implements JsonSerializable
         if ($search) {
             $query->where(function ($q) use ($search) {
                 foreach ($this->columns as $col) {
-                    if (!$col->searchable) {
+                    if (! $col->searchable) {
                         continue;
                     }
                     if ($col->relation && $col->relationKey) {
@@ -389,9 +409,8 @@ class Table implements JsonSerializable
      */
     private function mapRowsWithRenderUsing(
         LengthAwarePaginator|Paginator|CursorPaginator|Collection $items,
-    ): LengthAwarePaginator|Paginator|CursorPaginator|Collection
-    {
-        $columns = $this->columns;
+    ): LengthAwarePaginator|Paginator|CursorPaginator|Collection {
+        $columns     = $this->columns;
         $collections = $items instanceof Collection ? $items : $items->getCollection();
 
         $collections
@@ -403,13 +422,13 @@ class Table implements JsonSerializable
                     if ($col->renderUsing && is_callable($col->renderUsing)) {
                         $value = $this->evaluate($col->renderUsing, [
                             'state' => $value,
-                            'value' => $value, 
-                            'row' => $row,
+                            'value' => $value,
+                            'row'   => $row,
                             'model' => $row,
                         ]);
                     } elseif ($col->relation && $col->relationKey && $col->relationType === 'belongsTo') {
                         if (str_contains($col->relation, '.')) {
-                            $tmps = explode('.', $col->relation);
+                            $tmps  = explode('.', $col->relation);
                             $value = $row;
                             foreach ($tmps as $tmp) {
                                 $value = $value->{$tmp};
@@ -424,7 +443,7 @@ class Table implements JsonSerializable
                             ->wordWrap(break: '<br>');
                     } elseif (str_contains($col->name, '.')) {
                         [$relationName, $relationAttribute] = extractRelation($col->name);
-                        $value = $row->{$relationName};
+                        $value                              = $row->{$relationName};
                         if ($value instanceof Collection) {
                             $value = $value
                                 ->pluck($relationAttribute)
@@ -449,7 +468,7 @@ class Table implements JsonSerializable
      */
     public function getColumns(): array
     {
-        return array_map(fn($col) => $col->toArray(), $this->columns);
+        return array_map(fn ($col) => $col->toArray(), $this->columns);
     }
 
     /**
@@ -458,7 +477,7 @@ class Table implements JsonSerializable
     private function getAllowedSorts(): array
     {
         $allowedSorts = array_map(
-            fn($col) => $col->relation ?
+            fn ($col) => $col->relation ?
                 $col->relation . '.' . $col->relationKey
                 : $col->name,
             $this->columns
@@ -481,16 +500,16 @@ class Table implements JsonSerializable
     private function getAllowedFilters(Request $request): array
     {
         $allowedFilters = [];
-        if (!$request->has($this->getFilterParam())) {
+        if (! $request->has($this->getFilterParam())) {
             return $allowedFilters;
         }
         foreach (collect($this->filters) as $filter) {
             $key = $filter->field;
-            if (!array_key_exists($key, $request->{$this->getFilterParam()})) {
+            if (! array_key_exists($key, $request->{$this->getFilterParam()})) {
                 continue;
             }
             $oldValue = $request->{$this->getFilterParam()}[$key];
-            $temp = str_contains($oldValue, ':') ? explode(':', $oldValue, 2) : [$oldValue];
+            $temp     = str_contains($oldValue, ':') ? explode(':', $oldValue, 2) : [$oldValue];
             $operator = null;
 
             if (count($temp) < 1) {
@@ -503,9 +522,9 @@ class Table implements JsonSerializable
             }
 
             $operator = $temp[0];
-            $value = $temp[1] ?? $operator ?? '';
+            $value    = $temp[1] ?? $operator ?? '';
 
-            if (!in_array($operator, $this->predefinedOperators)) {
+            if (! in_array($operator, $this->predefinedOperators)) {
                 // fallback does nothing
                 $allowedFilters[] = AllowedFilter::callback($key, function (Builder $query) use ($key, $value) {
                     $query->where($key, $value);
@@ -547,14 +566,14 @@ class Table implements JsonSerializable
     private function filterQuery(Builder $query, string $key, string $operator, mixed $value, bool $isDateType): void
     {
         if ($operator === '><') {
-            $tmp = str_contains($value, ',') ? explode(',', $value, 2) : [$value, null];
+            $tmp    = str_contains($value, ',') ? explode(',', $value, 2) : [$value, null];
             $newKey = $isDateType ? DB::raw("DATE($key)") : $key;
             $query->whereBetween($newKey, [$tmp[0], $tmp[1] ?? null]);
 
             return;
         }
         if ($operator === '!><') {
-            $tmp = str_contains($value, ',') ? explode(',', $value, 2) : [$value, null];
+            $tmp    = str_contains($value, ',') ? explode(',', $value, 2) : [$value, null];
             $newKey = $isDateType ? DB::raw("DATE($key)") : $key;
             $query->whereNotBetween($newKey, [$tmp[0], $tmp[1] ?? null]);
 
@@ -591,14 +610,14 @@ class Table implements JsonSerializable
             return;
         }
         if ($operator === 'in') {
-            $tmp = str_contains($value, ',') ? explode(',', $value) : [$value];
+            $tmp    = str_contains($value, ',') ? explode(',', $value) : [$value];
             $newKey = $isDateType ? DB::raw("DATE($key)") : $key;
             $query->whereIn($newKey, is_array($tmp) ? $tmp : [$tmp]);
 
             return;
         }
         if ($operator === 'notIn') {
-            $tmp = str_contains($value, ',') ? explode(',', $value) : [$value];
+            $tmp    = str_contains($value, ',') ? explode(',', $value) : [$value];
             $newKey = $isDateType ? DB::raw("DATE($key)") : $key;
             $query->whereNotIn($newKey, is_array($tmp) ? $tmp : [$tmp]);
 
@@ -623,25 +642,25 @@ class Table implements JsonSerializable
         $items = $this->get();
 
         return [
-            'items' => $items,
+            'items'   => $items,
             'filters' => [
-                'q' => request()->input('q'),
-                'sort' => request()->input('sort', $this->defaultSort),
-                'dir' => request()->input('dir', $this->defaultSortDir),
-                'opt' => $this->filters,
+                'q'      => request()->input('q'),
+                'sort'   => request()->input('sort', $this->defaultSort),
+                'dir'    => request()->input('dir', $this->defaultSortDir),
+                'opt'    => $this->filters,
                 'filter' => request()->input('filter'),
             ],
-            'perPage' => $this->disablePagination ? 0 : (int)$items->perPage(),
-            'perPageOptions' => $this->disablePagination ? 0 : $this->perPageOptions,
-            'columns' => $this->getColumns(),
-            'actions' => $this->getActions(),
-            'prefix' => $this->prefix,
-            'name' => $this->name,
-            'edit' => $this->canEdit,
-            'view' => $this->canView,
-            'delete' => $this->canDelete,
-            'forceDelete' => $this->canForceDelete,
-            'restore' => $this->canRestore,
+            'perPage'           => $this->disablePagination ? 0 : (int) $items->perPage(),
+            'perPageOptions'    => $this->disablePagination ? 0 : $this->perPageOptions,
+            'columns'           => $this->getColumns(),
+            'actions'           => $this->getActions(),
+            'prefix'            => $this->prefix,
+            'name'              => $this->name,
+            'edit'              => $this->canEdit,
+            'view'              => $this->canView,
+            'delete'            => $this->canDelete,
+            'forceDelete'       => $this->canForceDelete,
+            'restore'           => $this->canRestore,
             'disablePagination' => $this->disablePagination,
         ];
     }

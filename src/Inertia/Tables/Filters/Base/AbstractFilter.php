@@ -30,7 +30,7 @@ abstract class AbstractFilter implements JsonSerializable
         }
 
         $reflector = new \ReflectionFunction($value);
-        $args = [];
+        $args      = [];
 
         foreach ($reflector->getParameters() as $param) {
             $type = $param->getType()?->getName();
@@ -39,18 +39,21 @@ abstract class AbstractFilter implements JsonSerializable
             // Inject berdasarkan nama
             if (array_key_exists($name, $parameters)) {
                 $args[] = $parameters[$name];
+
                 continue;
             }
 
             // Inject berdasarkan type-hint
             if ($type && array_key_exists($type, $parameters)) {
                 $args[] = $parameters[$type];
+
                 continue;
             }
 
             // Kalau nggak ketemu, coba default value
             if ($param->isDefaultValueAvailable()) {
                 $args[] = $param->getDefaultValue();
+
                 continue;
             }
 

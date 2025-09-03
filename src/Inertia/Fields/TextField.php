@@ -19,7 +19,7 @@ class TextField extends AbstractField
     {
         return array_merge(parent::toArray(), [
             'prefix' => $this->getPrefix(),
-            'suffix' => $this->getSuffix()
+            'suffix' => $this->getSuffix(),
         ]);
     }
 }

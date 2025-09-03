@@ -1,14 +1,15 @@
 import { AppDataTableActiveFilters } from '@/components/builder/app-datatable-active-filters';
-import { ActiveFilter, DataItem, DataTableCommon } from '@/types/datatable';
+import { ActiveFilter, DataItem, DataTableProps } from '@/types/datatable';
 import { router, usePage } from '@inertiajs/react';
 import { useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
 import { AppDataTableContent } from './app-datatable-content';
 import { AppDataTablePagination } from './app-datatable-pagination';
 import { AppDataTableToolbar } from './app-datatable-toolbar';
+import { route } from 'ziggy-js';
 
 type DataTable = {
-    data: DataTableCommon;
+    data: DataTableProps;
     routeName: string;
     tableRoute: string;
     children?: {

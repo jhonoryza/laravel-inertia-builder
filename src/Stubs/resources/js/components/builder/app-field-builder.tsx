@@ -67,6 +67,8 @@ export function AppFieldBuilder({ field, setFields, value, onReactive, error, is
         return <></>;
     }
 
+    value = value == "[]" ? [] : value;
+
     switch (field.type) {
         case 'textarea':
             return (
@@ -82,7 +84,7 @@ export function AppFieldBuilder({ field, setFields, value, onReactive, error, is
                         className={field.mergeClass}
                         disabled={field.isDisable || isProcessing}
                     />
-                    {error && <div className="text-sm text-destructive">{error}</div>}
+                    {error && <div className="text-xs text-destructive">{error}</div>}
                 </div>
             );
         case 'slider':
@@ -106,7 +108,7 @@ export function AppFieldBuilder({ field, setFields, value, onReactive, error, is
                             <span>{field.max || 100}</span>
                         </div>
                     </div>
-                    {error && <div className="text-sm text-destructive">{error}</div>}
+                    {error && <div className="text-xs text-destructive">{error}</div>}
                 </div>
             );
         case 'file':
@@ -114,7 +116,7 @@ export function AppFieldBuilder({ field, setFields, value, onReactive, error, is
                 <div key={field.name} className={`'space-y-2' ${field.isInline ? 'flex items-center space-x-2' : ''}`}>
                     <Label htmlFor={field.name}>{field.label}</Label>
                     <AppFieldBuilderFile field={field} value={value} onChange={onChange} />
-                    {error && <div className="text-sm text-destructive">{error}</div>}
+                    {error && <div className="text-xs text-destructive">{error}</div>}
                 </div>
             );
         case 'text':
@@ -140,7 +142,7 @@ export function AppFieldBuilder({ field, setFields, value, onReactive, error, is
                             <span className="flex items-center border-l border-input px-3 text-sm text-muted-foreground">{field.suffix}</span>
                         )}
                     </div>
-                    {error && <div className="text-sm text-destructive">{error}</div>}
+                    {error && <div className="text-xs text-destructive">{error}</div>}
                 </div>
             );
         case 'password':
@@ -157,7 +159,7 @@ export function AppFieldBuilder({ field, setFields, value, onReactive, error, is
                         className={cn(field.mergeClass, 'hidden')}
                         disabled={field.isDisable || isProcessing}
                     />
-                    {error && <div className="text-sm text-destructive">{error}</div>}
+                    {error && <div className="text-xs text-destructive">{error}</div>}
                 </div>
             );
         case 'markdown':
@@ -165,7 +167,7 @@ export function AppFieldBuilder({ field, setFields, value, onReactive, error, is
                 <div key={field.name} className={`'space-y-2' ${field.isInline ? 'flex items-center space-x-2' : ''}`}>
                     <Label htmlFor={field.name}>{field.label}</Label>
                     <AppFieldBuilderMarkdown field={field} value={value} onChange={onChange} />
-                    {error && <div className="text-sm text-destructive">{error}</div>}
+                    {error && <div className="text-xs text-destructive">{error}</div>}
                 </div>
             );
         case 'checkbox-list':
@@ -173,7 +175,7 @@ export function AppFieldBuilder({ field, setFields, value, onReactive, error, is
                 <div key={field.name} className={`'space-y-2' ${field.isInline ? 'flex items-center space-x-2' : ''}`}>
                     <Label htmlFor={field.name}>{field.label}</Label>
                     <AppFieldBuilderCheckboxList field={field} value={value} onChange={onChange} />
-                    {error && <div className="text-sm text-destructive">{error}</div>}
+                    {error && <div className="text-xs text-destructive">{error}</div>}
                 </div>
             );
         case 'rich-text':
@@ -181,7 +183,7 @@ export function AppFieldBuilder({ field, setFields, value, onReactive, error, is
                 <div key={field.name} className={`'space-y-2' ${field.isInline ? 'flex items-center space-x-2' : ''}`}>
                     <Label htmlFor={field.name}>{field.label}</Label>
                     <AppFieldBuilderRichText field={field} value={value} onChange={onChange} />
-                    {error && <div className="text-sm text-destructive">{error}</div>}
+                    {error && <div className="text-xs text-destructive">{error}</div>}
                 </div>
             );
         case 'repeater':
@@ -189,7 +191,7 @@ export function AppFieldBuilder({ field, setFields, value, onReactive, error, is
                 <div key={field.name} className={`'space-y-2' ${field.isInline ? 'flex items-center space-x-2' : ''}`}>
                     <Label htmlFor={field.name}>{field.label}</Label>
                     <AppFieldBuilderRepeater field={field} value={value || []} onChange={onChange} error={error} />
-                    {error && <div className="text-sm text-destructive">{error}</div>}
+                    {error && <div className="text-xs text-destructive">{error}</div>}
                 </div>
             );
         case 'key-value':
@@ -197,7 +199,7 @@ export function AppFieldBuilder({ field, setFields, value, onReactive, error, is
                 <div key={field.name} className={`'space-y-2' ${field.isInline ? 'flex items-center space-x-2' : ''}`}>
                     <Label htmlFor={field.name}>{field.label}</Label>
                     <AppFieldBuilderKeyValue field={field} value={value || {}} onChange={onChange} error={error} />
-                    {error && <div className="text-sm text-destructive">{error}</div>}
+                    {error && <div className="text-xs text-destructive">{error}</div>}
                 </div>
             );
         case 'tags':
@@ -205,7 +207,7 @@ export function AppFieldBuilder({ field, setFields, value, onReactive, error, is
                 <div key={field.name} className={`'space-y-2' ${field.isInline ? 'flex items-center space-x-2' : ''}`}>
                     <Label htmlFor={field.name}>{field.label}</Label>
                     <AppFieldBuilderTags field={field} value={value || []} onChange={onChange} error={error} />
-                    {error && <div className="text-sm text-destructive">{error}</div>}
+                    {error && <div className="text-xs text-destructive">{error}</div>}
                 </div>
             );
         case 'custom':
@@ -213,7 +215,7 @@ export function AppFieldBuilder({ field, setFields, value, onReactive, error, is
                 <div key={field.name} className={`'space-y-2' ${field.isInline ? 'flex items-center space-x-2' : ''}`}>
                     <Label htmlFor={field.name}>{field.label}</Label>
                     <AppFieldBuilderCustom field={field} value={value} onChange={onChange} error={error} />
-                    {error && <div className="text-sm text-destructive">{error}</div>}
+                    {error && <div className="text-xs text-destructive">{error}</div>}
                 </div>
             );
         case 'flatpickr':
@@ -221,7 +223,7 @@ export function AppFieldBuilder({ field, setFields, value, onReactive, error, is
                 <div key={field.name} className={`'space-y-2' ${field.isInline ? 'flex items-center space-x-2' : ''}`}>
                     <Label htmlFor={field.name}>{field.label}</Label>
                     <AppFieldBuilderFlatpickr field={field} value={value} onChange={onChange} />
-                    {error && <div className="text-sm text-destructive">{error}</div>}
+                    {error && <div className="text-xs text-destructive">{error}</div>}
                 </div>
             );
         case 'date':
@@ -243,7 +245,7 @@ export function AppFieldBuilder({ field, setFields, value, onReactive, error, is
                             <Calendar mode="single" selected={value} captionLayout="dropdown" onSelect={(date) => handleReactiveChange(date)} />
                         </PopoverContent>
                     </Popover>
-                    {error && <div className="text-sm text-destructive">{error}</div>}
+                    {error && <div className="text-xs text-destructive">{error}</div>}
                 </div>
             );
         case 'datetime-local':
@@ -251,7 +253,7 @@ export function AppFieldBuilder({ field, setFields, value, onReactive, error, is
                 <div key={field.name} className={`'space-y-2' ${field.isInline ? 'flex items-center space-x-2' : ''}`}>
                     <Label htmlFor={field.name}>{field.label}</Label>
                     <AppFieldBuilderDatetime field={field} value={value} onChange={onChange} />
-                    {error && <div className="text-sm text-destructive">{error}</div>}
+                    {error && <div className="text-xs text-destructive">{error}</div>}
                 </div>
             );
         case 'select':
@@ -267,7 +269,7 @@ export function AppFieldBuilder({ field, setFields, value, onReactive, error, is
                                     disabled={field.isDisable || isProcessing}
                                     className={cn('w-full justify-between text-muted-foreground hover:text-muted-foreground', field.mergeClass)}
                                 >
-                                    {value?.length > 0 ? `${value.length} selected` : field.placeholder || 'Select options'}
+                                    {value && value?.length > 0 ? `${value.length} selected` : field.placeholder || 'Select options'}
                                 </Button>
                             </PopoverTrigger>
 
@@ -296,7 +298,7 @@ export function AppFieldBuilder({ field, setFields, value, onReactive, error, is
                                 </div>
                             </PopoverContent>
                         </Popover>
-                        {error && <div className="text-sm text-destructive">{error}</div>}
+                        {error && <div className="text-xs text-destructive">{error}</div>}
                     </div>
                 );
             }
@@ -368,7 +370,7 @@ export function AppFieldBuilder({ field, setFields, value, onReactive, error, is
                                 </Command>
                             </PopoverContent>
                         </Popover>
-                        {error && <div className="text-sm text-destructive">{error}</div>}
+                        {error && <div className="text-xs text-destructive">{error}</div>}
                     </div>
                 );
             }
@@ -384,7 +386,7 @@ export function AppFieldBuilder({ field, setFields, value, onReactive, error, is
                                     disabled={field.isDisable || isProcessing}
                                     className={cn('w-full justify-between', field.mergeClass)}
                                 >
-                                    {value ? `${value.length} selected` : field.placeholder || 'Select options'}
+                                    {value && value.length > 0 ? `${value.length} selected` : field.placeholder || 'Select options'}
                                 </Button>
                             </PopoverTrigger>
 
@@ -446,7 +448,7 @@ export function AppFieldBuilder({ field, setFields, value, onReactive, error, is
                                 </Command>
                             </PopoverContent>
                         </Popover>
-                        {error && <div className="text-sm text-destructive">{error}</div>}
+                        {error && <div className="text-xs text-destructive">{error}</div>}
                     </div>
                 );
             }
@@ -474,7 +476,7 @@ export function AppFieldBuilder({ field, setFields, value, onReactive, error, is
                             ))}
                         </SelectContent>
                     </Select>
-                    {error && <div className="text-sm text-destructive">{error}</div>}
+                    {error && <div className="text-xs text-destructive">{error}</div>}
                 </div>
             );
         case 'combobox':
@@ -552,7 +554,7 @@ export function AppFieldBuilder({ field, setFields, value, onReactive, error, is
                                 </Command>
                             </PopoverContent>
                         </Popover>
-                        {error && <div className="text-sm text-destructive">{error}</div>}
+                        {error && <div className="text-xs text-destructive">{error}</div>}
                     </div>
                 );
             }
@@ -623,7 +625,7 @@ export function AppFieldBuilder({ field, setFields, value, onReactive, error, is
                             </Command>
                         </PopoverContent>
                     </Popover>
-                    {error && <div className="text-sm text-destructive">{error}</div>}
+                    {error && <div className="text-xs text-destructive">{error}</div>}
                 </div>
             );
         case 'radio':
@@ -638,7 +640,7 @@ export function AppFieldBuilder({ field, setFields, value, onReactive, error, is
                             </div>
                         ))}
                     </RadioGroup>
-                    {error && <div className="text-sm text-destructive">{error}</div>}
+                    {error && <div className="text-xs text-destructive">{error}</div>}
                 </div>
             );
         case 'checkbox':
@@ -652,7 +654,7 @@ export function AppFieldBuilder({ field, setFields, value, onReactive, error, is
                         className={field.mergeClass}
                         disabled={field.isDisable || isProcessing}
                     />
-                    {error && <div className="text-sm text-destructive">{error}</div>}
+                    {error && <div className="text-xs text-destructive">{error}</div>}
                 </div>
             );
         case 'toggle':
@@ -668,7 +670,7 @@ export function AppFieldBuilder({ field, setFields, value, onReactive, error, is
                             disabled={field.isDisable || isProcessing}
                         />
                     </div>
-                    {error && <div className="text-sm text-destructive">{error}</div>}
+                    {error && <div className="text-xs text-destructive">{error}</div>}
                 </div>
             );
         default:
