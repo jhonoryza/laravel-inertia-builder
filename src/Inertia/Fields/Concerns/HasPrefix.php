@@ -19,7 +19,7 @@ trait HasPrefix
     {
         return is_callable($this->prefix) ?
             $this->evaluate($this->prefix, [
-                'state' => $this->getState(),
+                'state' => $this->state,
                 'model' => $this->form?->getModel(),
                 'get'   => new Get($this),
             ]) : $this->prefix;

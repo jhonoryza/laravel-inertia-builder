@@ -1,33 +1,33 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import {AppFieldBuilderCheckboxList} from '@/components/builder/app-field-builder-checkbox-list';
-import {AppFieldBuilderCustom} from '@/components/builder/app-field-builder-custom';
-import {AppFieldBuilderDatetime} from '@/components/builder/app-field-builder-datetime';
-import {AppFieldBuilderFile} from '@/components/builder/app-field-builder-file';
-import {AppFieldBuilderFlatpickr} from '@/components/builder/app-field-builder-flatpickr';
-import {AppFieldBuilderKeyValue} from '@/components/builder/app-field-builder-key-value';
-import {AppFieldBuilderMarkdown} from '@/components/builder/app-field-builder-markdown';
-import {AppFieldBuilderRepeater} from '@/components/builder/app-field-builder-repeater';
-import {AppFieldBuilderRichText} from '@/components/builder/app-field-builder-rich-text';
-import {AppFieldBuilderTags} from '@/components/builder/app-field-builder-tags';
-import {Button} from '@/components/ui/button';
-import {Calendar} from '@/components/ui/calendar';
-import {Checkbox} from '@/components/ui/checkbox';
-import {Command, CommandEmpty, CommandGroup, CommandInput, CommandItem} from '@/components/ui/command';
-import {Input} from '@/components/ui/input';
-import {Label} from '@/components/ui/label';
-import {Popover, PopoverContent, PopoverTrigger} from '@/components/ui/popover';
-import {RadioGroup, RadioGroupItem} from '@/components/ui/radio-group';
-import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from '@/components/ui/select';
-import {Slider} from '@/components/ui/slider';
-import {Switch} from '@/components/ui/switch';
-import {Textarea} from '@/components/ui/textarea';
-import {cn} from '@/lib/utils';
-import {FieldDefinition} from '@/types/field-builder';
-import {router} from '@inertiajs/react';
-import {format} from 'date-fns';
-import {Check, ChevronsUpDown, Copy} from 'lucide-react';
-import React, {Key, useState} from 'react';
-import {AppFieldBuilderPassword} from './app-field-builder-password';
+import { AppFieldBuilderCheckboxList } from '@/components/builder/app-field-builder-checkbox-list';
+import { AppFieldBuilderCustom } from '@/components/builder/app-field-builder-custom';
+import { AppFieldBuilderDatetime } from '@/components/builder/app-field-builder-datetime';
+import { AppFieldBuilderFile } from '@/components/builder/app-field-builder-file';
+import { AppFieldBuilderFlatpickr } from '@/components/builder/app-field-builder-flatpickr';
+import { AppFieldBuilderKeyValue } from '@/components/builder/app-field-builder-key-value';
+import { AppFieldBuilderMarkdown } from '@/components/builder/app-field-builder-markdown';
+import { AppFieldBuilderRepeater } from '@/components/builder/app-field-builder-repeater';
+import { AppFieldBuilderRichText } from '@/components/builder/app-field-builder-rich-text';
+import { AppFieldBuilderTags } from '@/components/builder/app-field-builder-tags';
+import { Button } from '@/components/ui/button';
+import { Calendar } from '@/components/ui/calendar';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from '@/components/ui/command';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Slider } from '@/components/ui/slider';
+import { Switch } from '@/components/ui/switch';
+import { Textarea } from '@/components/ui/textarea';
+import { cn, fieldClasses } from '@/lib/utils';
+import { ColumnDef, FieldDefinition } from '@/types/field-builder';
+import { router } from '@inertiajs/react';
+import { format } from 'date-fns';
+import { Check, ChevronsUpDown, Copy } from 'lucide-react';
+import React, { Key, useState } from 'react';
+import { AppFieldBuilderPassword } from './app-field-builder-password';
 
 interface FieldBuilderProps {
     field: FieldDefinition;
@@ -36,9 +36,18 @@ interface FieldBuilderProps {
     onReactive: (name: string, value: any, operator?: string) => void;
     error?: string;
     isProcessing?: boolean;
+    columns: ColumnDef | undefined;
 }
 
-export function AppFieldBuilder({field, setFields, value, onReactive, error, isProcessing}: FieldBuilderProps) {
+export function AppFieldBuilder({
+    field,
+    setFields,
+    value,
+    onReactive,
+    error,
+    isProcessing,
+    columns
+}: FieldBuilderProps) {
     const handleReactiveChange = (newValue: any) => {
         onChange(field.name, newValue);
         // setData(field.name, newValue);
@@ -101,7 +110,7 @@ export function AppFieldBuilder({field, setFields, value, onReactive, error, isP
             return (
                 <div
                     key={field.key}
-                    className={`space-y-2 ${field.isInline ? "flex items-center space-x-2" : ""}`}
+                    className={`space-y-2 ${field.isInline ? "flex items-center space-x-2" : ""} ${fieldClasses(field)}`}
                 >
                     <Label htmlFor={field.name} className="text-sm font-medium text-foreground">
                         {field.label}
@@ -119,7 +128,7 @@ export function AppFieldBuilder({field, setFields, value, onReactive, error, isP
             return (
                 <div
                     key={field.key}
-                    className={`space-y-2 ${field.isInline ? "flex items-center space-x-2" : ""}`}
+                    className={`space-y-2 ${field.isInline ? "flex items-center space-x-2" : ""} ${fieldClasses(field)}`}
                 >
                     <Label htmlFor={field.name} className="text-sm font-bold text-foreground">
                         {field.label}
@@ -136,7 +145,8 @@ export function AppFieldBuilder({field, setFields, value, onReactive, error, isP
     switch (field.type) {
         case 'textarea':
             return (
-                <div key={field.key} className={`'space-y-2' ${field.isInline ? 'flex items-center space-x-2' : ''}`}>
+                <div key={field.key}
+                    className={`'space-y-2' ${field.isInline ? 'flex items-center space-x-2' : ''} ${fieldClasses(field)}`}>
                     <Label htmlFor={field.name}>{field.label}</Label>
                     <Textarea
                         id={field.name}
@@ -153,7 +163,8 @@ export function AppFieldBuilder({field, setFields, value, onReactive, error, isP
             );
         case 'slider':
             return (
-                <div key={field.key} className={`'space-y-2' ${field.isInline ? 'flex items-center space-x-2' : ''}`}>
+                <div key={field.key}
+                    className={`'space-y-2' ${field.isInline ? 'flex items-center space-x-2' : ''} ${fieldClasses(field)}`}>
                     <Label htmlFor={field.name}>{field.label}</Label>
                     <div className="pt-4">
                         <Slider
@@ -177,9 +188,10 @@ export function AppFieldBuilder({field, setFields, value, onReactive, error, isP
             );
         case 'file':
             return (
-                <div key={field.key} className={`'space-y-2' ${field.isInline ? 'flex items-center space-x-2' : ''}`}>
+                <div key={field.key}
+                    className={`'space-y-2' ${field.isInline ? 'flex items-center space-x-2' : ''} ${fieldClasses(field)}`}>
                     <Label htmlFor={field.name}>{field.label}</Label>
-                    <AppFieldBuilderFile field={field} value={value} onChange={onChange}/>
+                    <AppFieldBuilderFile field={field} value={value} onChange={onChange} />
                     {error && <div className="text-xs text-destructive">{error}</div>}
                 </div>
             );
@@ -187,7 +199,8 @@ export function AppFieldBuilder({field, setFields, value, onReactive, error, isP
         case 'number':
         case 'email':
             return (
-                <div key={field.key} className={`space-y-2 ${field.isInline ? 'flex items-center space-x-2' : ''}`}>
+                <div key={field.key}
+                    className={`space-y-2 ${field.isInline ? 'flex items-center space-x-2' : ''} ${fieldClasses(field)}`}>
                     <Label htmlFor={field.name}>{field.label}</Label>
                     <div
                         className="flex w-full rounded-md border border-input bg-background shadow-sm focus-within:ring-1 focus-within:ring-ring">
@@ -210,8 +223,8 @@ export function AppFieldBuilder({field, setFields, value, onReactive, error, isP
                         )}
                         {field.copyable && (
                             <Button type="button" variant="ghost" size="icon" onClick={handleCopy}
-                                    className="ml-1 h-9 w-9" disabled={!value}>
-                                <Copy className="h-4 w-4"/>
+                                className="ml-1 h-9 w-9" disabled={!value}>
+                                <Copy className="h-4 w-4" />
                                 <span className="sr-only">Copy</span>
                             </Button>
                         )}
@@ -221,10 +234,11 @@ export function AppFieldBuilder({field, setFields, value, onReactive, error, isP
                 </div>
             );
         case 'password':
-            return <AppFieldBuilderPassword field={field} value={value} error={error} handleChange={handleChange}/>;
+            return <AppFieldBuilderPassword field={field} value={value} error={error} handleChange={handleChange} />;
         case 'hidden':
             return (
-                <div key={field.key} className={`'space-y-2' ${field.isInline ? 'flex items-center space-x-2' : ''}`}>
+                <div key={field.key}
+                    className={`'space-y-2' ${field.isInline ? 'flex items-center space-x-2' : ''} ${fieldClasses(field)}`}>
                     <Input
                         id={field.name}
                         type={field.type}
@@ -239,71 +253,81 @@ export function AppFieldBuilder({field, setFields, value, onReactive, error, isP
             );
         case 'markdown':
             return (
-                <div key={field.key} className={`'space-y-2' ${field.isInline ? 'flex items-center space-x-2' : ''}`}>
+                <div key={field.key}
+                    className={`'space-y-2' ${field.isInline ? 'flex items-center space-x-2' : ''} ${fieldClasses(field)}`}>
                     <Label htmlFor={field.name}>{field.label}</Label>
-                    <AppFieldBuilderMarkdown field={field} value={value} onChange={onChange}/>
+                    <AppFieldBuilderMarkdown field={field} value={value} onChange={onChange} />
                     {error && <div className="text-xs text-destructive">{error}</div>}
                 </div>
             );
         case 'checkbox-list':
             return (
-                <div key={field.key} className={`'space-y-2' ${field.isInline ? 'flex items-center space-x-2' : ''}`}>
+                <div key={field.key}
+                    className={`'space-y-2' ${field.isInline ? 'flex items-center space-x-2' : ''} ${fieldClasses(field)}`}>
                     <Label htmlFor={field.name}>{field.label}</Label>
-                    <AppFieldBuilderCheckboxList field={field} value={value} onChange={onChange}/>
+                    <AppFieldBuilderCheckboxList field={field} value={value} onChange={onChange} />
                     {error && <div className="text-xs text-destructive">{error}</div>}
                 </div>
             );
         case 'rich-text':
             return (
-                <div key={field.key} className={`'space-y-2' ${field.isInline ? 'flex items-center space-x-2' : ''}`}>
+                <div key={field.key}
+                    className={`'space-y-2' ${field.isInline ? 'flex items-center space-x-2' : ''} ${fieldClasses(field)}`}>
                     <Label htmlFor={field.name}>{field.label}</Label>
-                    <AppFieldBuilderRichText field={field} value={value} onChange={onChange}/>
+                    <AppFieldBuilderRichText field={field} value={value} onChange={onChange} />
                     {error && <div className="text-xs text-destructive">{error}</div>}
                 </div>
             );
         case 'repeater':
             return (
-                <div key={field.key} className={`'space-y-2' ${field.isInline ? 'flex items-center space-x-2' : ''}`}>
+                <div key={field.key}
+                    className={`'space-y-2' ${field.isInline ? 'flex items-center space-x-2' : ''} ${fieldClasses(field)}`}>
                     <Label htmlFor={field.name}>{field.label}</Label>
-                    <AppFieldBuilderRepeater field={field} value={value || []} setFields={setFields} onReactive={onReactive} error={error}/>
+                    <AppFieldBuilderRepeater field={field} value={value || []} setFields={setFields}
+                        onReactive={onReactive} error={error} />
                     {error && <div className="text-xs text-destructive">{error}</div>}
                 </div>
             );
         case 'key-value':
             return (
-                <div key={field.key} className={`'space-y-2' ${field.isInline ? 'flex items-center space-x-2' : ''}`}>
+                <div key={field.key}
+                    className={`'space-y-2' ${field.isInline ? 'flex items-center space-x-2' : ''} ${fieldClasses(field)}`}>
                     <Label htmlFor={field.name}>{field.label}</Label>
-                    <AppFieldBuilderKeyValue field={field} value={value || {}} onChange={onChange} error={error}/>
+                    <AppFieldBuilderKeyValue field={field} value={value || {}} onChange={onChange} error={error} />
                     {error && <div className="text-xs text-destructive">{error}</div>}
                 </div>
             );
         case 'tags':
             return (
-                <div key={field.key} className={`'space-y-2' ${field.isInline ? 'flex items-center space-x-2' : ''}`}>
+                <div key={field.key}
+                    className={`'space-y-2' ${field.isInline ? 'flex items-center space-x-2' : ''} ${fieldClasses(field)}`}>
                     <Label htmlFor={field.name}>{field.label}</Label>
-                    <AppFieldBuilderTags field={field} value={value || []} onChange={onChange} error={error}/>
+                    <AppFieldBuilderTags field={field} value={value || []} onChange={onChange} error={error} />
                     {error && <div className="text-xs text-destructive">{error}</div>}
                 </div>
             );
         case 'custom':
             return (
-                <div key={field.key} className={`'space-y-2' ${field.isInline ? 'flex items-center space-x-2' : ''}`}>
+                <div key={field.key}
+                    className={`'space-y-2' ${field.isInline ? 'flex items-center space-x-2' : ''} ${fieldClasses(field)}`}>
                     <Label htmlFor={field.name}>{field.label}</Label>
-                    <AppFieldBuilderCustom field={field} value={value} onChange={onChange} error={error}/>
+                    <AppFieldBuilderCustom field={field} value={value} onChange={onChange} error={error} />
                     {error && <div className="text-xs text-destructive">{error}</div>}
                 </div>
             );
         case 'flatpickr':
             return (
-                <div key={field.key} className={`'space-y-2' ${field.isInline ? 'flex items-center space-x-2' : ''}`}>
+                <div key={field.key}
+                    className={`'space-y-2' ${field.isInline ? 'flex items-center space-x-2' : ''} ${fieldClasses(field)}`}>
                     <Label htmlFor={field.name}>{field.label}</Label>
-                    <AppFieldBuilderFlatpickr field={field} value={value} onChange={onChange}/>
+                    <AppFieldBuilderFlatpickr field={field} value={value} onChange={onChange} />
                     {error && <div className="text-xs text-destructive">{error}</div>}
                 </div>
             );
         case 'date':
             return (
-                <div key={field.key} className={`'space-y-2' ${field.isInline ? 'flex items-center space-x-2' : ''}`}>
+                <div key={field.key}
+                    className={`'space-y-2' ${field.isInline ? 'flex items-center space-x-2' : ''} ${fieldClasses(field)}`}>
                     <Label htmlFor={field.name}>{field.label}</Label>
                     <Popover>
                         <PopoverTrigger asChild>
@@ -318,7 +342,7 @@ export function AppFieldBuilder({field, setFields, value, onReactive, error, isP
                         </PopoverTrigger>
                         <PopoverContent className="w-auto overflow-hidden p-0" align="start">
                             <Calendar mode="single" selected={value} captionLayout="dropdown"
-                                      onSelect={(date) => handleReactiveChange(date)}/>
+                                onSelect={(date) => handleReactiveChange(date)} />
                         </PopoverContent>
                     </Popover>
                     {error && <div className="text-xs text-destructive">{error}</div>}
@@ -326,9 +350,10 @@ export function AppFieldBuilder({field, setFields, value, onReactive, error, isP
             );
         case 'datetime-local':
             return (
-                <div key={field.key} className={`'space-y-2' ${field.isInline ? 'flex items-center space-x-2' : ''}`}>
+                <div key={field.key}
+                    className={`'space-y-2' ${field.isInline ? 'flex items-center space-x-2' : ''} ${fieldClasses(field)}`}>
                     <Label htmlFor={field.name}>{field.label}</Label>
-                    <AppFieldBuilderDatetime field={field} value={value} onChange={onChange}/>
+                    <AppFieldBuilderDatetime field={field} value={value} onChange={onChange} />
                     {error && <div className="text-xs text-destructive">{error}</div>}
                 </div>
             );
@@ -336,7 +361,7 @@ export function AppFieldBuilder({field, setFields, value, onReactive, error, isP
             if (field.multiple && !field.searchable) {
                 return (
                     <div key={field.key}
-                         className={`'space-y-2' ${field.isInline ? 'flex items-center space-x-2' : ''}`}>
+                        className={`'space-y-2' ${field.isInline ? 'flex items-center space-x-2' : ''} ${fieldClasses(field)}`}>
                         <Label htmlFor={field.name}>{field.label}</Label>
                         <Popover>
                             <PopoverTrigger asChild>
@@ -356,7 +381,7 @@ export function AppFieldBuilder({field, setFields, value, onReactive, error, isP
                                         const checked = (value || []).includes(opt.value);
                                         return (
                                             <label key={field.key + opt.value.toString()}
-                                                   className="flex cursor-pointer items-center space-x-2">
+                                                className="flex cursor-pointer items-center space-x-2">
                                                 <Checkbox
                                                     checked={checked}
                                                     onCheckedChange={(isChecked) => {
@@ -383,7 +408,7 @@ export function AppFieldBuilder({field, setFields, value, onReactive, error, isP
             if (!field.multiple && field.searchable) {
                 return (
                     <div key={field.key}
-                         className={`'space-y-2' ${field.isInline ? 'flex items-center space-x-2' : ''}`}>
+                        className={`'space-y-2' ${field.isInline ? 'flex items-center space-x-2' : ''} ${fieldClasses(field)}`}>
                         <Label htmlFor={field.name}>{field.label}</Label>
                         <Popover>
                             <PopoverTrigger asChild>
@@ -397,10 +422,10 @@ export function AppFieldBuilder({field, setFields, value, onReactive, error, isP
                                     {isProcessing
                                         ? 'Loading...'
                                         : field.options?.find((opt) => opt.value === value)?.label || (
-                                        <span
-                                            className="text-muted-foreground">{field.placeholder || 'Select an option'}</span>
-                                    )}
-                                    <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50"/>
+                                            <span
+                                                className="text-muted-foreground">{field.placeholder || 'Select an option'}</span>
+                                        )}
+                                    <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                                 </Button>
                             </PopoverTrigger>
 
@@ -443,7 +468,7 @@ export function AppFieldBuilder({field, setFields, value, onReactive, error, isP
                                                 onSelect={() => handleReactiveChange(opt.value)}
                                             >
                                                 <Check
-                                                    className={cn('mr-2 h-4 w-4', opt.value === value ? 'opacity-100' : 'opacity-0')}/>
+                                                    className={cn('mr-2 h-4 w-4', opt.value === value ? 'opacity-100' : 'opacity-0')} />
                                                 {opt.label}
                                             </CommandItem>
                                         ))}
@@ -458,7 +483,7 @@ export function AppFieldBuilder({field, setFields, value, onReactive, error, isP
             if (field.multiple && field.searchable) {
                 return (
                     <div key={field.key}
-                         className={`'space-y-2' ${field.isInline ? 'flex items-center space-x-2' : ''}`}>
+                        className={`'space-y-2' ${field.isInline ? 'flex items-center space-x-2' : ''} ${fieldClasses(field)}`}>
                         <Label htmlFor={field.name}>{field.label}</Label>
                         <Popover>
                             <PopoverTrigger asChild>
@@ -521,7 +546,7 @@ export function AppFieldBuilder({field, setFields, value, onReactive, error, isP
                                                         handleReactiveChange(Array.from(newSet));
                                                     }}
                                                 >
-                                                    <Checkbox checked={isChecked} className="mr-2"/>
+                                                    <Checkbox checked={isChecked} className="mr-2" />
                                                     {opt.label}
                                                 </CommandItem>
                                             );
@@ -535,7 +560,8 @@ export function AppFieldBuilder({field, setFields, value, onReactive, error, isP
                 );
             }
             return (
-                <div key={field.key} className={`'space-y-2' ${field.isInline ? 'flex items-center space-x-2' : ''}`}>
+                <div key={field.key}
+                    className={`'space-y-2' ${field.isInline ? 'flex items-center space-x-2' : ''} ${fieldClasses(field)}`}>
                     <Label htmlFor={field.name}>{field.label}</Label>
                     <Select
                         value={value.toString() || ''}
@@ -543,7 +569,7 @@ export function AppFieldBuilder({field, setFields, value, onReactive, error, isP
                         disabled={field.isDisable || isProcessing}
                     >
                         <SelectTrigger>
-                            <SelectValue placeholder={field.placeholder || 'Select an option'}/>
+                            <SelectValue placeholder={field.placeholder || 'Select an option'} />
                         </SelectTrigger>
                         <SelectContent className="max-h-60 overflow-y-auto">
                             {isProcessing && (
@@ -553,7 +579,7 @@ export function AppFieldBuilder({field, setFields, value, onReactive, error, isP
                             )}
                             {field.options?.map((opt) => (
                                 <SelectItem key={field.key + opt.value as Key} value={opt.value.toString() as string}
-                                            className={field.mergeClass}>
+                                    className={field.mergeClass}>
                                     {opt.label}
                                 </SelectItem>
                             ))}
@@ -566,7 +592,7 @@ export function AppFieldBuilder({field, setFields, value, onReactive, error, isP
             if (field.multiple) {
                 return (
                     <div key={field.key}
-                         className={`'space-y-2' ${field.isInline ? 'flex items-center space-x-2' : ''}`}>
+                        className={`'space-y-2' ${field.isInline ? 'flex items-center space-x-2' : ''} ${fieldClasses(field)}`}>
                         <Label htmlFor={field.name}>{field.label}</Label>
                         <Popover>
                             <PopoverTrigger asChild>
@@ -629,7 +655,7 @@ export function AppFieldBuilder({field, setFields, value, onReactive, error, isP
                                                         handleReactiveChange(Array.from(newSet));
                                                     }}
                                                 >
-                                                    <Checkbox checked={isChecked} className="mr-2"/>
+                                                    <Checkbox checked={isChecked} className="mr-2" />
                                                     {opt.label}
                                                 </CommandItem>
                                             );
@@ -643,7 +669,8 @@ export function AppFieldBuilder({field, setFields, value, onReactive, error, isP
                 );
             }
             return (
-                <div key={field.key} className={`'space-y-2' ${field.isInline ? 'flex items-center space-x-2' : ''}`}>
+                <div key={field.key}
+                    className={`'space-y-2' ${field.isInline ? 'flex items-center space-x-2' : ''} ${fieldClasses(field)}`}>
                     <Label htmlFor={field.name}>{field.label}</Label>
                     <Popover>
                         <PopoverTrigger asChild>
@@ -657,10 +684,10 @@ export function AppFieldBuilder({field, setFields, value, onReactive, error, isP
                                 {isProcessing
                                     ? 'Loading...'
                                     : field.options?.find((opt) => opt.value === value)?.label || (
-                                    <span
-                                        className="text-muted-foreground">{field.placeholder || 'Select an option'}</span>
-                                )}
-                                <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50"/>
+                                        <span
+                                            className="text-muted-foreground">{field.placeholder || 'Select an option'}</span>
+                                    )}
+                                <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                             </Button>
                         </PopoverTrigger>
 
@@ -703,7 +730,7 @@ export function AppFieldBuilder({field, setFields, value, onReactive, error, isP
                                             onSelect={() => handleReactiveChange(opt.value)}
                                         >
                                             <Check
-                                                className={cn('mr-2 h-4 w-4', opt.value === value ? 'opacity-100' : 'opacity-0')}/>
+                                                className={cn('mr-2 h-4 w-4', opt.value === value ? 'opacity-100' : 'opacity-0')} />
                                             {opt.label}
                                         </CommandItem>
                                     ))}
@@ -716,14 +743,15 @@ export function AppFieldBuilder({field, setFields, value, onReactive, error, isP
             );
         case 'radio':
             return (
-                <div key={field.key} className={`'space-y-2' ${field.isInline ? 'flex items-center space-x-2' : ''}`}>
+                <div key={field.key}
+                    className={`'space-y-2' ${field.isInline ? 'flex items-center space-x-2' : ''} ${fieldClasses(field)}`}>
                     <Label htmlFor={field.name}>{field.label}</Label>
                     <RadioGroup value={value || ''} onValueChange={(val) => handleReactiveChange(val)}
-                                disabled={field.isDisable || isProcessing}>
+                        disabled={field.isDisable || isProcessing}>
                         {field.options?.map((opt) => (
                             <div key={opt.value.toString()}
-                                 className={cn('flex items-center space-x-2', field.mergeClass)}>
-                                <RadioGroupItem value={opt.value.toString()} id={`${field.name}-${opt.value}`}/>
+                                className={cn('flex items-center space-x-2', field.mergeClass)}>
+                                <RadioGroupItem value={opt.value.toString()} id={`${field.name}-${opt.value}`} />
                                 <Label htmlFor={`${field.name}-${opt.value}`}>{opt.label}</Label>
                             </div>
                         ))}
@@ -733,7 +761,8 @@ export function AppFieldBuilder({field, setFields, value, onReactive, error, isP
             );
         case 'checkbox':
             return (
-                <div key={field.key} className={`'space-y-2' ${field.isInline ? 'flex items-center space-x-2' : ''}`}>
+                <div key={field.key}
+                    className={`'space-y-2' ${field.isInline ? 'flex items-center space-x-2' : ''} ${fieldClasses(field)}`}>
                     <Label htmlFor={field.name}>{field.label}</Label>
                     <Checkbox
                         id={field.name}
@@ -747,7 +776,8 @@ export function AppFieldBuilder({field, setFields, value, onReactive, error, isP
             );
         case 'toggle':
             return (
-                <div key={field.key} className={`'space-y-2' ${field.isInline ? 'flex items-center space-x-2' : ''}`}>
+                <div key={field.key}
+                    className={`'space-y-2' ${field.isInline ? 'flex items-center space-x-2' : ''} ${fieldClasses(field)}`}>
                     <Label htmlFor={field.name}>{field.label}</Label>
                     <div>
                         <Switch

@@ -20,9 +20,9 @@ trait HasInfo
     {
         return is_callable($this->asInfo) ?
             $this->evaluate($this->asInfo, [
-                'asInfo' => $this->asInfo,
-                'get'    => new Get($this),
-                'model'  => $this->form?->getModel(),
+                'state' => $this->state,
+                'get'   => new Get($this),
+                'model' => $this->form?->getModel(),
             ])
             : $this->asInfo;
     }

@@ -1,7 +1,7 @@
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { cn } from '@/lib/utils';
+import { cn, fieldClasses } from '@/lib/utils';
 import { FieldDefinition } from '@/types/field-builder';
 import { Copy, Eye, EyeOff } from 'lucide-react';
 import { useState } from 'react';
@@ -45,7 +45,7 @@ export function AppFieldBuilderPassword({ field, value, error, handleChange }: P
     };
 
     return (
-        <div key={field.name} className={`space-y-2 ${field.isInline ? 'flex items-center space-x-2' : ''}`}>
+        <div key={field.name} className={`space-y-2 ${field.isInline ? 'flex items-center space-x-2' : ''} ${fieldClasses(field)}`}>
             <Label htmlFor={field.name}>{field.label}</Label>
             <div className="relative w-full">
                 {/* eye icon di kiri */}

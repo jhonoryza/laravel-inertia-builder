@@ -1,13 +1,14 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import {Link, router, useForm, usePage} from '@inertiajs/react';
-import {AppFieldBuilder} from "@/components/builder/app-field-builder";
-import React, {useEffect, useState} from "react";
-import {Button} from "@/components/ui/button";
-import {toast} from "sonner";
-import {ColumnDef, FieldDefinition} from "@/types/field-builder";
-import {RefreshCw} from "lucide-react";
-import {clsx} from "clsx";
+import { Link, router, useForm, usePage } from '@inertiajs/react';
+import { AppFieldBuilder } from "@/components/builder/app-field-builder";
+import React, { useEffect, useState } from "react";
+import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
+import { ColumnDef, FieldDefinition } from "@/types/field-builder";
+import { RefreshCw } from "lucide-react";
+import { clsx } from "clsx";
 import { route } from 'ziggy-js';
+import { gridClasses } from "@/lib/utils";
 
 type PageProps = {
     columns?: ColumnDef;
@@ -18,9 +19,9 @@ type PageProps = {
     formClass: string;
 };
 
-export function AppFormBuilder({columns, fields: initialFields, routeName, routeId, mode, formClass}: PageProps) {
-    const {flash} = usePage().props as { flash?: { success?: string, error?: string, description?: string } };
-    
+export function AppFormBuilder({ columns, fields: initialFields, routeName, routeId, mode, formClass }: PageProps) {
+    const { flash } = usePage().props as { flash?: { success?: string, error?: string, description?: string } };
+
     // local state fields agar bisa diupdate saat reactive/live
     const [fields, setFields] = useState<FieldDefinition[]>(initialFields);
 
@@ -58,7 +59,7 @@ export function AppFormBuilder({columns, fields: initialFields, routeName, route
     // The 'transform' function is used here to add this field to the data right before it's submitted.
     transform((data) => (
         routeId
-            ? {...data, _method: 'patch'}
+            ? { ...data, _method: 'patch' }
             : data
     ));
 
@@ -149,38 +150,44 @@ export function AppFormBuilder({columns, fields: initialFields, routeName, route
         post(route(`${routeName}.store`));
     };
 
-    const gridClass = clsx(
-        "grid gap-2",
-        columns?.default && `grid-cols-${columns.default}`,
-        columns?.sm && `sm:grid-cols-${columns.sm}`,
-        columns?.md && `md:grid-cols-${columns.md}`,
-        columns?.xl && `xl:grid-cols-${columns.xl}`,
-        columns?.["2xl"] && `2xl:grid-cols-${columns["2xl"]}`
-    );
+    // separate grid and non-grid
+    const gridGroups = fields
+        .filter(f => f.grid)
+        .reduce((acc, f) => {
+            acc[f.gridKey] = acc[f.gridKey] || [];
+            acc[f.gridKey].push(f);
+            return acc;
+        }, {} as Record<string, typeof fields>);
 
-    function fieldClasses(field: FieldDefinition) {
-        const span = field.columnSpan || {} as ColumnDef;
-        const order = field.columnOrder || {} as ColumnDef;
-
-        return [
-            span.default && `col-span-${span.default}`,
-            span.sm && `sm:col-span-${span.sm}`,
-            span.md && `md:col-span-${span.md}`,
-            span.xl && `xl:col-span-${span.xl}`,
-            span['2xl'] && `2xl:col-span-${span['2xl']}`,
-            order.default && `order-${order.default}`,
-            order.sm && `sm:order-${order.sm}`,
-            order.md && `md:order-${order.md}`,
-            order.xl && `xl:order-${order.xl}`,
-            order['2xl'] && `2xl:order-${order['2xl']}`,
-        ].filter(Boolean).join(" ");
-    }
+    const nonGridFields = fields.filter(f => !f.grid);
 
     return (
         <form onSubmit={handleSubmit} className="flex flex-col gap-4" encType="multipart/form-data">
-            <div className={gridClass}>
-                {fields.map((field) => (
-                    <div key={field.key} className={fieldClasses(field)}>
+            <div className={gridClasses(columns)}>
+                <>
+                    {/* render grid groups */}
+                    {Object.entries(gridGroups).map(([gridKey, group]) => {
+                        const gridCol = group[0]?.gridCol ?? 1;
+                        return (
+                            <div key={gridKey} className={gridClasses(gridCol)}>
+                                {group.map((field) => (
+                                    <AppFieldBuilder
+                                        key={field.key}
+                                        field={field}
+                                        value={data[field.name]}
+                                        onReactive={onReactive}
+                                        error={errors[field.name]}
+                                        isProcessing={processing}
+                                        setFields={setFields}
+                                        columns={columns}
+                                    />
+                                ))}
+                            </div>
+                        );
+                    })}
+
+                    {/* render non-grid fields directly */}
+                    {nonGridFields.map(field => (
                         <AppFieldBuilder
                             key={field.key}
                             field={field}
@@ -189,9 +196,10 @@ export function AppFormBuilder({columns, fields: initialFields, routeName, route
                             error={errors[field.name]}
                             isProcessing={processing}
                             setFields={setFields}
+                            columns={columns}
                         />
-                    </div>
-                ))}
+                    ))}
+                </>
             </div>
 
             <div className="flex items-center justify-between">

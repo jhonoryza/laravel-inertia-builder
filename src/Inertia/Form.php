@@ -4,13 +4,13 @@ namespace Jhonoryza\InertiaBuilder\Inertia;
 
 use Illuminate\Database\Eloquent\Model;
 use Jhonoryza\InertiaBuilder\Inertia\Fields\Base\AbstractField;
+use Jhonoryza\InertiaBuilder\Inertia\Fields\Concerns\HasColumns;
+use Jhonoryza\InertiaBuilder\Inertia\Fields\Concerns\HasFields;
 use JsonSerializable;
 
 class Form implements JsonSerializable
 {
-    protected array $columns = [];
-
-    protected array $fields = [];
+    use HasColumns, HasFields;
 
     public array $state = [];
 
@@ -30,33 +30,6 @@ class Form implements JsonSerializable
         return $this;
     }
 
-    public function schema(array $fields): static
-    {
-        $this->fields = $fields;
-
-        return $this;
-    }
-
-    public function fields(array $fields): static
-    {
-        $this->fields = $fields;
-
-        return $this;
-    }
-
-    public function appendFieldToSchema(AbstractField|iterable $field): static
-    {
-        if ($field instanceof AbstractField) {
-            $this->fields[] = $field;
-        } else {
-            foreach ($field as $f) {
-                $this->fields[] = $f;
-            }
-        }
-
-        return $this;
-    }
-
     public function state(array $state): static
     {
         if (! empty($state)) {
@@ -64,24 +37,6 @@ class Form implements JsonSerializable
         }
 
         return $this;
-    }
-
-    public function columns(int|array $columns): self
-    {
-        if (is_int($columns)) {
-            $this->columns = ['default' => $columns];
-
-            return $this;
-        }
-        $this->columns = $columns;
-
-        return $this;
-    }
-
-    public function findField(string $name)
-    {
-        return collect($this->getFields())
-            ->first(fn ($field) => $field->getName() === $name);
     }
 
     // di panggil saat ada perubahan dari frontend
@@ -107,6 +62,18 @@ class Form implements JsonSerializable
         return $state;
     }
 
+    public function getModel(): ?Model
+    {
+        return $this->model;
+    }
+
+    public function getState(): array
+    {
+        return $this->state;
+    }
+
+    // kenapa form class harus punya state berisi data state semua field
+    // yaitu untuk override state dari sebuah field ketika field lain berubah state nya
     // di panggil saat initial loads atau ada perubahan dari frontend
     public function evaluateFields(): array
     {
@@ -121,31 +88,6 @@ class Form implements JsonSerializable
                 return $field;
             })
             ->toArray();
-    }
-
-    public function getModel(): ?Model
-    {
-        return $this->model;
-    }
-
-    public function getSchema(): array
-    {
-        return $this->fields;
-    }
-
-    public function getFields(): array
-    {
-        return $this->fields;
-    }
-
-    public function getState(): array
-    {
-        return $this->state;
-    }
-
-    public function getColumns(): array
-    {
-        return $this->columns;
     }
 
     private function checkisStateEmpty(): void

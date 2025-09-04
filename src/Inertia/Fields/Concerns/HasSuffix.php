@@ -19,7 +19,7 @@ trait HasSuffix
     {
         return is_callable($this->suffix) ?
             $this->evaluate($this->suffix, [
-                'state' => $this->getState(),
+                'state' => $this->state,
                 'model' => $this->form?->getModel(),
                 'get'   => new Get($this),
             ]) : $this->suffix;

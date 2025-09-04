@@ -35,9 +35,9 @@ trait HasOptions
     {
         $data = is_callable($this->options) ?
             $this->evaluate($this->options, [
-                'options' => $this->options,
-                'get'     => new Get($this),
-                'model'   => $this->form?->getModel(),
+                'state' => $this->state,
+                'get'   => new Get($this),
+                'model' => $this->form?->getModel(),
             ]) : $this->options;
 
         if ($data instanceof Collection) {
@@ -47,6 +47,7 @@ trait HasOptions
                     'value' => $item->id,
                 ])
                 ->toArray();
+
             return $this;
         }
         if ($data instanceof Builder || $data instanceof EloquentBuilder) {
@@ -57,6 +58,7 @@ trait HasOptions
                     'value' => $item->id,
                 ])
                 ->toArray();
+
             return $this;
         }
 

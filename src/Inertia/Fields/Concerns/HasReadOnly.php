@@ -2,6 +2,8 @@
 
 namespace Jhonoryza\InertiaBuilder\Inertia\Fields\Concerns;
 
+use Jhonoryza\InertiaBuilder\Inertia\Forms\Get;
+
 trait HasReadOnly
 {
     protected bool $isReadOnly = false;
@@ -16,7 +18,11 @@ trait HasReadOnly
     public function evaluateDisable(): static
     {
         $this->isReadOnly = is_callable($this->isReadOnly) ?
-            call_user_func($this->isReadOnly) : $this->isReadOnly;
+            $this->evaluate($this->isReadOnly, [
+                'state' => $this->state,
+                'model' => $this->form?->getModel(),
+                'get'   => new Get($this),
+            ]) : $this->isReadOnly;
 
         return $this;
     }

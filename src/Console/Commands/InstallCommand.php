@@ -68,6 +68,10 @@ class InstallCommand extends Command
         (new Filesystem)->copyDirectory(__DIR__ . '/../../Stubs/resources/js/components/general', resource_path('js/components/general'));
         $this->info('component copied successfully.');
 
+        // copy inertia lib
+        (new Filesystem)->copyDirectory(__DIR__ . '/../../Stubs/resources/js/lib', resource_path('js/lib'));
+        $this->info('lib copied successfully.');
+
         // copy inertia builder pages
         (new Filesystem)->copyDirectory(__DIR__ . '/../../Stubs/resources/js/pages/builder', resource_path('js/pages/builder'));
         $this->info('page copied successfully.');

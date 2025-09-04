@@ -31,21 +31,10 @@ trait HasVisibility
             return $this;
         }
 
-        // cek apakah callback menerima parameter
-        $reflection = new \ReflectionFunction($this->hidden);
-        if ($reflection->getNumberOfParameters() === 0) {
-            $this->hidden = $this->evaluate($this->hidden, [
-                'get'   => new Get($this),
-                'model' => $this->form?->getModel(),
-            ]);
-
-            return $this;
-        }
-
-        // jika menerima parameter, inject Get
         $this->hidden = $this->evaluate($this->hidden, [
-            'get'   => new Get($this),
+            'state' => $this->state,
             'model' => $this->form?->getModel(),
+            'get'   => new Get($this),
         ]);
 
         return $this;
