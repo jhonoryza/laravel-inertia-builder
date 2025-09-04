@@ -60,6 +60,8 @@ trait HasOptions
             return $this;
         }
 
+        $this->options = $data;
+
         return $this;
     }
 

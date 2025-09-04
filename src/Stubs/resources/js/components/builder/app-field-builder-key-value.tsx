@@ -121,7 +121,7 @@ export function AppFieldBuilderKeyValue({ field, value, onChange, error }: KeyVa
                                 value={item.key}
                                 onChange={(e) => updateItem(index, 'key', e.target.value)}
                                 placeholder={field.keyPlaceholder || 'Enter key'}
-                                disabled={!field.editable}
+                                disabled={!field.editable || field.isDisable}
                             />
 
                             <Input
@@ -129,7 +129,7 @@ export function AppFieldBuilderKeyValue({ field, value, onChange, error }: KeyVa
                                 value={item.value}
                                 onChange={(e) => updateItem(index, 'value', e.target.value)}
                                 placeholder={field.valuePlaceholder || 'Enter value'}
-                                disabled={!field.editable}
+                                disabled={!field.editable || field.isDisable}
                             />
 
                             {field.removable && (
@@ -139,6 +139,7 @@ export function AppFieldBuilderKeyValue({ field, value, onChange, error }: KeyVa
                                     size="icon"
                                     className="flex-none h-8 w-8 text-destructive hover:text-destructive hover:bg-destructive/10"
                                     onClick={() => removeItem(index)}
+                                    disabled={field.isDisable}
                                 >
                                     <Trash2 className="h-4 w-4" />
                                 </Button>
