@@ -10,6 +10,7 @@ use Jhonoryza\InertiaBuilder\Inertia\Fields\Concerns\HasInfo;
 use Jhonoryza\InertiaBuilder\Inertia\Fields\Concerns\HasKey;
 use Jhonoryza\InertiaBuilder\Inertia\Fields\Concerns\HasLabel;
 use Jhonoryza\InertiaBuilder\Inertia\Fields\Concerns\HasName;
+use Jhonoryza\InertiaBuilder\Inertia\Fields\Concerns\HasOrder;
 use Jhonoryza\InertiaBuilder\Inertia\Fields\Concerns\HasPlaceholder;
 use Jhonoryza\InertiaBuilder\Inertia\Fields\Concerns\HasReactive;
 use Jhonoryza\InertiaBuilder\Inertia\Fields\Concerns\HasReadOnly;
@@ -21,7 +22,7 @@ use JsonSerializable;
 
 abstract class AbstractField implements JsonSerializable
 {
-    use HasCopyable, HasGrid;
+    use HasCopyable, HasGrid, HasOrder;
     use HasDebounce, HasPlaceholder, HasReadOnly, HasStyle, HasVisibility;
     use HasForm, HasLabel, HasName, HasType;
     use HasInfo, HasKey, HasReactive, HasState;
@@ -107,6 +108,7 @@ abstract class AbstractField implements JsonSerializable
             'grid'         => $this->getGrid(),
             'gridKey'      => $this->getGridKey(),
             'gridCol'      => $this->getGridCol(),
+            'order'        => $this->getOrder(),
         ];
     }
 

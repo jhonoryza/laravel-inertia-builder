@@ -1,5 +1,8 @@
 @import 'tailwindcss';
 @import "./theme/claude.css";
+@source inline('{sm:,md:,lg:,xl:,2xl:,}grid-cols-{{1..12}}');
+@source inline('{sm:,md:,lg:,xl:,2xl:,}col-span-{{1..12}}');
+@source inline('{sm:,md:,lg:,xl:,2xl:,}order-{{1..12}}');
 
 @plugin 'tailwindcss-animate';
 @config "../../tailwind.config.js";
@@ -18,6 +21,7 @@
   color utility to any element that depends on these defaults.
 */
 @layer base {
+
     *,
     ::after,
     ::before,

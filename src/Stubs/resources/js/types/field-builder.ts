@@ -8,6 +8,7 @@ export type ColumnDef = {
     default: number;
     sm?: number;
     md?: number;
+    lg?: number;
     xl?: number;
     '2xl'?: number;
 };
@@ -23,6 +24,7 @@ export type FieldDefinition = {
     grid: boolean;
     gridKey: string;
     gridCol: ColumnDef;
+    order: number;
     type: 'text' | 'email' | 'number' | 'date' | 'datetime-local' | 'password'
     | 'textarea' | 'select' | 'combobox' | 'radio' | 'checkbox' | 'toggle'
     | 'markdown' | 'flatpickr' | 'hidden' | 'slider' | 'file'

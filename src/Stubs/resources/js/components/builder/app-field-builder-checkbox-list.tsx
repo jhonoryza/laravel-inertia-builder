@@ -3,6 +3,7 @@ import React from 'react';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import { FieldDefinition } from "@/types/field-builder";
+import { gridClasses } from "@/lib/utils";
 
 interface CheckboxListFieldProps {
     field: FieldDefinition;
@@ -29,7 +30,7 @@ export function AppFieldBuilderCheckboxList({ field, value, onChange }: Checkbox
     };
 
     return (
-        <div className="space-y-2">
+        <div className={`space-y-2 gap-2 ${gridClasses(field.gridCol)}`}>
             {field.options?.map((option) => (
                 <div key={field.key + option.value.toString()} className="flex items-center space-x-2">
                     <Checkbox

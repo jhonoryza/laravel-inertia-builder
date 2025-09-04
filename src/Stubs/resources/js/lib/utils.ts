@@ -38,84 +38,55 @@ export function registerComponentsFromContext(modules: Record<string, { default:
 
 // registerComponentsFromContext(components)
 
+export const breakpoints = ["", "sm", "md", "lg", "xl", "2xl"] as const;
+
+export function toColumnDefKey(bp: (typeof breakpoints)[number]): keyof ColumnDef {
+    return bp === "" ? "default" : (bp as keyof ColumnDef);
+}
+
+function makeResponsiveClasses(
+    def: ColumnDef,
+    prefix: string,
+    max: number
+): string[] {
+    return breakpoints.flatMap(bp => {
+        const key = toColumnDefKey(bp);
+        const val = def?.[key];
+        if (!val || val > max) return [];
+        const className = `${prefix}-${val}`;
+        return bp === "" ? [className] : [`${bp}:${className}`];
+    });
+}
+
 export function fieldClasses(field: FieldDefinition): string {
     const span = field.columnSpan || {} as ColumnDef;
     const order = field.columnOrder || {} as ColumnDef;
 
-    const colSpanMap: Record<number, string> = {
-        1: "col-span-1",
-        2: "col-span-2",
-        3: "col-span-3",
-        4: "col-span-4",
-        5: "col-span-5",
-        6: "col-span-6",
-        7: "col-span-7",
-        8: "col-span-8",
-        9: "col-span-9",
-        10: "col-span-10",
-        11: "col-span-11",
-        12: "col-span-12",
-    };
-
-    const orderMap: Record<number, string> = {
-        1: "order-1",
-        2: "order-2",
-        3: "order-3",
-        4: "order-4",
-        5: "order-5",
-        6: "order-6",
-        7: "order-7",
-        8: "order-8",
-        9: "order-9",
-        10: "order-10",
-        11: "order-11",
-        12: "order-12",
-        13: "order-13",
-        14: "order-14",
-        15: "order-15",
-        16: "order-16",
-        17: "order-17",
-        18: "order-18",
-        19: "order-19",
-        20: "order-20",
-    };
-
-    return [
-        span.default && `${colSpanMap[span.default]}`,
-        span.sm && `sm:${colSpanMap[span.sm]}`,
-        span.md && `md:${colSpanMap[span.md]}`,
-        span.xl && `xl:${colSpanMap[span.xl]}`,
-        span['2xl'] && `2xl:${colSpanMap[span['2xl']]}`,
-        order.default && `${orderMap[order.default]}`,
-        order.sm && `sm:${orderMap[order.sm]}`,
-        order.md && `md:${orderMap[order.md]}`,
-        order.xl && `xl:${orderMap[order.xl]}`,
-        order['2xl'] && `2xl:${orderMap[order['2xl']]}`,
-    ].filter(Boolean).join(" ");
-}
-
-
-export function gridClasses(columns?: ColumnDef): string {
-    const gridColsMap: Record<number, string> = {
-        1: "grid-cols-1",
-        2: "grid-cols-2",
-        3: "grid-cols-3",
-        4: "grid-cols-4",
-        5: "grid-cols-5",
-        6: "grid-cols-6",
-        7: "grid-cols-7",
-        8: "grid-cols-8",
-        9: "grid-cols-9",
-        10: "grid-cols-10",
-        11: "grid-cols-11",
-        12: "grid-cols-12",
-    };
     return clsx(
-        "grid gap-4",
-        columns?.default && gridColsMap[columns.default],
-        columns?.sm && `sm:${gridColsMap[columns.sm]}`,
-        columns?.md && `md:${gridColsMap[columns.md]}`,
-        columns?.xl && `xl:${gridColsMap[columns.xl]}`,
-        columns?.["2xl"] && `2xl:${gridColsMap[columns["2xl"]]}`
+        makeResponsiveClasses(span, "col-span", 12),
+        makeResponsiveClasses(order, "order", 20),
     );
 }
+
+const colSizes = Array.from({ length: 12 }, (_, i) => i + 1);
+
+export function gridClasses(columns?: ColumnDef): string {
+    return clsx(
+        "grid",
+        ...breakpoints.flatMap(bp =>
+            colSizes.map(size => {
+                const key = toColumnDefKey(bp);
+                const colValue = columns?.[key];
+                const className = bp === "" ? `grid-cols-${size}` : `${bp}:grid-cols-${size}`;
+
+                return colValue === size && className;
+            })
+        )
+    );
+}
+
+export const sortByOrder = <T extends { order?: number }>(arr: T[]) =>
+    [...arr].sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+
+export const maxOrder = <T extends { order?: number }>(arr: T[]) =>
+    Math.max(...arr.map(f => f.order ?? 0), 0);

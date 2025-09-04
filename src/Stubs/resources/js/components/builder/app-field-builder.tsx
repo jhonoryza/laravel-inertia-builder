@@ -21,8 +21,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Slider } from '@/components/ui/slider';
 import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
-import { cn, fieldClasses } from '@/lib/utils';
-import { ColumnDef, FieldDefinition } from '@/types/field-builder';
+import { cn, fieldClasses, gridClasses } from '@/lib/utils';
+import { FieldDefinition } from '@/types/field-builder';
 import { router } from '@inertiajs/react';
 import { format } from 'date-fns';
 import { Check, ChevronsUpDown, Copy } from 'lucide-react';
@@ -36,7 +36,6 @@ interface FieldBuilderProps {
     onReactive: (name: string, value: any, operator?: string) => void;
     error?: string;
     isProcessing?: boolean;
-    columns: ColumnDef | undefined;
 }
 
 export function AppFieldBuilder({
@@ -46,7 +45,6 @@ export function AppFieldBuilder({
     onReactive,
     error,
     isProcessing,
-    columns
 }: FieldBuilderProps) {
     const handleReactiveChange = (newValue: any) => {
         onChange(field.name, newValue);
@@ -110,7 +108,7 @@ export function AppFieldBuilder({
             return (
                 <div
                     key={field.key}
-                    className={`space-y-2 ${field.isInline ? "flex items-center space-x-2" : ""} ${fieldClasses(field)}`}
+                    className={`space-y-2 ${field.isInline ? "flex items-center space-x-2" : ""} ${fieldClasses(field)} gap-2 ${gridClasses(field.gridCol)}`}
                 >
                     <Label htmlFor={field.name} className="text-sm font-medium text-foreground">
                         {field.label}
@@ -130,7 +128,7 @@ export function AppFieldBuilder({
                     key={field.key}
                     className={`space-y-2 ${field.isInline ? "flex items-center space-x-2" : ""} ${fieldClasses(field)}`}
                 >
-                    <Label htmlFor={field.name} className="text-sm font-bold text-foreground">
+                    <Label htmlFor={field.name} className="text-sm font-bold">
                         {field.label}
                     </Label>
                     <div

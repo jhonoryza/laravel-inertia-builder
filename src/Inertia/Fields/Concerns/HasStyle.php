@@ -8,7 +8,7 @@ trait HasStyle
 
     protected ?string $mergeClass = null;
 
-    protected array $columnSpan = ['default' => 1];
+    protected array $columnSpan = [];
 
     protected array $columnOrder = [];
 

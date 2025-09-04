@@ -6,9 +6,8 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { ColumnDef, FieldDefinition } from "@/types/field-builder";
 import { RefreshCw } from "lucide-react";
-import { clsx } from "clsx";
 import { route } from 'ziggy-js';
-import { gridClasses } from "@/lib/utils";
+import { gridClasses, maxOrder, sortByOrder } from "@/lib/utils";
 
 type PageProps = {
     columns?: ColumnDef;
@@ -151,26 +150,54 @@ export function AppFormBuilder({ columns, fields: initialFields, routeName, rout
     };
 
     // separate grid and non-grid
-    const gridGroups = fields
-        .filter(f => f.grid)
-        .reduce((acc, f) => {
-            acc[f.gridKey] = acc[f.gridKey] || [];
-            acc[f.gridKey].push(f);
-            return acc;
-        }, {} as Record<string, typeof fields>);
+    // const gridGroups = fields
+    //     .filter(f => f.grid)
+    //     .reduce((acc, f) => {
+    //         acc[f.gridKey] = acc[f.gridKey] || [];
+    //         acc[f.gridKey].push(f);
+    //         return acc;
+    //     }, {} as Record<string, typeof fields>);
+    //
+    // const nonGridFields = fields.filter(f => !f.grid);
+
+    const gridGroups = Object.entries(
+        fields
+            .filter(f => f.grid)
+            .reduce((acc, f) => {
+                acc[f.gridKey] = acc[f.gridKey] || [];
+                acc[f.gridKey].push(f);
+                return acc;
+            }, {} as Record<string, typeof fields>)
+    );
 
     const nonGridFields = fields.filter(f => !f.grid);
 
+    const groups = [
+        ...gridGroups.map(([gridKey, group]) => ({
+            type: "grid" as const,
+            key: gridKey,
+            fields: sortByOrder(group),
+            maxOrder: maxOrder(group),
+        })),
+        {
+            type: "non-grid" as const,
+            key: "non-grid",
+            fields: sortByOrder(nonGridFields),
+            maxOrder: maxOrder(nonGridFields),
+        },
+    ];
+
+    const sortedGroups = groups.sort((a, b) => a.maxOrder - b.maxOrder);
+
     return (
         <form onSubmit={handleSubmit} className="flex flex-col gap-4" encType="multipart/form-data">
-            <div className={gridClasses(columns)}>
-                <>
-                    {/* render grid groups */}
-                    {Object.entries(gridGroups).map(([gridKey, group]) => {
-                        const gridCol = group[0]?.gridCol ?? 1;
+            <div className={gridClasses(columns) + " gap-4"}>
+                {sortedGroups.map(group => {
+                    if (group.type === "grid") {
+                        const gridCol = group.fields[0]?.gridCol;
                         return (
-                            <div key={gridKey} className={gridClasses(gridCol)}>
-                                {group.map((field) => (
+                            <div key={group.key} className={gridClasses(gridCol) + " gap-4"}>
+                                {group.fields.map(field => (
                                     <AppFieldBuilder
                                         key={field.key}
                                         field={field}
@@ -179,15 +206,14 @@ export function AppFormBuilder({ columns, fields: initialFields, routeName, rout
                                         error={errors[field.name]}
                                         isProcessing={processing}
                                         setFields={setFields}
-                                        columns={columns}
                                     />
                                 ))}
                             </div>
                         );
-                    })}
+                    }
 
-                    {/* render non-grid fields directly */}
-                    {nonGridFields.map(field => (
+                    // non-grid
+                    return group.fields.map(field => (
                         <AppFieldBuilder
                             key={field.key}
                             field={field}
@@ -196,10 +222,8 @@ export function AppFormBuilder({ columns, fields: initialFields, routeName, rout
                             error={errors[field.name]}
                             isProcessing={processing}
                             setFields={setFields}
-                            columns={columns}
-                        />
-                    ))}
-                </>
+                        />));
+                })}
             </div>
 
             <div className="flex items-center justify-between">
