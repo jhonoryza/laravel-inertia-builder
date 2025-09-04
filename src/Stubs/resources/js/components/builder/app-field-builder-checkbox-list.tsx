@@ -2,7 +2,7 @@
 import React from 'react';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
-import {FieldDefinition} from "@/types/field-builder";
+import { FieldDefinition } from "@/types/field-builder";
 
 interface CheckboxListFieldProps {
     field: FieldDefinition;
@@ -31,7 +31,7 @@ export function AppFieldBuilderCheckboxList({ field, value, onChange }: Checkbox
     return (
         <div className="space-y-2">
             {field.options?.map((option) => (
-                <div key={option.value.toString()} className="flex items-center space-x-2">
+                <div key={field.key + option.value.toString()} className="flex items-center space-x-2">
                     <Checkbox
                         id={`${field.name}-${option.value}`}
                         checked={selectedValues.includes(option.value)}

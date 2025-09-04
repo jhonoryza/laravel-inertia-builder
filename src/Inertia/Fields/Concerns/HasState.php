@@ -35,6 +35,7 @@ trait HasState
                 'get'   => new Get($this),
                 'model' => $this->form?->getModel(),
             ]);
+
             return $this;
         }
 

@@ -153,10 +153,10 @@ class Form implements JsonSerializable
         if (empty($this->state)) {
             foreach ($this->getFields() as $field) {
                 $field->form($this);
-                
-                $state = $this->model?->{$field->getName()} ?? null;
+
+                $state      = $this->model?->{$field->getName()} ?? null;
                 $fieldState = $field->getState();
-                $state = $fieldState !== null ? $fieldState : $state;
+                $state      = $fieldState !== null ? $fieldState : $state;
 
                 $this->state[$field->getName()] = $state;
             }

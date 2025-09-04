@@ -1,3 +1,4 @@
+
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
@@ -6,7 +7,7 @@ import { AppFieldBuilder } from './app-field-builder';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
-import {FieldDefinition} from "@/types/field-builder";
+import { FieldDefinition } from "@/types/field-builder";
 
 interface RepeaterFieldProps {
     field: FieldDefinition & {
@@ -20,11 +21,12 @@ interface RepeaterFieldProps {
         reorderable?: boolean;
     };
     value: any[];
-    onChange: (name: string, value: any, operator?: string) => void;
+    setFields: React.Dispatch<React.SetStateAction<FieldDefinition[]>>;
+    onReactive: (name: string, value: any, operator?: string) => void;
     error?: string | Record<string, any>;
 }
 
-export function AppFieldBuilderRepeater({ field, value, onChange, error }: RepeaterFieldProps) {
+export function AppFieldBuilderRepeater({ field, value, setFields, onReactive, error }: RepeaterFieldProps) {
     // Ensure value is an array
     const items = Array.isArray(value) ? value : [];
 
@@ -63,7 +65,7 @@ export function AppFieldBuilderRepeater({ field, value, onChange, error }: Repea
 
         // Add the new item to the array
         const updatedItems = [...items, newItem];
-        onChange(field.name, updatedItems);
+        onReactive(field.name, updatedItems);
 
         // Auto-open the new item if collapsible
         if (field.collapsible) {
@@ -82,7 +84,7 @@ export function AppFieldBuilderRepeater({ field, value, onChange, error }: Repea
 
         const updatedItems = [...items];
         updatedItems.splice(index, 1);
-        onChange(field.name, updatedItems);
+        onReactive(field.name, updatedItems);
     };
 
     const updateItemField = (index: number, fieldName: string, fieldValue: any) => {
@@ -91,7 +93,7 @@ export function AppFieldBuilderRepeater({ field, value, onChange, error }: Repea
             ...updatedItems[index],
             [fieldName]: fieldValue,
         };
-        onChange(field.name, updatedItems);
+        onReactive(field.name, updatedItems);
     };
 
     const toggleCollapse = (index: number) => {
@@ -108,7 +110,7 @@ export function AppFieldBuilderRepeater({ field, value, onChange, error }: Repea
         const [movedItem] = updatedItems.splice(fromIndex, 1);
         updatedItems.splice(toIndex, 0, movedItem);
 
-        onChange(field.name, updatedItems);
+        onReactive(field.name, updatedItems);
     };
 
     const handleDragStart = (index: number) => {
@@ -197,10 +199,11 @@ export function AppFieldBuilderRepeater({ field, value, onChange, error }: Repea
                                         <div className="space-y-4">
                                             {field.schema?.map((schemaField) => (
                                                 <AppFieldBuilder
-                                                    key={`${index}-${schemaField.name}`}
+                                                    key={`${index}-${schemaField.name}-${field.key}`}
                                                     field={schemaField}
                                                     value={item[schemaField.name]}
-                                                    onChange={(fieldName, fieldValue) => updateItemField(index, fieldName, fieldValue)}
+                                                    setFields={setFields}
+                                                    onReactive={(fieldName, fieldValue) => updateItemField(index, fieldName, fieldValue)}
                                                     error={itemErrors && itemErrors[schemaField.name]}
                                                 />
                                             ))}
@@ -233,7 +236,8 @@ export function AppFieldBuilderRepeater({ field, value, onChange, error }: Repea
                                                 key={`${index}-${schemaField.name}`}
                                                 field={schemaField}
                                                 value={item[schemaField.name]}
-                                                onChange={(fieldName, fieldValue) => updateItemField(index, fieldName, fieldValue)}
+                                                setFields={setFields}
+                                                onReactive={(fieldName, fieldValue) => updateItemField(index, fieldName, fieldValue)}
                                                 error={itemErrors && itemErrors[schemaField.name]}
                                             />
                                         ))}

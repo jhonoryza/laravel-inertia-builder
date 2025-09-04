@@ -70,4 +70,5 @@ export type FieldDefinition = {
     reactive?: boolean;
     debounce?: number;
     copyable?: boolean;
+    asInfo?: boolean;
 };

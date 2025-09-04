@@ -5,6 +5,7 @@ namespace Jhonoryza\InertiaBuilder\Inertia\Fields\Base;
 use Jhonoryza\InertiaBuilder\Inertia\Fields\Concerns\HasCopyable;
 use Jhonoryza\InertiaBuilder\Inertia\Fields\Concerns\HasDebounce;
 use Jhonoryza\InertiaBuilder\Inertia\Fields\Concerns\HasForm;
+use Jhonoryza\InertiaBuilder\Inertia\Fields\Concerns\HasInfo;
 use Jhonoryza\InertiaBuilder\Inertia\Fields\Concerns\HasKey;
 use Jhonoryza\InertiaBuilder\Inertia\Fields\Concerns\HasLabel;
 use Jhonoryza\InertiaBuilder\Inertia\Fields\Concerns\HasName;
@@ -22,7 +23,7 @@ abstract class AbstractField implements JsonSerializable
     use HasCopyable;
     use HasDebounce, HasPlaceholder, HasReadOnly, HasStyle, HasVisibility;
     use HasForm, HasLabel, HasName, HasType;
-    use HasKey, HasReactive, HasState;
+    use HasInfo, HasKey, HasReactive, HasState;
 
     abstract protected static function getType(): string;
 
@@ -101,6 +102,7 @@ abstract class AbstractField implements JsonSerializable
             'columnOrder'  => $this->getColumnOrder(),
             'debounce'     => $this->getDebounce(),
             'copyable'     => $this->getCopyable(),
+            'asInfo'       => $this->getInfo(),
         ];
     }
 

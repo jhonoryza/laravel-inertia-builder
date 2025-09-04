@@ -33,14 +33,13 @@ trait HasOptions
 
     public function evaluateOptions(): static
     {
-        $this->options = is_callable($this->options) ?
+        $data = is_callable($this->options) ?
             $this->evaluate($this->options, [
                 'options' => $this->options,
                 'get'     => new Get($this),
                 'model'   => $this->form?->getModel(),
             ]) : $this->options;
 
-        $data = $this->options;
         if ($data instanceof Collection) {
             $this->options = $data
                 ->map(fn ($item) => [
@@ -48,6 +47,7 @@ trait HasOptions
                     'value' => $item->id,
                 ])
                 ->toArray();
+            return $this;
         }
         if ($data instanceof Builder || $data instanceof EloquentBuilder) {
             $this->options = $data
@@ -57,9 +57,7 @@ trait HasOptions
                     'value' => $item->id,
                 ])
                 ->toArray();
-        }
-        if (is_array($data)) {
-            return $this->options($data);
+            return $this;
         }
 
         return $this;
