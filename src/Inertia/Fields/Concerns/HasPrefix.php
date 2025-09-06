@@ -7,7 +7,7 @@ use Jhonoryza\InertiaBuilder\Inertia\Forms\Get;
 
 trait HasPrefix
 {
-    protected string|Closure $prefix = null;
+    protected string|Closure|null $prefix = null;
 
     public function prefix(string|callable $prefix): static
     {
