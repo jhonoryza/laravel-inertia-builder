@@ -1,4 +1,4 @@
-import { RatingField } from '@/components/custom-fields/rating-field';
+import { RatingField } from '@/components/builder/custom-fields/rating-field';
 import React from 'react';
 import { CustomFilterComponentProps } from './index';
 

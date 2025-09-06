@@ -10,7 +10,7 @@ import {Label} from "@/components/ui/label";
 import {Check, ChevronDown} from "lucide-react";
 import {Command, CommandEmpty, CommandGroup, CommandInput, CommandItem} from "@/components/ui/command";
 import {cn} from "@/lib/utils";
-import {customFilterComponents} from '@/components/custom-filters';
+import {customFilterComponents} from '@/components/builder/custom-filters';
 import {router} from "@inertiajs/react";
 
 interface FilterInputProps {

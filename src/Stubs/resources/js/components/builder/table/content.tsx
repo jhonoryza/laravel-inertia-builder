@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { customCellComponents } from '@/components/custom-cell';
+import { customCellComponents } from '@/components/builder/custom-cell';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Column, DataItem, DataTableProps } from '@/types/datatable';

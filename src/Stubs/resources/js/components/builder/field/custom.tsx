@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useState } from 'react';
 import { cn } from '@/lib/utils';
-import { customFieldsComponents } from '@/components/custom-fields';
+import { customFieldsComponents } from '@/components/builder/custom-fields';
 
 export function AppFieldBuilderCustom({ field, value, onChange, error }: any) {
     // Use field state as initial value if provided and no value exists yet

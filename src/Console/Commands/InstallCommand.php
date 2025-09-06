@@ -62,10 +62,6 @@ class InstallCommand extends Command
 
         // copy inertia builder components
         (new Filesystem)->copyDirectory(__DIR__ . '/../../Stubs/resources/js/components/builder', resource_path('js/components/builder'));
-        (new Filesystem)->copyDirectory(__DIR__ . '/../../Stubs/resources/js/components/custom-fields', resource_path('js/components/custom-fields'));
-        (new Filesystem)->copyDirectory(__DIR__ . '/../../Stubs/resources/js/components/custom-filters', resource_path('js/components/custom-filters'));
-        (new Filesystem)->copyDirectory(__DIR__ . '/../../Stubs/resources/js/components/custom-cell', resource_path('js/components/custom-cell'));
-        (new Filesystem)->copyDirectory(__DIR__ . '/../../Stubs/resources/js/components/general', resource_path('js/components/general'));
         $this->info('component copied successfully.');
 
         // copy inertia lib

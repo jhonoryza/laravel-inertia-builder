@@ -7,21 +7,22 @@ import {
   SidebarMenuSub,
   SidebarMenuSubItem,
 } from '@/components/ui/sidebar'
-import { type NavItem } from '@/types'
+import {type NavItem, SharedData} from '@/types'
 import { Link, usePage } from '@inertiajs/react'
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible'
 import { ChevronDown } from 'lucide-react'
 
 export function NavMain({ items = [] }: { items: NavItem[] }) {
-  const page = usePage()
+  const page = usePage();
+  const { auth } = usePage<SharedData>().props;
 
   return (
     <SidebarGroup className="px-2 py-0">
-      <SidebarGroupLabel>Platform</SidebarGroupLabel>
+      <SidebarGroupLabel>{auth.user.team?.name || 'Internal'} Platform</SidebarGroupLabel>
       <SidebarMenu>
         {items.map((item) =>
           item.children && item.children.length > 0 ? (
-            <Collapsible key={item.title} 
+            <Collapsible key={item.title}
               defaultOpen={
                 item.href
                   ? page.url.startsWith(item.href)
