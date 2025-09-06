@@ -2,11 +2,13 @@
 
 namespace Jhonoryza\InertiaBuilder\Inertia\Fields\Concerns;
 
+use Closure;
+
 trait HasDebounce
 {
-    protected int $debounce = 300;
+    protected int|Closure $debounce = 300;
 
-    public function debounce(int $miliSecond): static
+    public function debounce(int|callable $miliSecond): static
     {
         $this->debounce = $miliSecond;
 
@@ -15,6 +17,7 @@ trait HasDebounce
 
     public function getDebounce(): int
     {
-        return $this->debounce;
+        return is_callable($this->debounce) ?
+            $this->evaluate($this->debounce) : $this->debounce;
     }
 }

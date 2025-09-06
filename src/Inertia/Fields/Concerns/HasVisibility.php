@@ -17,25 +17,13 @@ trait HasVisibility
 
     public function getHidden(): bool
     {
-        $this->evaluateHidden();
-
-        return $this->hidden;
+        return is_callable($this->hidden) ?
+            $this->evaluate($this->hidden) : $this->hidden;
     }
 
     public function evaluateHidden(): static
     {
-        // jika boolean, kembalikan langsung
-        if (! is_callable($this->hidden)) {
-            $this->hidden = (bool) $this->hidden;
-
-            return $this;
-        }
-
-        $this->hidden = $this->evaluate($this->hidden, [
-            'state' => $this->state,
-            'model' => $this->form?->getModel(),
-            'get'   => new Get($this),
-        ]);
+        $this->hidden = $this->getHidden();
 
         return $this;
     }

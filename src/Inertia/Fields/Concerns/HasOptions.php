@@ -34,11 +34,7 @@ trait HasOptions
     public function evaluateOptions(): static
     {
         $data = is_callable($this->options) ?
-            $this->evaluate($this->options, [
-                'state' => $this->state,
-                'get'   => new Get($this),
-                'model' => $this->form?->getModel(),
-            ]) : $this->options;
+            $this->evaluate($this->options) : $this->options;
 
         if ($data instanceof Collection) {
             $this->options = $data

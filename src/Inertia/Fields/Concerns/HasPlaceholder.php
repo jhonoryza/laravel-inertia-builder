@@ -2,11 +2,13 @@
 
 namespace Jhonoryza\InertiaBuilder\Inertia\Fields\Concerns;
 
+use Closure;
+
 trait HasPlaceholder
 {
-    protected ?string $placeholder = null;
+    protected string|null|Closure $placeholder = null;
 
-    public function placeholder(string $placeholder): static
+    public function placeholder(string|callable $placeholder): static
     {
         $this->placeholder = $placeholder;
 
@@ -15,6 +17,7 @@ trait HasPlaceholder
 
     public function getPlaceholder(): ?string
     {
-        return $this->placeholder;
+        return is_callable($this->placeholder) ?
+            $this->evaluate($this->placeholder) : $this->placeholder;
     }
 }

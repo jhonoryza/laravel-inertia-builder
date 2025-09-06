@@ -40,11 +40,7 @@ trait HasGrid
     public function getGrid(): bool
     {
         return is_callable($this->hasGrid) ?
-            $this->evaluate($this->hasGrid, [
-                'state' => $this->state,
-                'get'   => new Get($this),
-                'model' => $this->form?->getModel(),
-            ]) : $this->hasGrid;
+            $this->evaluate($this->hasGrid) : $this->hasGrid;
     }
 
     public function gridKey(string|null|callable $state): self
@@ -57,10 +53,6 @@ trait HasGrid
     public function getGridKey(): ?string
     {
         return is_callable($this->gridKey) ?
-            $this->evaluate($this->gridKey, [
-                'state' => $this->state,
-                'get'   => new Get($this),
-                'model' => $this->form?->getModel(),
-            ]) : $this->gridKey;
+            $this->evaluate($this->gridKey) : $this->gridKey;
     }
 }

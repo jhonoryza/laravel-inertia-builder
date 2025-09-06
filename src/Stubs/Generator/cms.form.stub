@@ -12,24 +12,36 @@ use Jhonoryza\InertiaBuilder\Inertia\Forms\Get;
 
 class {{modelName}}Form implements FormContract
 {
-    public static function build(Model|array|null $model = null, string $action = 'create or edit'): Form 
+    public static function view(Model|array $state): Form
     {
-        $state = is_array($model) ? 'state' : 'model';
+        $type = is_array($state) ? 'state' : 'model';
 
-        $form = Form::make()
+        return Form::make()
             ->columns(1)
-            ->$state($model)    
+            ->$type($state)
             ->schema([
-{{fields}} 
+{{fieldsView}}
         ]);
+    }
 
-        if ($action == 'view') {
-            foreach ($form->getFields() as $field) {
-                /** @var AbstractField $field */
-                $field->disable();
-            }
-        }
+    public static function edit(Model|array $state): Form
+    {
+        $type = is_array($state) ? 'state' : 'model';
 
-        return $form;
+        return Form::make()
+            ->columns(1)
+            ->$type($state)
+            ->schema([
+{{fieldsEdit}}
+        ]);
+    }
+
+    public static function create(): Form
+    {
+        return Form::make()
+            ->columns(1)
+            ->schema([
+{{fieldsCreate}}
+        ]);
     }
 }

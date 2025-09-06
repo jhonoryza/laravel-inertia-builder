@@ -18,10 +18,6 @@ trait HasOrder
     public function getOrder(): int
     {
         return is_callable($this->order) ?
-            $this->evaluate($this->order, [
-                'state' => $this->state,
-                'get'   => new Get($this),
-                'model' => $this->form?->getModel(),
-            ]) : $this->order;
+            $this->evaluate($this->order) : $this->order;
     }
 }

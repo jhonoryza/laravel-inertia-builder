@@ -1,7 +1,6 @@
 # TODO
- 
-- [ ] table export
-- [ ] table import
-- [ ] add support has many relationship
-- [ ] add support has one relationship
-- [ ] add support many to may relationship
+
+- [x] refactor form class
+- [x] fix generated relation name must be camelCase on model, form, table
+- [x] recheck all field closure
+- [ ] update docs

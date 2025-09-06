@@ -2,19 +2,22 @@
 
 namespace Jhonoryza\InertiaBuilder\Inertia\Fields\Concerns;
 
+use Closure;
+
 trait HasCopyable
 {
-    protected bool $copyable = false;
+    protected bool|Closure $copyable = false;
 
-    public function copyable($state = true): self
+    public function copyable(bool|callable $state = true): self
     {
         $this->copyable = $state;
 
         return $this;
     }
 
-    public function getCopyable(): bool
+    public function getIsCopyable(): bool
     {
-        return $this->copyable;
+        return is_callable($this->copyable) ?
+            $this->evaluate($this->copyable) : $this->copyable;
     }
 }

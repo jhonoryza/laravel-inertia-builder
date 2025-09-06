@@ -25,10 +25,10 @@ class SelectField extends AbstractField
     public function toArray(): array
     {
         return array_merge(parent::toArray(), [
-            'multiple'   => $this->multiple,
+            'multiple'   => $this->getIsMultiple(),
             'options'    => $this->relation ? $this->getRelationshipData() : $this->getOptions(),
-            'searchable' => $this->searchable,
-            'serverside' => $this->serverside,
+            'searchable' => $this->getIsSearchable(),
+            'serverside' => $this->getIsServerSide(),
         ]);
     }
 }

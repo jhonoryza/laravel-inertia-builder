@@ -2,11 +2,12 @@
 
 namespace Jhonoryza\InertiaBuilder\Inertia\Fields\Concerns;
 
+use Closure;
 use Jhonoryza\InertiaBuilder\Inertia\Forms\Get;
 
 trait HasSuffix
 {
-    protected ?string $suffix = null;
+    protected string|null|Closure $suffix = null;
 
     public function suffix($suffix): static
     {
@@ -18,10 +19,6 @@ trait HasSuffix
     public function getSuffix(): ?string
     {
         return is_callable($this->suffix) ?
-            $this->evaluate($this->suffix, [
-                'state' => $this->state,
-                'model' => $this->form?->getModel(),
-                'get'   => new Get($this),
-            ]) : $this->suffix;
+            $this->evaluate($this->suffix) : $this->suffix;
     }
 }

@@ -74,7 +74,7 @@ trait HasModel
     {
         return collect($schema)->pluck('name')->filter(fn ($name) => Str::endsWith($name, '_id'))
             ->map(function ($foreignKey) {
-                $relationName = Str::beforeLast($foreignKey, '_id');
+                $relationName = Str::camel(Str::beforeLast($foreignKey, '_id'));
                 $relatedModel = Str::studly($relationName);
 
                 return "\n    public function $relationName(): BelongsTo\n    {\n

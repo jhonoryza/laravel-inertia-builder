@@ -2,11 +2,13 @@
 
 namespace Jhonoryza\InertiaBuilder\Inertia\Fields\Concerns;
 
+use Closure;
+
 trait HasLabel
 {
-    protected string $label;
+    protected string|Closure $label;
 
-    public function label(string $label): static
+    public function label(string|callable $label): static
     {
         $this->label = $label;
 
@@ -15,6 +17,7 @@ trait HasLabel
 
     public function getLabel(): string
     {
-        return $this->label;
+        return is_callable($this->label) ?
+            $this->evaluate($this->label) : $this->label;
     }
 }

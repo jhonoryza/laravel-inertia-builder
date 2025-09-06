@@ -2,9 +2,11 @@
 
 namespace Jhonoryza\InertiaBuilder\Inertia\Fields\Concerns;
 
+use Closure;
+
 trait HasStyle
 {
-    protected bool $isInline = false;
+    protected bool|Closure $isInline = false;
 
     protected ?string $mergeClass = null;
 
@@ -12,9 +14,9 @@ trait HasStyle
 
     protected array $columnOrder = [];
 
-    public function inline(): static
+    public function inline(bool|callable $state = true): static
     {
-        $this->isInline = true;
+        $this->isInline = $state;
 
         return $this;
     }
@@ -42,7 +44,8 @@ trait HasStyle
 
     public function getIsInline(): bool
     {
-        return $this->isInline;
+        return is_callable($this->isInline) ?
+            $this->evaluate($this->isInline) : $this->isInline;
     }
 
     public function getMergeClass(): ?string

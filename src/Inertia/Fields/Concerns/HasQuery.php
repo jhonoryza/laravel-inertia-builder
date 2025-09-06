@@ -2,9 +2,11 @@
 
 namespace Jhonoryza\InertiaBuilder\Inertia\Fields\Concerns;
 
+use Closure;
+
 trait HasQuery
 {
-    public ?\Closure $queryCallback = null;
+    public Closure|null $queryCallback = null;
 
     public function query(callable $query): static
     {

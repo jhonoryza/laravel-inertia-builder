@@ -69,11 +69,15 @@ trait HasController
         $content = str_replace(
             [
                 '{{modelName}}',
-                '{{fields}}',
+                '{{fieldsEdit}}',
+                '{{fieldsCreate}}',
+                '{{fieldsView}}',
             ],
             [
                 $modelName,
-                $this->generateFormFields($schema),
+                $this->generateFormFieldsCreateEdit($schema),
+                $this->generateFormFieldsCreateEdit($schema),
+                $this->generateFormFieldsInfo($schema),
             ],
             $stub
         );
@@ -155,9 +159,11 @@ trait HasController
             $line = "TableColumn::make('$name')" . PHP_EOL;
             if ($column['relationName']) {
                 $relationName = $column['relationName'];
+                $label = Str::studly($relationName);
+                $relationName = Str::camel($relationName);
                 $relationKey  = $column['relationKey'];
                 $line         = "TableColumn::make('$relationName.$relationKey')
-                    ->label('" . Str::studly($relationName) . "')" . PHP_EOL;
+                    ->label('" . $label . "')" . PHP_EOL;
             }
             if (in_array($type, ['varchar', 'text'])) {
                 $line .= '->searchable()' . PHP_EOL;
@@ -200,11 +206,12 @@ trait HasController
 
             if ($column['relationName']) {
                 $relationName = $column['relationName'];
+                $relationName = Str::camel($relationName);
                 $relationKey  = $column['relationKey'];
                 $relatedModel = Str::studly($relationName);
 
                 return "Filter::select('$name')
-                    ->label('" . Str::studly($relationName) . "')
+                    ->label('" . $relatedModel . "')
                     ->relationship($relatedModel::class, '$relationKey', '$relationKey')
                     ->query(fn(\$query, \$op, \$val) => \$query->whereHas('$relationName', function (\$q) use (\$op, \$val) {
                         \$q->where('$relationKey', \$op, \$val);
@@ -221,7 +228,7 @@ trait HasController
         })->filter()->implode("\n");
     }
 
-    protected function generateFormFields($schema): string
+    protected function generateFormFieldsCreateEdit($schema): string
     {
         return collect($schema)->map(function ($column) {
             $name = $column['name'];
@@ -234,7 +241,7 @@ trait HasController
                 $relationKey  = $column['relationKey'];
                 $relatedModel = Str::studly($relationName);
                 $field        = "Field::select('$name')
-                    ->label('" . Str::studly($relationName) . "')
+                    ->label('" . $relatedModel . "')
                     ->relationship($relatedModel::class, '$relationKey')";
             } else {
                 $type  = $column['type_name'];
@@ -247,6 +254,20 @@ trait HasController
                     default => "Field::text('$name')",
                 };
             }
+
+            return "$field,";
+        })->filter()->implode("\n");
+    }
+
+    protected function generateFormFieldsInfo($schema): string
+    {
+        return collect($schema)->map(function ($column) {
+            $name = $column['name'];
+            if (in_array($name, ['id', 'created_at', 'updated_at', 'deleted_at'])) {
+                return;
+            }
+            $field = "Field::text('$name')
+                ->info()";
 
             return "$field,";
         })->filter()->implode("\n");

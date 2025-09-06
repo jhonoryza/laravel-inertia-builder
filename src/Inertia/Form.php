@@ -7,6 +7,7 @@ use Jhonoryza\InertiaBuilder\Inertia\Fields\Base\AbstractField;
 use Jhonoryza\InertiaBuilder\Inertia\Fields\Concerns\HasColumns;
 use Jhonoryza\InertiaBuilder\Inertia\Fields\Concerns\HasFields;
 use JsonSerializable;
+use Illuminate\Support\Str;
 
 class Form implements JsonSerializable
 {
@@ -65,6 +66,11 @@ class Form implements JsonSerializable
     public function getModel(): ?Model
     {
         return $this->model;
+    }
+
+    public function getModelName(): string
+    {
+        return Str::camel(class_basename($this->model));
     }
 
     public function getState(): array

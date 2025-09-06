@@ -30,21 +30,13 @@ trait HasState
     public function evaluateState(): static
     {
         if ($this->formatStateUsing) {
-            $this->state = $this->evaluate($this->formatStateUsing, [
-                'state' => $this->state,
-                'get'   => new Get($this),
-                'model' => $this->form?->getModel(),
-            ]);
+            $this->state = $this->evaluate($this->formatStateUsing);
 
             return $this;
         }
 
         $this->state = is_callable($this->state) ?
-            $this->evaluate($this->state, [
-                'state' => $this->state,
-                'get'   => new Get($this),
-                'model' => $this->form?->getModel(),
-            ]) : $this->state;
+            $this->evaluate($this->state) : $this->state;
 
         return $this;
     }
@@ -77,8 +69,6 @@ trait HasState
             $this->evaluate($this->afterStateUpdated, [
                 'state' => $state,
                 'set'   => $set,
-                'get'   => new Get($this),
-                'model' => $this->form?->getModel(),
             ]);
         }
     }

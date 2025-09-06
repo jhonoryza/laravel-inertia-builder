@@ -18,6 +18,7 @@ use Jhonoryza\InertiaBuilder\Inertia\Fields\Concerns\HasState;
 use Jhonoryza\InertiaBuilder\Inertia\Fields\Concerns\HasStyle;
 use Jhonoryza\InertiaBuilder\Inertia\Fields\Concerns\HasType;
 use Jhonoryza\InertiaBuilder\Inertia\Fields\Concerns\HasVisibility;
+use Jhonoryza\InertiaBuilder\Inertia\Forms\Get;
 use JsonSerializable;
 
 abstract class AbstractField implements JsonSerializable
@@ -44,6 +45,14 @@ abstract class AbstractField implements JsonSerializable
 
     protected function evaluate(mixed $value, array $parameters = [])
     {
+        $addParam = [
+            'state' => $this->state,
+            'get'   => new Get($this),
+            'model' => $this->form?->getModel(),
+            $this->form?->getModelName() => $this->form?->getModel(),
+        ];
+
+        $parameters = $parameters + $addParam;
         if (! $value instanceof \Closure) {
             return $value;
         }
@@ -103,7 +112,7 @@ abstract class AbstractField implements JsonSerializable
             'columnSpan'   => $this->getColumnSpan(),
             'columnOrder'  => $this->getColumnOrder(),
             'debounce'     => $this->getDebounce(),
-            'copyable'     => $this->getCopyable(),
+            'copyable'     => $this->getIsCopyable(),
             'asInfo'       => $this->getInfo(),
             'grid'         => $this->getGrid(),
             'gridKey'      => $this->getGridKey(),

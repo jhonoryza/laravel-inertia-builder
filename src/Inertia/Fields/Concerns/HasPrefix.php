@@ -2,13 +2,14 @@
 
 namespace Jhonoryza\InertiaBuilder\Inertia\Fields\Concerns;
 
+use Closure;
 use Jhonoryza\InertiaBuilder\Inertia\Forms\Get;
 
 trait HasPrefix
 {
-    protected ?string $prefix = null;
+    protected string|Closure $prefix = null;
 
-    public function prefix($prefix): static
+    public function prefix(string|callable $prefix): static
     {
         $this->prefix = $prefix;
 
@@ -18,10 +19,6 @@ trait HasPrefix
     public function getPrefix(): ?string
     {
         return is_callable($this->prefix) ?
-            $this->evaluate($this->prefix, [
-                'state' => $this->state,
-                'model' => $this->form?->getModel(),
-                'get'   => new Get($this),
-            ]) : $this->prefix;
+            $this->evaluate($this->prefix) : $this->prefix;
     }
 }

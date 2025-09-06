@@ -2,11 +2,13 @@
 
 namespace Jhonoryza\InertiaBuilder\Inertia\Fields\Concerns;
 
+use Closure;
+
 trait HasName
 {
-    protected string $name;
+    protected string|Closure $name;
 
-    public function name($name): static
+    public function name(string|callable $name): static
     {
         $this->name = $name;
 
@@ -15,6 +17,7 @@ trait HasName
 
     public function getName(): string
     {
-        return $this->name;
+        return is_callable($this->name) ?
+            $this->evaluate($this->name) : $this->name;
     }
 }
