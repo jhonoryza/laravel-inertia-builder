@@ -6,8 +6,8 @@ import {
 } from '@/types/datatable';
 import {X, XIcon} from 'lucide-react';
 import {Popover, PopoverContent, PopoverTrigger} from '@/components/ui/popover';
-import {AppDataTableFilterInput} from './app-datatable-filter-input';
-import {AppDatatableFilterOperator} from "@/components/builder/app-datatable-filter-operator";
+import {AppDataTableFilterInput} from './filter-input';
+import {AppDatatableFilterOperator} from "@/components/builder/table/filter-operator";
 import {cn} from "@/lib/utils";
 
 interface AppDataTableActiveFiltersProps {

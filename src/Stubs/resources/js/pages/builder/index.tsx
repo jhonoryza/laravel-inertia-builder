@@ -4,7 +4,7 @@ import AppDataTable from "@/components/builder/app-datatable";
 import AppLayout from "@/layouts/app-layout";
 import {BreadcrumbItem} from "@/types";
 import {DataTableProps} from "@/types/datatable";
-import AppDatatableRowActions from '@/components/builder/app-datatable-row-actions';
+import AppDatatableRowActions from '@/components/builder/table/row-actions';
 import { route } from 'ziggy-js';
 
 interface Props {
@@ -30,8 +30,8 @@ export default function Index({data, routeName, tableRoute}: Props) {
                 >
                     {{
                         rowAction: (item, routeName) => (
-                            <AppDatatableRowActions 
-                                item={item} 
+                            <AppDatatableRowActions
+                                item={item}
                                 routeName={routeName}
                                 edit={data.edit}
                                 show={data.view}

@@ -3,11 +3,11 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { PlusCircle, Trash2, ChevronUp, ChevronDown, GripVertical } from 'lucide-react';
-import { AppFieldBuilder } from './app-field-builder';
+import { AppFieldBuilder } from '../app-field-builder';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
-import { FieldDefinition } from "@/types/field-builder";
+import {FieldDefinition} from "@/types/field-builder";
 
 interface RepeaterFieldProps {
     field: FieldDefinition & {

@@ -4,7 +4,7 @@ import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from '@/c
 import {Popover, PopoverContent, PopoverTrigger} from '@/components/ui/popover';
 import {Button} from '@/components/ui/button';
 import {Checkbox} from '@/components/ui/checkbox';
-import {AppFieldBuilderFlatpickr} from "@/components/builder/app-field-builder-flatpickr";
+import {AppFieldBuilderFlatpickr} from "@/components/builder/field/flatpickr";
 import {RadioGroup, RadioGroupItem} from "@/components/ui/radio-group";
 import {Label} from "@/components/ui/label";
 import {Check, ChevronDown} from "lucide-react";
@@ -261,6 +261,8 @@ export function AppDataTableFilterInput({name, filterDef, activeFilter, onFilter
                     <AppFieldBuilderFlatpickr
                         field={{
                             name: filterDef.field,
+                            key: filterDef.field,
+                            order: 1,
                             label: filterDef?.label,
                             type: 'date',
                             mode: 'single',

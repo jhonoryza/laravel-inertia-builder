@@ -2,8 +2,8 @@
 import React from 'react';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
-import { FieldDefinition } from "@/types/field-builder";
-import { gridClasses } from "@/lib/utils";
+import {FieldDefinition} from "@/types/field-builder";
+import {gridClasses} from "@/lib/utils";
 
 interface CheckboxListFieldProps {
     field: FieldDefinition;

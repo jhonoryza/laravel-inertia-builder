@@ -1,12 +1,13 @@
-import { AppDataTableActiveFilters } from '@/components/builder/app-datatable-active-filters';
-import { ActiveFilter, DataItem, DataTableProps } from '@/types/datatable';
-import { router, usePage } from '@inertiajs/react';
-import { useEffect, useRef, useState } from 'react';
-import { toast } from 'sonner';
-import { AppDataTableContent } from './app-datatable-content';
-import { AppDataTablePagination } from './app-datatable-pagination';
-import { AppDataTableToolbar } from './app-datatable-toolbar';
-import { route } from 'ziggy-js';
+import {AppDataTableActiveFilters} from '@/components/builder/table/active-filters';
+import {ActiveFilter, DataItem, DataTableProps} from '@/types/datatable';
+import {router, usePage} from '@inertiajs/react';
+import {useEffect, useRef, useState} from 'react';
+import {toast} from 'sonner';
+import {AppDataTableContent} from './table/content';
+import {AppDataTablePagination} from './table/pagination';
+import {AppDataTableToolbar} from './table/toolbar';
+import {route} from 'ziggy-js';
+import {AppDatatableLoadingPlaceholder} from "@/components/builder/table/loading-placeholder";
 
 type DataTable = {
     data: DataTableProps;
@@ -18,13 +19,13 @@ type DataTable = {
     };
 };
 
-export default function AppDataTable({ data, routeName, tableRoute, children }: DataTable) {
-    const { name, prefix, items, filters, columns, actions, perPage, perPageOptions, disablePagination } = data;
+export default function AppDataTable({data, routeName, tableRoute, children}: DataTable) {
+    const {name, prefix, items, filters, columns, actions, perPage, perPageOptions, disablePagination} = data;
     const [openFilterPopovers, setOpenFilterPopovers] = useState<Record<string, boolean>>({});
-    const openPopover = (field: string) => setOpenFilterPopovers((prev) => ({ ...prev, [field]: true }));
-    const closePopover = (field: string) => setOpenFilterPopovers((prev) => ({ ...prev, [field]: false }));
+    const openPopover = (field: string) => setOpenFilterPopovers((prev) => ({...prev, [field]: true}));
+    const closePopover = (field: string) => setOpenFilterPopovers((prev) => ({...prev, [field]: false}));
 
-    const { flash } = usePage().props as { flash?: { success?: string; error?: string; description?: string } };
+    const {flash} = usePage().props as { flash?: { success?: string; error?: string; description?: string } };
 
     const [selectedIds, setSelectedIds] = useState<(string | number)[]>([]);
 
@@ -47,7 +48,7 @@ export default function AppDataTable({ data, routeName, tableRoute, children }: 
         Object.entries(filters.filter).forEach(([field, value]) => {
             const operator = value.split(':')[0];
             const filterValue = value.split(':')[1];
-            initialActiveFilters.push({ field, operator, value: filterValue });
+            initialActiveFilters.push({field, operator, value: filterValue});
         });
     }
     const [activeFilters, setActiveFilters] = useState<ActiveFilter[]>(initialActiveFilters);
@@ -107,7 +108,7 @@ export default function AppDataTable({ data, routeName, tableRoute, children }: 
                 router.get(
                     routeUrl,
                     {
-                        ...(params ? { ...params } : {}),
+                        ...(params ? {...params} : {}),
                         [searchParam]: searchQuery,
                         [sortByParam]: sort,
                         [sortDirParam]: dir,
@@ -186,6 +187,12 @@ export default function AppDataTable({ data, routeName, tableRoute, children }: 
         setActiveFilters(newFilters);
     };
 
+    const [loading, setLoading] = useState(false)
+    useEffect(() => {
+        router.on('start', () => setLoading(true))
+        router.on('finish', () => setLoading(false))
+    }, [])
+
     return (
         <div className="overflow-hidden rounded-xl border bg-background text-foreground shadow-sm">
             <AppDataTableToolbar
@@ -213,21 +220,27 @@ export default function AppDataTable({ data, routeName, tableRoute, children }: 
                 openPopover={openPopover}
                 closePopover={closePopover}
             />
-            <AppDataTableContent
-                items={items}
-                columns={columns}
-                selectedIds={selectedIds}
-                hiddenColumns={hiddenColumns}
-                sort={sort}
-                dir={dir}
-                handleSort={handleSort}
-                toggleSelectAll={toggleSelectAll}
-                toggleSelectOne={toggleSelectOne}
-                routeName={routeName}
-                disablePagination={disablePagination}
-            >
-                {children && children.rowAction}
-            </AppDataTableContent>
+
+            {loading ? (
+                <AppDatatableLoadingPlaceholder count={items.data.length || 10} />
+            ) : (
+                <AppDataTableContent
+                    items={items}
+                    columns={columns}
+                    selectedIds={selectedIds}
+                    hiddenColumns={hiddenColumns}
+                    sort={sort}
+                    dir={dir}
+                    handleSort={handleSort}
+                    toggleSelectAll={toggleSelectAll}
+                    toggleSelectOne={toggleSelectOne}
+                    routeName={routeName}
+                    disablePagination={disablePagination}
+                >
+                    {children && children.rowAction}
+                </AppDataTableContent>
+            )}
+
             {!disablePagination && (
                 <AppDataTablePagination
                     name={name}

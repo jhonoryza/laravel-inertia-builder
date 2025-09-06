@@ -1,13 +1,14 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Link, router, useForm, usePage } from '@inertiajs/react';
-import { AppFieldBuilder } from "@/components/builder/app-field-builder";
-import React, { useEffect, useState } from "react";
-import { Button } from "@/components/ui/button";
-import { toast } from "sonner";
-import { ColumnDef, FieldDefinition } from "@/types/field-builder";
-import { RefreshCw } from "lucide-react";
-import { route } from 'ziggy-js';
-import { gridClasses, maxOrder, sortByOrder } from "@/lib/utils";
+import {Link, router, useForm, usePage} from '@inertiajs/react';
+import {AppFieldBuilder} from "@/components/builder/app-field-builder";
+import React, {useEffect, useState} from "react";
+import {Button} from "@/components/ui/button";
+import {toast} from "sonner";
+import {ColumnDef, FieldDefinition} from "@/types/field-builder";
+import {RefreshCw} from "lucide-react";
+import {route} from 'ziggy-js';
+import {gridClasses, maxOrder, sortByOrder} from "@/lib/utils";
+import {AppFieldBuilderLoadingPlaceholder} from "@/components/builder/field/loading-placeholder";
 
 type PageProps = {
     columns?: ColumnDef;
@@ -18,10 +19,10 @@ type PageProps = {
     formClass: string;
 };
 
-export function AppFormBuilder({ columns, fields: initialFields, routeName, routeId, mode, formClass }: PageProps) {
-    const { flash } = usePage().props as { flash?: { success?: string, error?: string, description?: string } };
+export function AppFormBuilder({columns, fields: initialFields, routeName, routeId, mode, formClass}: PageProps) {
+    const {flash} = usePage().props as { flash?: { success?: string, error?: string, description?: string } };
 
-    // local state fields agar bisa diupdate saat reactive/live
+    // local state fields that can be updated when reactive/live
     const [fields, setFields] = useState<FieldDefinition[]>(initialFields);
 
     useEffect(() => {
@@ -58,7 +59,7 @@ export function AppFormBuilder({ columns, fields: initialFields, routeName, rout
     // The 'transform' function is used here to add this field to the data right before it's submitted.
     transform((data) => (
         routeId
-            ? { ...data, _method: 'patch' }
+            ? {...data, _method: 'patch'}
             : data
     ));
 
@@ -75,17 +76,16 @@ export function AppFormBuilder({ columns, fields: initialFields, routeName, rout
     const debounceTimeouts = React.useRef<Record<string, NodeJS.Timeout>>({});
 
     const onReactive = async (name: string, value: any, operator?: string) => {
-        setData((prev: any) => ({ ...prev, [name]: value, operator }));
+        setData((prev: any) => ({...prev, [name]: value, operator}));
         const field = fields.find((f) => f.name === name);
         if (!field) return;
-        if (!field.reactive || false) return;
+        if (!field.reactive) return;
 
-        // jika ada debounce
         if (field.debounce && field.debounce > 0) {
-            // clear timeout sebelumnya
+            // clear timeout before
             if (debounceTimeouts.current[name]) clearTimeout(debounceTimeouts.current[name]);
 
-            // set timeout baru
+            // set new timeout
             debounceTimeouts.current[name] = setTimeout(() => {
                 sendLiveUpdate(name, value);
             }, field.debounce);
@@ -115,7 +115,7 @@ export function AppFormBuilder({ columns, fields: initialFields, routeName, rout
                 body: JSON.stringify({
                     name,
                     value,
-                    state: { ...data, [name]: value },
+                    state: {...data, [name]: value},
                     formClass,
                 }),
             });
@@ -149,23 +149,12 @@ export function AppFormBuilder({ columns, fields: initialFields, routeName, rout
         post(route(`${routeName}.store`));
     };
 
-    // separate grid and non-grid
-    // const gridGroups = fields
-    //     .filter(f => f.grid)
-    //     .reduce((acc, f) => {
-    //         acc[f.gridKey] = acc[f.gridKey] || [];
-    //         acc[f.gridKey].push(f);
-    //         return acc;
-    //     }, {} as Record<string, typeof fields>);
-    //
-    // const nonGridFields = fields.filter(f => !f.grid);
-
     const gridGroups = Object.entries(
         fields
             .filter(f => f.grid)
             .reduce((acc, f) => {
-                acc[f.gridKey] = acc[f.gridKey] || [];
-                acc[f.gridKey].push(f);
+                acc[f.gridKey || ''] = acc[f.gridKey || ''] || [];
+                acc[f.gridKey || ''].push(f);
                 return acc;
             }, {} as Record<string, typeof fields>)
     );
@@ -191,6 +180,8 @@ export function AppFormBuilder({ columns, fields: initialFields, routeName, rout
 
     return (
         <form onSubmit={handleSubmit} className="flex flex-col gap-4" encType="multipart/form-data">
+
+            {/* field builder */}
             <div className={gridClasses(columns) + " gap-4"}>
                 {sortedGroups.map(group => {
                     if (group.type === "grid") {
@@ -198,15 +189,19 @@ export function AppFormBuilder({ columns, fields: initialFields, routeName, rout
                         return (
                             <div key={group.key} className={gridClasses(gridCol) + " gap-4"}>
                                 {group.fields.map(field => (
-                                    <AppFieldBuilder
-                                        key={field.key}
-                                        field={field}
-                                        value={data[field.name]}
-                                        onReactive={onReactive}
-                                        error={errors[field.name]}
-                                        isProcessing={processing}
-                                        setFields={setFields}
-                                    />
+                                    processing ? (
+                                        <AppFieldBuilderLoadingPlaceholder field={field}/>
+                                    ) : (
+                                        <AppFieldBuilder
+                                            key={field.key}
+                                            field={field}
+                                            value={data[field.name]}
+                                            onReactive={onReactive}
+                                            error={errors[field.name]}
+                                            isProcessing={processing}
+                                            setFields={setFields}
+                                        />
+                                    )
                                 ))}
                             </div>
                         );
@@ -214,18 +209,24 @@ export function AppFormBuilder({ columns, fields: initialFields, routeName, rout
 
                     // non-grid
                     return group.fields.map(field => (
-                        <AppFieldBuilder
-                            key={field.key}
-                            field={field}
-                            value={data[field.name]}
-                            onReactive={onReactive}
-                            error={errors[field.name]}
-                            isProcessing={processing}
-                            setFields={setFields}
-                        />));
+                        processing ? (
+                            <AppFieldBuilderLoadingPlaceholder field={field}/>
+                        ) : (
+                            <AppFieldBuilder
+                                key={field.key}
+                                field={field}
+                                value={data[field.name]}
+                                onReactive={onReactive}
+                                error={errors[field.name]}
+                                isProcessing={processing}
+                                setFields={setFields}
+                            />
+                        )
+                    ))
                 })}
             </div>
 
+            {/* action button */}
             <div className="flex items-center justify-between">
                 {mode === 'show' && (
                     <div className="flex items-center gap-2">
@@ -274,7 +275,7 @@ export function AppFormBuilder({ columns, fields: initialFields, routeName, rout
                             href={route(`${routeName}.edit`, routeId)}
                             className="flex items-center gap-2 text-sm hover:cursor-pointer hover:opacity-60"
                         >
-                            <RefreshCw className="h-4 w-4 text-destructive" />
+                            <RefreshCw className="h-4 w-4 text-destructive"/>
                             <span>reset</span>
                         </Link>
                     </div>

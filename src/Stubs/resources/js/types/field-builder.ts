@@ -21,15 +21,15 @@ export type FieldDefinition = {
     label: string;
     prefix?: string;
     suffix?: string;
-    grid: boolean;
-    gridKey: string;
-    gridCol: ColumnDef;
+    grid?: boolean;
+    gridKey?: string;
+    gridCol?: ColumnDef;
     order: number;
     type: 'text' | 'email' | 'number' | 'date' | 'datetime-local' | 'password'
-    | 'textarea' | 'select' | 'combobox' | 'radio' | 'checkbox' | 'toggle'
-    | 'markdown' | 'flatpickr' | 'hidden' | 'slider' | 'file'
-    | 'checkbox-list' | 'rich-text' | 'repeater' | 'key-value' | 'tags'
-    | 'custom';
+        | 'textarea' | 'select' | 'combobox' | 'radio' | 'checkbox' | 'toggle'
+        | 'markdown' | 'flatpickr' | 'hidden' | 'slider' | 'file'
+        | 'checkbox-list' | 'rich-text' | 'repeater' | 'key-value' | 'tags'
+        | 'custom';
     options?: FieldOption[];
     isDisable?: boolean;
     hidden?: boolean;
