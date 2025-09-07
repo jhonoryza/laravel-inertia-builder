@@ -20,8 +20,6 @@ class {{className}} extends Controller
     {
         return Inertia::render('builder/index', [
             'data' => {{TableClass}}::build(),
-            'tableRoute' => route('{{routeName}}.index'),
-            'routeName' => '{{routeName}}',
         ]);
     }
 
@@ -34,9 +32,6 @@ class {{className}} extends Controller
     {
         return Inertia::render('builder/show', [
             'form' => {{FormClass}}::view(${{modelVariable}}),
-            'routeName' => '{{routeName}}',
-            'routeId' => ${{modelVariable}}->id,
-            'formClass' => {{FormClass}}::class,
         ]);
     }
 
@@ -44,8 +39,6 @@ class {{className}} extends Controller
     {
         return Inertia::render('builder/create', [
             'form' => {{FormClass}}::create(),
-            'routeName' => '{{routeName}}',
-            'formClass' => {{FormClass}}::class,
         ]);
     }
 
@@ -53,9 +46,6 @@ class {{className}} extends Controller
     {
         return Inertia::render('builder/edit', [
             'form' => {{FormClass}}::edit(${{modelVariable}}),
-            'routeName' => '{{routeName}}',
-            'routeId' => ${{modelVariable}}->id,
-            'formClass' => {{FormClass}}::class,
         ]);
     }
 
