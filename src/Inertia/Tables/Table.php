@@ -18,16 +18,51 @@ use Illuminate\Support\Str;
 
 class Table implements JsonSerializable
 {
+    /**
+     * the pagination method that will be used
+     * available: simple, paginate, cursor
+     */
     protected string $paginationMethod = 'simple';
 
     protected bool $disablePagination = false;
 
+    /**
+     * this will be used when partial reload happen
+     * you need to change this value when using multiple table
+     * in a single page
+     */
     protected string $name = 'data';
+
+    /**
+     * table title used in breadcumb and table header
+     */
     protected string $title = '';
 
+    /**
+     * this is used for route resolver in AppDatatable
+     * route(baseRoute + .index)
+     */
     protected string $baseRoute = '';
+
+    /**
+     * this is used for route resolver in AppDatatable
+     * baseRoute config will not be used
+     * must be full url ex: route('posts.index')
+     */
     protected string|null $tableRoute = null;
+
+    /**
+     * this is used for route resolver in AppDataTableToolbar
+     * used for actions route
+     * default using baseRoute + .actions
+     */
     protected string|null $actionRoute = null;
+
+    /**
+     * this is required to be change when using
+     * multiple table in a single page
+     */
+    protected string $prefix = '';
 
     protected string $model;
 
@@ -56,8 +91,6 @@ class Table implements JsonSerializable
     protected string $pageParam = 'page';
 
     protected string $filterParam = 'filter';
-
-    protected string $prefix = '';
 
     protected ?string $defaultSort = null;
 
@@ -316,21 +349,21 @@ class Table implements JsonSerializable
             $type = $param->getType()?->getName();
             $name = $param->getName();
 
-            // Inject berdasarkan nama
+            // Inject based on name
             if (array_key_exists($name, $parameters)) {
                 $args[] = $parameters[$name];
 
                 continue;
             }
 
-            // Inject berdasarkan type-hint
+            // Inject based on type-hint
             if ($type && array_key_exists($type, $parameters)) {
                 $args[] = $parameters[$type];
 
                 continue;
             }
 
-            // Kalau nggak ketemu, coba default value
+            // if didn't found, try default value
             if ($param->isDefaultValueAvailable()) {
                 $args[] = $param->getDefaultValue();
 

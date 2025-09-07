@@ -13,13 +13,48 @@ class Form implements JsonSerializable
 {
     use HasColumns, HasFields;
 
+    /**
+     * this is used for form model
+     */
+    protected ?Model $model = null;
+
+    /**
+     * this is used for form internal state
+     * when model is loaded, this variable will be filled
+     * from the model field value
+     */
     public array $state = [];
 
-    protected ?Model $model = null;
+    /**
+     * this is used for route resolver in AppFormBuilderAction
+     * route(baseRoute + .edit)
+     * ex: .edit .show .destroy .forceDestroy .restore
+     * form post or patch is handled by inertia useForm
+     */
     protected string $baseRoute = '';
+
+    /**
+     * this is used for route resolver in AppFormBuilderAction
+     * you can set this routeId with ex: $model->id
+     */
     protected string|int|null $routeId = null;
+
+    /**
+     * this is used for which button should be displayed in AppFormBuilderAction
+     * mode: show, edit, create
+     */
     protected string $mode = '';
+
+    /**
+     * this is used for inertia builder internal api route
+     * to identify which form class is should be called
+     * when state is changed
+     */
     protected string $formClass = '';
+
+    /**
+     * this is used for form title
+     */
     protected string $title = '';
 
     public function __construct()
@@ -90,15 +125,15 @@ class Form implements JsonSerializable
         return $this;
     }
 
-    // public function state(array $state): static
-    // {
-    //     if (! empty($state)) {
-    //         $this->state = $state;
-    //     }
-    //     return $this;
-    // }
+    public function state(array $state): static
+    {
+        if (! empty($state)) {
+            $this->state = $state;
+        }
+        return $this;
+    }
 
-    // di panggil saat ada perubahan dari frontend
+    // will be called when there is reactive call from frontend
     public function handleLiveUpdate(string $name, $value, array &$state): array
     {
         /** @var AbstractField|null $field */
@@ -136,9 +171,9 @@ class Form implements JsonSerializable
         return $this->state;
     }
 
-    // kenapa form class harus punya state berisi data state semua field
-    // yaitu untuk override state dari sebuah field ketika field lain berubah state nya
-    // di panggil saat initial loads atau ada perubahan dari frontend
+    // why the form class must have a state containing the state data of all fields
+    // it is to override the state of a field when another field’s state changes
+    // called during initial load or when there are changes from the frontend
     public function evaluateFields(): array
     {
         return collect($this->getFields())
@@ -154,6 +189,11 @@ class Form implements JsonSerializable
             ->toArray();
     }
 
+    /**
+     * when form state is empty, we need to filled the form state
+     * from model field value
+     * or from field state when it is available
+     */
     private function checkisStateEmpty(): void
     {
         if (empty($this->state)) {

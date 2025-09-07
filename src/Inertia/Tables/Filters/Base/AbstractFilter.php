@@ -36,21 +36,21 @@ abstract class AbstractFilter implements JsonSerializable
             $type = $param->getType()?->getName();
             $name = $param->getName();
 
-            // Inject berdasarkan nama
+            // Inject based on name
             if (array_key_exists($name, $parameters)) {
                 $args[] = $parameters[$name];
 
                 continue;
             }
 
-            // Inject berdasarkan type-hint
+            // Inject based on type-hint
             if ($type && array_key_exists($type, $parameters)) {
                 $args[] = $parameters[$type];
 
                 continue;
             }
 
-            // Kalau nggak ketemu, coba default value
+            // if didn't found, try default value
             if ($param->isDefaultValueAvailable()) {
                 $args[] = $param->getDefaultValue();
 

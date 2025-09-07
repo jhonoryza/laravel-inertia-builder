@@ -73,6 +73,7 @@ class InstallCommand extends Command
         $this->info('page copied successfully.');
 
         // copy datatable and field builder type
+        copy(__DIR__ . '/../../Stubs/resources/js/types/form.ts', resource_path('js/types/form.ts'));
         copy(__DIR__ . '/../../Stubs/resources/js/types/index.d.ts', resource_path('js/types/index.d.ts'));
         copy(__DIR__ . '/../../Stubs/resources/js/types/datatable.ts', resource_path('js/types/datatable.ts'));
         copy(__DIR__ . '/../../Stubs/resources/js/types/field-builder.ts', resource_path('js/types/field-builder.ts'));
