@@ -7,7 +7,6 @@ import {AppDataTableContent} from './table/content';
 import {AppDataTablePagination} from './table/pagination';
 import {AppDataTableToolbar} from './table/toolbar';
 import {route} from 'ziggy-js';
-import {AppDatatableLoadingPlaceholder} from "@/components/builder/table/loading-placeholder";
 
 type DataTable = {
     data: DataTableProps;
@@ -71,19 +70,22 @@ export default function AppDataTable({data, routeName, tableRoute, children}: Da
     useEffect(() => {
         if (firstRender.current) {
             firstRender.current = false;
-            return; // skip request pertama
+            return; // skip first request
         }
 
         if ((sort.length > 0 && dir.length > 0) || searchQuery.length > 0 || activeFilters.length > 0) {
             // console.log(sort, dir, searchQuery, activeFilters)
-            setTimeout(() => {
+            const handler = setTimeout(() => {
                 const filterParams = activeFilters.reduce(
                     (acc, filter) => {
                         if (filter.value && Array.isArray(filter.value) && filter.value.length > 0) {
-                            const joined = filter.value.length > 1 ? filter.value.join(',') : filter.value.toString();
-                            //console.log(joined);
-                            //console.log(filter.value);
-                            acc[`${prefix}filter[${filter.field}]`] = filter.operator ? `${filter.operator}:${joined}` : joined;
+                            const joined =
+                                filter.value.length > 1
+                                    ? filter.value.join(",")
+                                    : filter.value.toString();
+                            acc[`${prefix}filter[${filter.field}]`] = filter.operator
+                                ? `${filter.operator}:${joined}`
+                                : joined;
                         } else if (filter.value) {
                             acc[`${prefix}filter[${filter.field}]`] = filter.operator
                                 ? `${filter.operator}:${filter.value}`
@@ -91,20 +93,19 @@ export default function AppDataTable({data, routeName, tableRoute, children}: Da
                         }
                         return acc;
                     },
-                    {} as Record<string, string>,
+                    {} as Record<string, string>
                 );
 
-                // if (Object.keys(filterParams).length <= 0 && activeFilters.length > 0) {
-                //     return;
-                // }
+                const params =
+                    Object.keys(filterParams).length > 0 ? filterParams : {};
 
-                const params = Object.keys(filterParams).length > 0 ? filterParams : {};
-                // console.log(params);
+                const routeUrl = tableRoute
+                    ? tableRoute
+                    : route(`${routeName}.index`);
+                const searchParam = prefix + "q";
+                const sortByParam = prefix + "sort";
+                const sortDirParam = prefix + "dir";
 
-                const routeUrl = tableRoute ? tableRoute : route(`${routeName}.index`);
-                const searchParam = prefix + 'q';
-                const sortByParam = prefix + 'sort';
-                const sortDirParam = prefix + 'dir';
                 router.get(
                     routeUrl,
                     {
@@ -117,9 +118,12 @@ export default function AppDataTable({data, routeName, tableRoute, children}: Da
                         preserveScroll: true,
                         preserveState: true,
                         only: [name],
-                    },
+                    }
                 );
-            }, 500);
+            }, 350);
+
+            // cleanup: if there is changed before 250ms, clear old timeout
+            return () => clearTimeout(handler);
         }
     }, [sort, dir, searchQuery, activeFilters, tableRoute, routeName, prefix]);
 
@@ -187,12 +191,6 @@ export default function AppDataTable({data, routeName, tableRoute, children}: Da
         setActiveFilters(newFilters);
     };
 
-    const [loading, setLoading] = useState(false)
-    useEffect(() => {
-        router.on('start', () => setLoading(true))
-        router.on('finish', () => setLoading(false))
-    }, [])
-
     return (
         <div className="overflow-hidden rounded-xl border bg-background text-foreground shadow-sm">
             <AppDataTableToolbar
@@ -221,25 +219,21 @@ export default function AppDataTable({data, routeName, tableRoute, children}: Da
                 closePopover={closePopover}
             />
 
-            {loading ? (
-                <AppDatatableLoadingPlaceholder count={items.data.length || 10} />
-            ) : (
-                <AppDataTableContent
-                    items={items}
-                    columns={columns}
-                    selectedIds={selectedIds}
-                    hiddenColumns={hiddenColumns}
-                    sort={sort}
-                    dir={dir}
-                    handleSort={handleSort}
-                    toggleSelectAll={toggleSelectAll}
-                    toggleSelectOne={toggleSelectOne}
-                    routeName={routeName}
-                    disablePagination={disablePagination}
-                >
-                    {children && children.rowAction}
-                </AppDataTableContent>
-            )}
+            <AppDataTableContent
+                items={items}
+                columns={columns}
+                selectedIds={selectedIds}
+                hiddenColumns={hiddenColumns}
+                sort={sort}
+                dir={dir}
+                handleSort={handleSort}
+                toggleSelectAll={toggleSelectAll}
+                toggleSelectOne={toggleSelectOne}
+                routeName={routeName}
+                disablePagination={disablePagination}
+            >
+                {children && children.rowAction}
+            </AppDataTableContent>
 
             {!disablePagination && (
                 <AppDataTablePagination
