@@ -14,6 +14,7 @@ use JsonSerializable;
 use Spatie\QueryBuilder\AllowedFilter;
 use Spatie\QueryBuilder\AllowedSort;
 use Spatie\QueryBuilder\QueryBuilder;
+use Illuminate\Support\Str;
 
 class Table implements JsonSerializable
 {
@@ -22,6 +23,11 @@ class Table implements JsonSerializable
     protected bool $disablePagination = false;
 
     protected string $name = 'data';
+    protected string $title = '';
+
+    protected string $baseRoute = '';
+    protected string|null $tableRoute = null;
+    protected string|null $actionRoute = null;
 
     protected string $model;
 
@@ -81,11 +87,41 @@ class Table implements JsonSerializable
     public function __construct(string $model)
     {
         $this->model = $model;
+        $this->baseRoute = Str::plural(Str::snake(class_basename($model)));
+        $this->title = Str::title(class_basename($model));
     }
 
-    public function name(string $name): static
+    public function name(string $name = 'data'): static
     {
         $this->name = $name;
+
+        return $this;
+    }
+
+    public function dataName(string $name = 'data'): static
+    {
+        $this->name = $name;
+
+        return $this;
+    }
+
+    public function baseRoute(string $base): static
+    {
+        $this->name = $base;
+
+        return $this;
+    }
+
+    public function tableRoute(string $tableRoute): static
+    {
+        $this->tableRoute = $tableRoute;
+
+        return $this;
+    }
+
+    public function actionRoute(string $actionRoute): static
+    {
+        $this->actionRoute = $actionRoute;
 
         return $this;
     }
@@ -662,6 +698,11 @@ class Table implements JsonSerializable
             'forceDelete'       => $this->canForceDelete,
             'restore'           => $this->canRestore,
             'disablePagination' => $this->disablePagination,
+            'paginationMethod'  => $this->paginationMethod,
+            'baseRoute'         => $this->baseRoute,
+            'tableRoute'        => $this->tableRoute,
+            'actionRoute'       => $this->actionRoute,
+            'title'             => $this->title,
         ];
     }
 

@@ -1,30 +1,28 @@
-import {AppDataTableActiveFilters} from '@/components/builder/table/active-filters';
-import {ActiveFilter, DataItem, DataTableProps} from '@/types/datatable';
-import {router, usePage} from '@inertiajs/react';
-import {useEffect, useRef, useState} from 'react';
-import {toast} from 'sonner';
-import {AppDataTableContent} from './table/content';
-import {AppDataTablePagination} from './table/pagination';
-import {AppDataTableToolbar} from './table/toolbar';
-import {route} from 'ziggy-js';
+import { AppDataTableActiveFilters } from '@/components/builder/table/active-filters';
+import { ActiveFilter, DataItem, DataTableProps } from '@/types/datatable';
+import { router, usePage } from '@inertiajs/react';
+import { useEffect, useRef, useState } from 'react';
+import { toast } from 'sonner';
+import { AppDataTableContent } from './table/content';
+import { AppDataTablePagination } from './table/pagination';
+import { AppDataTableToolbar } from './table/toolbar';
+import { route } from 'ziggy-js';
 
 type DataTable = {
     data: DataTableProps;
-    routeName: string;
-    tableRoute: string;
     children?: {
-        rowAction: (item: DataItem, routeName: string) => React.ReactNode;
+        rowAction: (item: DataItem) => React.ReactNode;
         toolbarAction: React.ReactNode;
     };
 };
 
-export default function AppDataTable({data, routeName, tableRoute, children}: DataTable) {
-    const {name, prefix, items, filters, columns, actions, perPage, perPageOptions, disablePagination} = data;
+export default function AppDataTable({ data, children }: DataTable) {
+    const { name, prefix, items, filters, columns, disablePagination } = data;
     const [openFilterPopovers, setOpenFilterPopovers] = useState<Record<string, boolean>>({});
-    const openPopover = (field: string) => setOpenFilterPopovers((prev) => ({...prev, [field]: true}));
-    const closePopover = (field: string) => setOpenFilterPopovers((prev) => ({...prev, [field]: false}));
+    const openPopover = (field: string) => setOpenFilterPopovers((prev) => ({ ...prev, [field]: true }));
+    const closePopover = (field: string) => setOpenFilterPopovers((prev) => ({ ...prev, [field]: false }));
 
-    const {flash} = usePage().props as { flash?: { success?: string; error?: string; description?: string } };
+    const { flash } = usePage().props as { flash?: { success?: string; error?: string; description?: string } };
 
     const [selectedIds, setSelectedIds] = useState<(string | number)[]>([]);
 
@@ -47,7 +45,7 @@ export default function AppDataTable({data, routeName, tableRoute, children}: Da
         Object.entries(filters.filter).forEach(([field, value]) => {
             const operator = value.split(':')[0];
             const filterValue = value.split(':')[1];
-            initialActiveFilters.push({field, operator, value: filterValue});
+            initialActiveFilters.push({ field, operator, value: filterValue });
         });
     }
     const [activeFilters, setActiveFilters] = useState<ActiveFilter[]>(initialActiveFilters);
@@ -99,9 +97,9 @@ export default function AppDataTable({data, routeName, tableRoute, children}: Da
                 const params =
                     Object.keys(filterParams).length > 0 ? filterParams : {};
 
-                const routeUrl = tableRoute
-                    ? tableRoute
-                    : route(`${routeName}.index`);
+                const routeUrl = data.tableRoute
+                    ? data.tableRoute
+                    : route(`${data.baseRoute}.index`);
                 const searchParam = prefix + "q";
                 const sortByParam = prefix + "sort";
                 const sortDirParam = prefix + "dir";
@@ -109,7 +107,7 @@ export default function AppDataTable({data, routeName, tableRoute, children}: Da
                 router.get(
                     routeUrl,
                     {
-                        ...(params ? {...params} : {}),
+                        ...(params ? { ...params } : {}),
                         [searchParam]: searchQuery,
                         [sortByParam]: sort,
                         [sortDirParam]: dir,
@@ -125,7 +123,7 @@ export default function AppDataTable({data, routeName, tableRoute, children}: Da
             // cleanup: if there is changed before 250ms, clear old timeout
             return () => clearTimeout(handler);
         }
-    }, [sort, dir, searchQuery, activeFilters, tableRoute, routeName, prefix]);
+    }, [sort, dir, searchQuery, activeFilters, prefix]);
 
     useEffect(() => {
         if (flash?.success) {
@@ -198,13 +196,11 @@ export default function AppDataTable({data, routeName, tableRoute, children}: Da
                 setSearchQuery={setSearchQuery}
                 selectedIds={selectedIds}
                 activeFilters={activeFilters}
-                filters={filters}
                 handleAddFilter={handleAddFilter}
                 columns={columns}
                 toggleColumn={toggleColumn}
                 hiddenColumns={hiddenColumns}
-                routeName={routeName}
-                actions={actions}
+                data={data}
             >
                 {children && children.toolbarAction}
             </AppDataTableToolbar>
@@ -229,7 +225,6 @@ export default function AppDataTable({data, routeName, tableRoute, children}: Da
                 handleSort={handleSort}
                 toggleSelectAll={toggleSelectAll}
                 toggleSelectOne={toggleSelectOne}
-                routeName={routeName}
                 disablePagination={disablePagination}
             >
                 {children && children.rowAction}
@@ -237,11 +232,7 @@ export default function AppDataTable({data, routeName, tableRoute, children}: Da
 
             {!disablePagination && (
                 <AppDataTablePagination
-                    name={name}
-                    prefix={prefix}
-                    items={items}
-                    perPage={perPage}
-                    perPageOptions={perPageOptions}
+                    data={data}
                     selectedIds={selectedIds}
                     toggleSelectAll={toggleSelectAll}
                 />

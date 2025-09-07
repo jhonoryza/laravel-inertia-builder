@@ -1,37 +1,33 @@
-import {Button} from '@/components/ui/button';
-import {Pagination, PaginationContent, PaginationItem} from '@/components/ui/pagination';
-import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from '@/components/ui/select';
-import {DataTableProps} from '@/types/datatable';
-import {router, usePage} from '@inertiajs/react';
-import {ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight} from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Pagination, PaginationContent, PaginationItem } from '@/components/ui/pagination';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { DataTableProps } from '@/types/datatable';
+import { router } from '@inertiajs/react';
+import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from 'lucide-react';
 
 interface AppDataTablePaginationProps {
-    name: DataTableProps['name'];
-    prefix: DataTableProps['prefix'];
-    items: DataTableProps['items'];
-    perPage?: DataTableProps['perPage'];
-    perPageOptions?: DataTableProps['perPageOptions'];
+    data: DataTableProps;
     selectedIds: (string | number)[];
     toggleSelectAll: (checked: boolean) => void;
 }
 
 export function AppDataTablePagination({
-                                           name,
-                                           prefix,
-                                           items,
-                                           perPage,
-                                           perPageOptions,
-                                           selectedIds,
-                                           toggleSelectAll
-                                       }: AppDataTablePaginationProps) {
-    const hasSimplePagination = true;
-    const {url} = usePage();
+    data,
+    selectedIds,
+    toggleSelectAll
+}: AppDataTablePaginationProps) {
+    const { name, prefix, items, perPage, perPageOptions, paginationMethod } = data;
+    const routeUrl = data.tableRoute
+        ? data.tableRoute
+        : route(`${data.baseRoute}.index`);
+
+    const hasSimplePagination = (paginationMethod == 'simple' || paginationMethod == 'cursor') ? true : false;
 
     const handlePerPageChange = (value: string) => {
         const perPageParam = prefix + 'perPage';
         router.get(
-            url,
-            {[perPageParam]: value},
+            routeUrl,
+            { [perPageParam]: value },
             {
                 preserveState: true,
                 preserveScroll: true,
@@ -45,8 +41,8 @@ export function AppDataTablePagination({
                 <div>
                     {selectedIds.length > 0 && (
                         <Button variant="link"
-                                onClick={() => toggleSelectAll(false)} type="button"
-                                className="cursor-pointer"
+                            onClick={() => toggleSelectAll(false)} type="button"
+                            className="cursor-pointer"
                         >
                             Deselect all
                         </Button>
@@ -67,7 +63,7 @@ export function AppDataTablePagination({
                 <p className="text-sm font-medium">Rows per page</p>
                 <Select value={`${perPage}`} onValueChange={handlePerPageChange}>
                     <SelectTrigger className="h-8 w-[70px]">
-                        <SelectValue placeholder={`${perPage}`}/>
+                        <SelectValue placeholder={`${perPage}`} />
                     </SelectTrigger>
                     <SelectContent side="top">
                         {perPageOptions?.map(option => (
@@ -100,7 +96,7 @@ export function AppDataTablePagination({
                                 })
                             }
                             disabled={!items.prev_page_url || !items.first_page_url}>
-                            <ChevronsLeft/>
+                            <ChevronsLeft />
                         </Button>
                         <Button
                             variant="ghost"
@@ -115,7 +111,7 @@ export function AppDataTablePagination({
                                 })
                             }
                             disabled={!items.prev_page_url}>
-                            <ChevronLeft/>
+                            <ChevronLeft />
                         </Button>
                         <Button
                             variant="ghost"
@@ -130,7 +126,7 @@ export function AppDataTablePagination({
                                 })
                             }
                             disabled={!items.next_page_url}>
-                            <ChevronRight/>
+                            <ChevronRight />
                         </Button>
                         <Button
                             variant="ghost"
@@ -145,7 +141,7 @@ export function AppDataTablePagination({
                                 })
                             }
                             disabled={!items.next_page_url || !items.last_page_url}>
-                            <ChevronsRight/>
+                            <ChevronsRight />
                         </Button>
                     </div>
                 ) : (
@@ -173,7 +169,7 @@ export function AppDataTablePagination({
                                                     )
                                                 }
                                                 disabled={!link.url}
-                                                dangerouslySetInnerHTML={{__html: link.label}}
+                                                dangerouslySetInnerHTML={{ __html: link.label }}
                                             />
                                         </PaginationItem>
                                     ))}

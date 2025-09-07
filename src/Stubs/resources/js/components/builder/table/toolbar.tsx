@@ -1,6 +1,6 @@
-import React, {useState} from "react";
-import {Button} from "@/components/ui/button";
-import {Input} from "@/components/ui/input";
+import React, { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -27,44 +27,42 @@ import {
     WrenchIcon,
     XIcon,
 } from "lucide-react";
-import {Action, ActiveFilter, Column, DataTableProps, Filter} from "@/types/datatable";
-import {router} from "@inertiajs/react";
-import {route} from 'ziggy-js';
+import { Action, ActiveFilter, Column, DataTableProps, Filter } from "@/types/datatable";
+import { router } from "@inertiajs/react";
+import { route } from 'ziggy-js';
 
 interface AppDataTableToolbarProps {
     searchQuery: string;
     setSearchQuery: (query: string) => void;
     selectedIds: (string | number)[];
     activeFilters: ActiveFilter[];
-    filters: DataTableProps["filters"];
     handleAddFilter: (field: string, value?: string) => void;
     columns: Column[];
     toggleColumn: (colName: string) => void;
     hiddenColumns: Record<string, boolean>;
-    routeName: string;
-    actions: DataTableProps["actions"];
+    data: DataTableProps;
     children?: React.ReactNode;
 }
 
 export function AppDataTableToolbar({
-                                        searchQuery,
-                                        setSearchQuery,
-                                        selectedIds,
-                                        activeFilters,
-                                        filters,
-                                        handleAddFilter,
-                                        columns,
-                                        toggleColumn,
-                                        hiddenColumns,
-                                        routeName,
-                                        actions,
-                                        children,
-                                    }: AppDataTableToolbarProps) {
+    searchQuery,
+    setSearchQuery,
+    selectedIds,
+    activeFilters,
+    handleAddFilter,
+    columns,
+    toggleColumn,
+    hiddenColumns,
+    data,
+    children,
+}: AppDataTableToolbarProps) {
     const [confirmAction, setConfirmAction] = useState<null | {
         name: string;
         label: string;
         message: string;
     }>(null);
+
+    const { baseRoute, actionRoute, filters, actions } = data;
 
     const handleAction = (action: Action) => {
         if (action.rowSelected && selectedIds.length === 0) return;
@@ -74,7 +72,8 @@ export function AppDataTableToolbar({
             return;
         }
 
-        router.visit(route(`${routeName}.actions`), {
+        const routeUrl = actionRoute ? actionRoute : route(`${baseRoute}.actions`);
+        router.visit(routeUrl, {
             method: "post",
             data: {
                 ids: selectedIds,
@@ -86,7 +85,8 @@ export function AppDataTableToolbar({
 
     const confirmAndRunAction = () => {
         if (!confirmAction) return;
-        router.visit(route(`${routeName}.actions`), {
+        const routeUrl = actionRoute ? actionRoute : route(`${baseRoute}.actions`);
+        router.visit(routeUrl, {
             method: "post",
             data: {
                 ids: selectedIds,
@@ -99,7 +99,7 @@ export function AppDataTableToolbar({
 
     const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
         const value = e.target.value;
-            setSearchQuery(value);
+        setSearchQuery(value);
     };
 
     return (
@@ -107,14 +107,14 @@ export function AppDataTableToolbar({
             <div className="flex items-center gap-2 justify-between px-4 py-2">
                 <div className="flex items-center gap-2">
                     <Input placeholder="Search..." value={searchQuery} onChange={handleSearch}
-                           className="max-w-xs sm:max-w-sm"/>
+                        className="max-w-xs sm:max-w-sm" />
                 </div>
                 <div className="flex items-center gap-2">
                     {actions.length > 0 && (
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
                                 <Button className="flex cursor-pointer items-center gap-2" variant="outline" size="sm">
-                                    <WrenchIcon/>
+                                    <WrenchIcon />
                                     <span className="hidden sm:block">Action</span>
                                 </Button>
                             </DropdownMenuTrigger>
@@ -143,7 +143,7 @@ export function AppDataTableToolbar({
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
                                 <Button variant="outline" size="sm" className="cursor-pointer gap-2">
-                                    <FilterIconComponent className="h-4 w-4"/>
+                                    <FilterIconComponent className="h-4 w-4" />
                                     <span className="hidden sm:block">Filters</span>
                                 </Button>
                             </DropdownMenuTrigger>
@@ -156,8 +156,8 @@ export function AppDataTableToolbar({
                                             onSelect={() => handleAddFilter(filter.field)}
                                             className="flex cursor-pointer items-center gap-2"
                                         >
-                                            {activeFilters.find((f) => f.field === filter.field) ? <CheckIcon/> :
-                                                <XIcon/>}
+                                            {activeFilters.find((f) => f.field === filter.field) ? <CheckIcon /> :
+                                                <XIcon />}
                                             <span>{filter.label}</span>
                                         </DropdownMenuItem>
                                     ))}
@@ -169,7 +169,7 @@ export function AppDataTableToolbar({
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                             <Button variant="outline" size="sm" className="cursor-pointer gap-2">
-                                <Eye className="h-4 w-4"/>
+                                <Eye className="h-4 w-4" />
                                 <span className="hidden sm:block">Columns</span>
                             </Button>
                         </DropdownMenuTrigger>
@@ -182,7 +182,7 @@ export function AppDataTableToolbar({
                                         onSelect={() => toggleColumn(col.name)}
                                         className="flex cursor-pointer items-center gap-2"
                                     >
-                                        {!hiddenColumns[col.name] ? <CheckIcon/> : <XIcon/>}
+                                        {!hiddenColumns[col.name] ? <CheckIcon /> : <XIcon />}
                                         <span>{col.label}</span>
                                     </DropdownMenuItem>
                                 ))}

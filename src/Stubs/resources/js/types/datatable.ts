@@ -24,7 +24,7 @@ export type Filter = {
     options?: SelectOption[];
     multiple?: boolean;
     searchable?: boolean;
-    serverside ?: boolean;
+    serverside?: boolean;
     component?: string;
 };
 
@@ -50,8 +50,8 @@ export type PaginatedItems = {
     total: number;
     next_page_url?: string;
     prev_page_url?: string;
-    first_page_url? : string;
-    last_page_url? : string;
+    first_page_url?: string;
+    last_page_url?: string;
 };
 
 export type Column = {
@@ -87,6 +87,7 @@ export type DataTableCommon = {
 
 export type DataTableProps = {
     name: string;
+    title: string;
     prefix: string;
     items: PaginatedItems;
     columns: Column[];
@@ -94,12 +95,14 @@ export type DataTableProps = {
     actions: Action[];
     perPage?: number;
     perPageOptions?: number[];
-    routeName: string;
+    baseRoute: string;
     tableRoute?: string;
+    actionRoute?: string;
     edit: boolean;
     view: boolean;
     delete: boolean;
     forceDelete: boolean;
     restore: boolean;
     disablePagination: boolean;
+    paginationMethod: string;
 };
