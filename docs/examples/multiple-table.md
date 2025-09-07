@@ -34,7 +34,8 @@ public static function getLeaderboard(GamePeriod $gamePeriod)
 {
     return Table::make(LeaderboardWithReward::class)
         ->dataName('leaderboard')
-        ->prefix('lwr');
+        ->prefix('lwr')
+        ->tableRoute(route('game_periods.show', $gamePeriod))
 ```
 
 ```php
@@ -43,6 +44,7 @@ public static function getRewardDistribution(GamePeriod $gamePeriod)
     return Table::make(LeaderboardReward::class)
         ->dataName('rewardDistribution')
         ->prefix('rd')
+        ->tableRoute(route('game_periods.show', $gamePeriod))
 ```
 
 `game_period/show.tsx` sample file, in this file we add 2 `AppDataTable` after `AppFormBuilder`

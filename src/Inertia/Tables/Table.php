@@ -18,7 +18,7 @@ use Illuminate\Support\Str;
 
 class Table implements JsonSerializable
 {
-    protected string $paginationMethod = 'paginate';
+    protected string $paginationMethod = 'simple';
 
     protected bool $disablePagination = false;
 
@@ -174,6 +174,27 @@ class Table implements JsonSerializable
             throw new \Exception('Invalid pagination method: ' . $method);
         }
         $this->paginationMethod = $method;
+
+        return $this;
+    }
+
+    public function simplePaginate(): static
+    {
+        $this->paginationMethod = 'simple';
+
+        return $this;
+    }
+
+    public function cursorPaginate(): static
+    {
+        $this->paginationMethod = 'cursor';
+
+        return $this;
+    }
+
+    public function standardPaginate(): static
+    {
+        $this->paginationMethod = 'paginate';
 
         return $this;
     }

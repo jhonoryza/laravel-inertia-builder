@@ -43,7 +43,6 @@ export function AppDataTableContent({
         router.on('finish', () => setLoading(false))
     }, [])
 
-    console.log(children?.rowAction);
     return (
         <Table className="min-w-full divide-y divide-gray-200 border-t">
             <TableHeader>
