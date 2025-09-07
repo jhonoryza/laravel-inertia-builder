@@ -1,4 +1,3 @@
-import React from 'react';
 import { Head } from '@inertiajs/react';
 import AppDataTable from "@/components/builder/app-datatable";
 import AppLayout from "@/layouts/app-layout";
@@ -14,7 +13,6 @@ interface Props {
 export default function Index({ data }: Props) {
     const { baseRoute, tableRoute, title } = data
     const routeUrl = tableRoute ? tableRoute : route(baseRoute + ".index")
-
     const breadcrumbs: BreadcrumbItem[] = [
         {
             title: title,
@@ -25,12 +23,13 @@ export default function Index({ data }: Props) {
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title={title} />
             <div className="p-4">
-                <AppDataTable data={data}>
+                <AppDataTable data={data}
+                >
                     {{
                         rowAction: (item) => (
                             <AppDatatableRowActions
                                 item={item}
-                                baseRoute={data.baseRoute}
+                                baseRoute={baseRoute}
                                 edit={data.edit}
                                 show={data.view}
                                 del={data.delete}

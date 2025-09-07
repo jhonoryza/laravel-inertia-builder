@@ -1,7 +1,7 @@
-import {Checkbox} from "@/components/ui/checkbox";
-import {TableHead, TableRow} from '@/components/ui/table';
-import {ArrowDown, ArrowUp, ArrowUpDown} from 'lucide-react';
-import {Column, DataItem} from "@/types/datatable";
+import { Checkbox } from "@/components/ui/checkbox";
+import { TableHead, TableRow } from '@/components/ui/table';
+import { ArrowDown, ArrowUp, ArrowUpDown } from 'lucide-react';
+import { Column, DataItem } from "@/types/datatable";
 
 type Props = {
     data: DataItem[];
@@ -12,18 +12,20 @@ type Props = {
     dir: 'asc' | 'desc';
     handleSort: (colName: string) => void;
     toggleSelectAll: (checked: boolean) => void;
+    isActionAvail: boolean;
 }
 
 export function AppDatatableRowHeader({
-                                          data,
-                                          columns,
-                                          selectedIds,
-                                          hiddenColumns,
-                                          sort,
-                                          dir,
-                                          toggleSelectAll,
-                                          handleSort
-                                      }: Props) {
+    data,
+    columns,
+    selectedIds,
+    hiddenColumns,
+    sort,
+    dir,
+    toggleSelectAll,
+    handleSort,
+    isActionAvail
+}: Props) {
     return (
         <TableRow>
             <TableHead className="w-12">
@@ -46,17 +48,17 @@ export function AppDatatableRowHeader({
                             {col.sortable &&
                                 (sort === col.name ? (
                                     dir === 'asc' ? (
-                                        <ArrowUp className="h-4 w-4"/>
+                                        <ArrowUp className="h-4 w-4" />
                                     ) : (
-                                        <ArrowDown className="h-4 w-4"/>
+                                        <ArrowDown className="h-4 w-4" />
                                     )
                                 ) : (
-                                    <ArrowUpDown className="h-4 w-4"/>
+                                    <ArrowUpDown className="h-4 w-4" />
                                 ))}
                         </div>
                     </TableHead>
                 ))}
-            <TableHead>Actions</TableHead>
+            {isActionAvail ? <TableHead>Actions</TableHead> : ''}
         </TableRow>
     )
 }

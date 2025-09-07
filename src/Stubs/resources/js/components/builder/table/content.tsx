@@ -43,12 +43,13 @@ export function AppDataTableContent({
         router.on('finish', () => setLoading(false))
     }, [])
 
+    console.log(children?.rowAction);
     return (
         <Table className="min-w-full divide-y divide-gray-200 border-t">
             <TableHeader>
                 <AppDatatableRowHeader data={data} columns={columns} selectedIds={selectedIds}
                     hiddenColumns={hiddenColumns} dir={dir} handleSort={handleSort}
-                    sort={sort} toggleSelectAll={toggleSelectAll} />
+                    sort={sort} toggleSelectAll={toggleSelectAll} isActionAvail={children !== undefined} />
             </TableHeader>
             <TableBody>
                 {data.length > 0 ? (

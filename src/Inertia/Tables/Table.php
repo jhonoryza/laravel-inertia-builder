@@ -88,7 +88,7 @@ class Table implements JsonSerializable
     {
         $this->model = $model;
         $this->baseRoute = Str::plural(Str::snake(class_basename($model)));
-        $this->title = Str::title(class_basename($model));
+        $this->title = Str::headline(class_basename($model));
     }
 
     public function name(string $name = 'data'): static

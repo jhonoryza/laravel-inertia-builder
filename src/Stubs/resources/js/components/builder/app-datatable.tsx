@@ -11,8 +11,8 @@ import { route } from 'ziggy-js';
 type DataTable = {
     data: DataTableProps;
     children?: {
-        rowAction: (item: DataItem) => React.ReactNode;
-        toolbarAction: React.ReactNode;
+        rowAction?: (item: DataItem) => React.ReactNode;
+        toolbarAction?: React.ReactNode;
     };
 };
 

@@ -16,29 +16,87 @@ class Form implements JsonSerializable
     public array $state = [];
 
     protected ?Model $model = null;
+    protected string $baseRoute = '';
+    protected string|int|null $routeId = null;
+    protected string $mode = '';
+    protected string $formClass = '';
+    protected string $title = '';
+
+    public function __construct()
+    {
+        $this->formClass = class_basename($this);
+    }
 
     public static function make(): static
     {
-        return new static;
+        return new static();
     }
 
     public function model(?Model $model): self
     {
         if ($model) {
             $this->model = $model;
+            $this->baseRoute = Str::plural(Str::snake(class_basename($model)));
+            $this->title = Str::headline(class_basename($model));
+            $this->routeId = $model->id ?? null;
         }
 
         return $this;
     }
 
-    public function state(array $state): static
+    public function title(string $title): self
     {
-        if (! empty($state)) {
-            $this->state = $state;
-        }
+        $this->title = $title;
 
         return $this;
     }
+
+    public function baseRoute(string $baseRoute): self
+    {
+        $this->baseRoute = $baseRoute;
+
+        return $this;
+    }
+
+    public function routeId(string|int|null $routeId): self
+    {
+        $this->routeId = $routeId;
+
+        return $this;
+    }
+
+    public function create(): self
+    {
+        $this->mode = 'create';
+        return $this;
+    }
+
+    public function edit(): self
+    {
+        $this->mode = 'edit';
+        return $this;
+    }
+
+    public function view(): self
+    {
+        $this->mode = 'show';
+        return $this;
+    }
+
+    public function formClass(string $class): self
+    {
+        $this->formClass = $class;
+
+        return $this;
+    }
+
+    // public function state(array $state): static
+    // {
+    //     if (! empty($state)) {
+    //         $this->state = $state;
+    //     }
+    //     return $this;
+    // }
 
     // di panggil saat ada perubahan dari frontend
     public function handleLiveUpdate(string $name, $value, array &$state): array
@@ -118,6 +176,11 @@ class Form implements JsonSerializable
         return [
             'columns' => $this->getColumns(),
             'fields'  => $this->evaluateFields(),
+            'baseRoute' => $this->baseRoute,
+            'routeId' => $this->routeId,
+            'mode' => $this->mode,
+            'formClass' => $this->formClass,
+            'title' => $this->title,
         ];
     }
 }

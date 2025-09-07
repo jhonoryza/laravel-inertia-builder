@@ -1,39 +1,38 @@
-import {Head} from '@inertiajs/react';
+import { Head } from '@inertiajs/react';
 import AppLayout from "@/layouts/app-layout";
-import {BreadcrumbItem} from "@/types";
-import {ColumnDef, FieldDefinition} from "@/types/field-builder";
-import {AppFormBuilder} from "@/components/builder/app-form-builder";
-import {Card, CardContent} from "@/components/ui/card";
-import {route} from "ziggy-js";
-
-type Form = {
-    columns: ColumnDef;
-    fields: FieldDefinition[];
-};
+import { BreadcrumbItem } from "@/types";
+import { AppFormBuilder } from "@/components/builder/app-form-builder";
+import { Card, CardContent } from "@/components/ui/card";
+import { route } from "ziggy-js";
+import { Form } from '@/types/form';
+import { AppFormBuilderAction } from '@/components/builder/form/action';
 
 type PageProps = {
     form: Form;
-    routeName: string;
-    routeId?: string;
-    formClass: string;
 };
 
-export default function Show({form, routeName, routeId, formClass}: PageProps) {
-    const {columns, fields} = form;
+export default function Show({ form }: PageProps) {
+    const { baseRoute, routeId, title } = form;
+
     const breadcrumbs: BreadcrumbItem[] = [
-        {title: `${routeName}`, href: route(routeName + ".index")},
-        {title: 'show', href: route(routeName + ".show", routeId)},
-        {title: `#${routeId}`, href: ''}
+        { title: title, href: route(baseRoute + ".index") },
+        { title: 'show', href: route(baseRoute + ".show", routeId) },
+        { title: `#${routeId}`, href: '' }
     ];
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title={`show ${routeName} #${routeId}`}/>
+            <Head title={`show ${title} #${routeId}`} />
             <div className="p-4">
                 <Card className="p-4 max-w-full">
                     <CardContent>
-                        <AppFormBuilder columns={columns} fields={fields} routeName={routeName} routeId={routeId}
-                                        mode="show" formClass={formClass} />
+                        <AppFormBuilder form={form} >
+                            {{
+                                formAction: (processing) => (
+                                    <AppFormBuilderAction form={form} processing={processing} />
+                                )
+                            }}
+                        </AppFormBuilder>
                     </CardContent>
                 </Card>
             </div>

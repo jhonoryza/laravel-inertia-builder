@@ -1,40 +1,40 @@
-import {ColumnDef, FieldDefinition} from "@/types/field-builder";
-import {AppFormBuilder} from "@/components/builder/app-form-builder";
+import { AppFormBuilder } from "@/components/builder/app-form-builder";
 import AppLayout from "@/layouts/app-layout";
-import {Head} from "@inertiajs/react";
-import {BreadcrumbItem} from "@/types";
-import {Card, CardContent} from "@/components/ui/card";
-import {route} from "ziggy-js";
-
-type Form = {
-    columns: ColumnDef;
-    fields: FieldDefinition[];
-};
+import { Head } from "@inertiajs/react";
+import { BreadcrumbItem } from "@/types";
+import { Card, CardContent } from "@/components/ui/card";
+import { route } from "ziggy-js";
+import { Form } from "@/types/form";
+import { AppFormBuilderAction } from "@/components/builder/form/action";
 
 type PageProps = {
     form: Form;
-    routeName: string;
-    formClass: string;
 };
 
-export default function Create({form, routeName, formClass}: PageProps) {
-    const {columns, fields} = form;
+export default function Create({ form }: PageProps) {
+    const { baseRoute, title } = form;
+
     const breadcrumbs: BreadcrumbItem[] = [
-        {title: `${routeName}`, href: route(routeName + ".index")},
-        {title: 'new', href: route(routeName + ".create")},
-        {title: '#', href: ''},
+        { title: title, href: route(baseRoute + ".index") },
+        { title: 'new', href: route(baseRoute + ".create") },
+        { title: '#', href: '' },
     ];
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title={`new ${routeName}`}/>
+            <Head title={`new ${title}`} />
             <div className="p-4">
                 <Card className="p-4 max-w-full">
                     <CardContent>
-                        <AppFormBuilder columns={columns} fields={fields} routeName={routeName} mode="create" formClass={formClass} />
+                        <AppFormBuilder form={form} >
+                            {{
+                                formAction: (processing) => (
+                                    <AppFormBuilderAction form={form} processing={processing} />
+                                )
+                            }}
+                        </AppFormBuilder>
                     </CardContent>
                 </Card>
             </div>
         </AppLayout>
     );
 }
-

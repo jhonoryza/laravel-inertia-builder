@@ -1,26 +1,24 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import {Link, router, useForm, usePage} from '@inertiajs/react';
-import {AppFieldBuilder} from "@/components/builder/app-field-builder";
-import React, {useEffect, useState} from "react";
-import {Button} from "@/components/ui/button";
-import {toast} from "sonner";
-import {ColumnDef, FieldDefinition} from "@/types/field-builder";
-import {RefreshCw} from "lucide-react";
-import {route} from 'ziggy-js';
-import {gridClasses, maxOrder, sortByOrder} from "@/lib/utils";
-import {AppFieldBuilderLoadingPlaceholder} from "@/components/builder/field/loading-placeholder";
+import { useForm, usePage } from '@inertiajs/react';
+import { AppFieldBuilder } from "@/components/builder/app-field-builder";
+import React, { useEffect, useState } from "react";
+import { toast } from "sonner";
+import { FieldDefinition } from "@/types/field-builder";
+import { route } from 'ziggy-js';
+import { gridClasses, maxOrder, sortByOrder } from "@/lib/utils";
+import { AppFieldBuilderLoadingPlaceholder } from "@/components/builder/field/loading-placeholder";
+import { Form } from '@/types/form';
 
 type PageProps = {
-    columns?: ColumnDef;
-    fields: FieldDefinition[];
-    routeName: string;
-    routeId?: string;
-    mode: string; // create, edit, show
-    formClass: string;
+    form: Form;
+    children?: {
+        formAction: (processing: boolean) => React.ReactNode;
+    };
 };
 
-export function AppFormBuilder({columns, fields: initialFields, routeName, routeId, mode, formClass}: PageProps) {
-    const {flash} = usePage().props as { flash?: { success?: string, error?: string, description?: string } };
+export function AppFormBuilder({ form, children }: PageProps) {
+    const { columns, fields: initialFields, baseRoute, routeId, formClass } = form
+    const { flash } = usePage().props as { flash?: { success?: string, error?: string, description?: string } };
 
     // local state fields that can be updated when reactive/live
     const [fields, setFields] = useState<FieldDefinition[]>(initialFields);
@@ -59,7 +57,7 @@ export function AppFormBuilder({columns, fields: initialFields, routeName, route
     // The 'transform' function is used here to add this field to the data right before it's submitted.
     transform((data) => (
         routeId
-            ? {...data, _method: 'patch'}
+            ? { ...data, _method: 'patch' }
             : data
     ));
 
@@ -76,7 +74,7 @@ export function AppFormBuilder({columns, fields: initialFields, routeName, route
     const debounceTimeouts = React.useRef<Record<string, NodeJS.Timeout>>({});
 
     const onReactive = async (name: string, value: any, operator?: string) => {
-        setData((prev: any) => ({...prev, [name]: value, operator}));
+        setData((prev: any) => ({ ...prev, [name]: value, operator }));
         const field = fields.find((f) => f.name === name);
         if (!field) return;
         if (!field.reactive) return;
@@ -115,7 +113,7 @@ export function AppFormBuilder({columns, fields: initialFields, routeName, route
                 body: JSON.stringify({
                     name,
                     value,
-                    state: {...data, [name]: value},
+                    state: { ...data, [name]: value },
                     formClass,
                 }),
             });
@@ -143,10 +141,10 @@ export function AppFormBuilder({columns, fields: initialFields, routeName, route
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         if (routeId) {
-            post(route(`${routeName}.update`, routeId));
+            post(route(`${baseRoute}.update`, routeId));
             return;
         }
-        post(route(`${routeName}.store`));
+        post(route(`${baseRoute}.store`));
     };
 
     const gridGroups = Object.entries(
@@ -190,7 +188,7 @@ export function AppFormBuilder({columns, fields: initialFields, routeName, route
                             <div key={group.key} className={gridClasses(gridCol) + " gap-4"}>
                                 {group.fields.map(field => (
                                     processing ? (
-                                        <AppFieldBuilderLoadingPlaceholder field={field}/>
+                                        <AppFieldBuilderLoadingPlaceholder field={field} />
                                     ) : (
                                         <AppFieldBuilder
                                             key={field.key}
@@ -210,7 +208,7 @@ export function AppFormBuilder({columns, fields: initialFields, routeName, route
                     // non-grid
                     return group.fields.map(field => (
                         processing ? (
-                            <AppFieldBuilderLoadingPlaceholder field={field}/>
+                            <AppFieldBuilderLoadingPlaceholder field={field} />
                         ) : (
                             <AppFieldBuilder
                                 key={field.key}
@@ -226,61 +224,7 @@ export function AppFormBuilder({columns, fields: initialFields, routeName, route
                 })}
             </div>
 
-            {/* action button */}
-            <div className="flex items-center justify-between">
-                {mode === 'show' && (
-                    <div className="flex items-center gap-2">
-                        <Button
-                            onClick={() => {
-                                router.visit(route(`${routeName}.edit`, routeId));
-                            }}
-                            variant="default"
-                            type="button"
-                            className="hover:cursor-pointer"
-                        >
-                            edit
-                        </Button>
-                        <Button
-                            onClick={() => {
-                                window.history.back();
-                            }}
-                            variant="link"
-                            type="button"
-                            className="hover:cursor-pointer"
-                        >
-                            back
-                        </Button>
-                    </div>
-                )}
-                {(mode === 'edit' || mode === 'create') && (
-                    <div className="flex items-center gap-2">
-                        <Button type="submit" disabled={processing} className="hover:cursor-pointer">
-                            save
-                        </Button>
-                        <Button
-                            onClick={() => {
-                                window.history.back();
-                            }}
-                            variant="destructive"
-                            type="button"
-                            className="hover:cursor-pointer"
-                        >
-                            cancel
-                        </Button>
-                    </div>
-                )}
-                {mode === 'edit' && (
-                    <div className="mb-2">
-                        <Link
-                            href={route(`${routeName}.edit`, routeId)}
-                            className="flex items-center gap-2 text-sm hover:cursor-pointer hover:opacity-60"
-                        >
-                            <RefreshCw className="h-4 w-4 text-destructive"/>
-                            <span>reset</span>
-                        </Link>
-                    </div>
-                )}
-            </div>
+            {children && children.formAction(processing)}
         </form>
     );
 }
