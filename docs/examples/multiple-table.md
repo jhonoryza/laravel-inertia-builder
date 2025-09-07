@@ -18,9 +18,6 @@ public function show(GamePeriod $gamePeriod): Response
         'rewardDistribution' => $rewardDistribution,
         'leaderboard' => $leaderboard,
         'form' => GamePeriodForm::view($gamePeriod),
-        'routeName' => 'game_periods',
-        'routeId' => $gamePeriod->id,
-        'formClass' => GamePeriodForm::class,
     ]);
 }
 ```
@@ -51,67 +48,54 @@ public static function getRewardDistribution(GamePeriod $gamePeriod)
 `game_period/show.tsx` sample file, in this file we add 2 `AppDataTable` after `AppFormBuilder`
 
 ```tsx
-type Form = {
-    columns: ColumnDef;
-    fields: FieldDefinition[];
-};
-
 type PageProps = {
     rewardDistribution: DataTableProps;
     leaderboard: DataTableProps;
     form: Form;
-    routeName: string;
-    routeId?: string;
-    formClass: string;
 };
 
-export default function Show({ rewardDistribution, leaderboard, form, routeName, routeId, formClass }: PageProps) {
-    const { columns: formColumns, fields } = form;
+export default function Show({ rewardDistribution, leaderboard, form }: PageProps) {
+    const { baseRoute, routeId, title } = form;
     const breadcrumbs: BreadcrumbItem[] = [
-        { title: `${routeName}`, href: route(routeName + ".index") },
-        { title: 'show', href: route(routeName + ".show", routeId) },
+        { title: title, href: route(baseRoute + ".index") },
+        { title: 'show', href: route(baseRoute + ".show", routeId) },
         { title: `#${routeId}`, href: '' }
     ];
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title={`show ${routeName} #${routeId}`} />
+            <Head title={`show ${title} #${routeId}`} />
             <div className="p-4">
                 <Card className="p-4 max-w-full">
                     <CardContent>
-                        <AppFormBuilder columns={formColumns} fields={fields} routeName={routeName} routeId={routeId}
-                            formClass={formClass} mode="show" />
+                        <AppFormBuilder form={form} >
+                            {{
+                                formAction: (processing) => (
+                                    <AppFormBuilderAction form={form} processing={processing} />
+                                )
+                            }}
+                        </AppFormBuilder>
                     </CardContent>
                 </Card>
                 <div className="py-4">
                     <h1 className="font-bold b-4">Reward Distribution</h1>
-                    <AppDataTable data={rewardDistribution}
-                        routeName="leaderboard_rewards"
-                        tableRoute={route(routeName + ".show", routeId)}
-                    >
+                    <AppDataTable data={rewardDistribution}>
                         {{
-                            rowAction: (item, routeName) => (
+                            rowAction: (item) => (
                                 <AppDatatableRowActions
                                     item={item}
-                                    routeName={routeName}
+                                    baseRoute={rewardDistribution.baseRoute}
                                     edit={rewardDistribution.edit}
                                     show={rewardDistribution.view}
                                     del={rewardDistribution.delete}
                                 />
-                            ),
-                            toolbarAction: (
-                                <>
-                                </>
-                            ),
+                            )
                         }}
                     </AppDataTable>
                 </div>
                 <div className="py-4">
                     <h1 className="font-bold b-4">Leaderboard</h1>
-                    <AppDataTable data={leaderboard}
-                        routeName={routeName}
-                        tableRoute={route(routeName + ".show", routeId)}
-                    />
+                    <AppDataTable data={leaderboard} />
                 </div>
             </div>
         </AppLayout>
