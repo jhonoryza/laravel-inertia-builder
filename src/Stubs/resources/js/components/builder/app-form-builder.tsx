@@ -149,7 +149,7 @@ export function AppFormBuilder({ form, children }: PageProps) {
 
     const gridGroups = Object.entries(
         fields
-            .filter(f => f.grid)
+            .filter(f => f.grid && f.type !== 'hidden')
             .reduce((acc, f) => {
                 acc[f.gridKey || ''] = acc[f.gridKey || ''] || [];
                 acc[f.gridKey || ''].push(f);
@@ -157,7 +157,7 @@ export function AppFormBuilder({ form, children }: PageProps) {
             }, {} as Record<string, typeof fields>)
     );
 
-    const nonGridFields = fields.filter(f => !f.grid);
+    const nonGridFields = fields.filter(f => !f.grid && f.type !== 'hidden');
 
     const groups = [
         ...gridGroups.map(([gridKey, group]) => ({
@@ -174,11 +174,12 @@ export function AppFormBuilder({ form, children }: PageProps) {
         },
     ];
 
+    const hiddenFields = fields.filter(f => f.type === 'hidden');
+
     const sortedGroups = groups.sort((a, b) => a.maxOrder - b.maxOrder);
 
     return (
         <form onSubmit={handleSubmit} className="flex flex-col gap-4" encType="multipart/form-data">
-
             {/* field builder */}
             <div className={gridClasses(columns) + " gap-4"}>
                 {sortedGroups.map(group => {
@@ -223,6 +224,19 @@ export function AppFormBuilder({ form, children }: PageProps) {
                     ))
                 })}
             </div>
+            {hiddenFields.map(hiddenField => {
+                return (
+                    <AppFieldBuilder
+                        key={hiddenField.key}
+                        field={hiddenField}
+                        value={data[hiddenField.name]}
+                        onReactive={onReactive}
+                        error={errors[hiddenField.name]}
+                        isProcessing={processing}
+                        setFields={setFields}
+                    />
+                )
+            })}
 
             {children && children.formAction(processing)}
         </form>
