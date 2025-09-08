@@ -79,7 +79,7 @@ For more detailed examples and documentation, please check the following resourc
 
 - PHP >= 8.4
 - Laravel >= 12
-- Nodejs & npm >= 20
+- Nodejs >= 20
 - Tailwind 4
 - Laravel [official starter kit with React](https://laravel.com/docs/12.x/starter-kits#react)
 
