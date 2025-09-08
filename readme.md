@@ -1,15 +1,6 @@
-<h1 align="center">Laravel Inertia Builder</h1>
-<p align="center">
-    <a href="https://packagist.org/packages/jhonoryza/laravel-inertia-builder">
-        <img src="https://poser.pugx.org/jhonoryza/laravel-inertia-builder/d/total.svg" alt="Total Downloads">
-    </a>
-    <a href="https://packagist.org/packages/jhonoryza/laravel-inertia-builder">
-        <img src="https://poser.pugx.org/jhonoryza/laravel-inertia-builder/v/stable.svg" alt="Latest Stable Version">
-    </a>
-    <a href="https://packagist.org/packages/jhonoryza/laravel-inertia-builder">
-        <img src="https://poser.pugx.org/jhonoryza/laravel-inertia-builder/license.svg" alt="License">
-    </a>
-</p>
+# Laravel Inertia Builder
+
+[![Latest Stable Version](http://poser.pugx.org/phpunit/phpunit/v)](https://packagist.org/packages/phpunit/phpunit) [![Total Downloads](http://poser.pugx.org/phpunit/phpunit/downloads)](https://packagist.org/packages/phpunit/phpunit) [![Latest Unstable Version](http://poser.pugx.org/phpunit/phpunit/v/unstable)](https://packagist.org/packages/phpunit/phpunit) [![License](http://poser.pugx.org/phpunit/phpunit/license)](https://packagist.org/packages/phpunit/phpunit) [![PHP Version Require](http://poser.pugx.org/phpunit/phpunit/require/php)](https://packagist.org/packages/phpunit/phpunit)
 
 This project is inspired by Filament PHP. It aims to build complex UI components like data tables and forms using a
 declarative, backend-driven approach. The structure of the UI (e.g., form fields, table columns) is defined in PHP
