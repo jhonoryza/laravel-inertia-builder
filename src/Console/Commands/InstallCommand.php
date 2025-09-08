@@ -5,9 +5,12 @@ namespace Jhonoryza\InertiaBuilder\Console\Commands;
 use Illuminate\Console\Command;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Facades\Process;
+use Jhonoryza\InertiaBuilder\Console\Commands\Concerns\HasAppToaster;
 
 class InstallCommand extends Command
 {
+    use HasAppToaster;
+
     protected $signature = 'inertia-builder:install';
 
     protected $description = 'Install inertia builder required dependencies';
@@ -99,6 +102,9 @@ class InstallCommand extends Command
         } else {
             echo $publishResult->errorOutput();
         }
+
+        $this->addToasterComponent();
+        $this->addToasterMessageToInertiaMiddleware();
 
         $this->info('inertia-builder installed successfully.');
     }

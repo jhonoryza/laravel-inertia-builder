@@ -28,7 +28,7 @@ without writing custom frontend page components for each resource.
   Markdown, File Uploads, Date Pickers, and more.
 - **Powerful Data Tables:** Create complex data tables with searchable columns, advanced filtering, sorting, and bulk
   actions.
-- **Reactive Components:** Create dependent dropdowns and other reactive form elements where a change in one
+- **Reactive Components:** Create reactive form elements where a change in one
   field automatically updates another, all handled seamlessly on the backend.
 - **Relationship Handling:** Automatically populate fields and table columns with data from Eloquent relationships (
   `belongsTo`, `hasMany`, etc.).
@@ -72,7 +72,7 @@ For more detailed examples and documentation, please check the following resourc
   - [CRUD Example: Districts](./docs/examples/districts.md)
   - [CRUD Example: Subdistricts](./docs/examples/subdistricts.md)
   - [CRUD Example: Posts](./docs/examples/posts.md)
-  - [CRUD Example: Role Permission](./docs/examples/role-and-permissions.md)
+  - [CRUD Example: Role Permission](./docs/examples/roles-and-permissions.md)
   - [CRUD Example: Dropdown](./docs/examples/dependent-dropdown.md)
 
 ## Requirement
@@ -91,65 +91,29 @@ currently not supported for `official vue starter kit`
 
 ```bash
 composer require jhonoryza/laravel-inertia-builder
+```
+
+```bash
 php artisan inertia-builder:install
-```
-
-add toaster component for notification, edit this file `resources/js/layouts/app.layout.tsx`.
-
-```tsx
-import {Toaster} from "@/components/ui/sonner";
-
-export default ({ children, breadcrumbs, ...props }: AppLayoutProps) => {
-    const isDark = document.documentElement.classList.contains("dark");
-    return (
-        <AppLayoutTemplate breadcrumbs={breadcrumbs} {...props}>
-            <Toaster theme={isDark ? "dark" : "light"} />
-            {children}
-        </AppLayoutTemplate>
-    );
-}
-```
-
-edit this file `app/Http/Middleware/HandleInertiaRequests.php`.
-
-```php
-    public function share(Request $request): array
-    {
-        return [
-            // ... etc
-            'flash' => [
-                'success' => fn() => $request->session()->get('success'),
-                'error' => fn() => $this->getErrMessage($request),
-            ],
-        ];
-    }
-    
-    private function getErrMessage(Request $request): string
-    {
-        /** @var ViewErrorBag $errors */
-        $errors = $request->session()->get('errors');
-        if ($errors) {
-            return collect($errors->getMessages())->flatten()->implode(', ');
-        }
-        return '';
-    }
 ```
 
 ### Generator
 
-you need at least a table structure in your database
+you need at least a `table structure` in your database
 
-let's say `posts` table using laravel migration or manually
+let's create `users` table using `laravel migration` or `manual sql`
 
-then run this command to generate: Model, Factory, Controller, Request, and Routes
+then run this command :
 
 ```bash
-php artisan inertia-builder:generate posts
+php artisan inertia-builder:generate users
 ```
+
+this will generate: `Model, Factory, Controller, Form & Table class, Request, and Routes`
 
 then run `npm run dev` to recompile the frontend
 
-## Core Concept: Reactive Forms (The Inertia Way)
+<!--## Core Concept: Reactive Forms (The Inertia Way)
 
 The form builder supports creating fields that react to changes in other fields (e.g., dependent dropdowns). This is
 achieved without custom frontend logic or API endpoints by using Inertia's "Partial Reloads" feature.
@@ -166,9 +130,9 @@ achieved without custom frontend logic or API endpoints by using Inertia's "Part
 4. **Frontend (Seamless Update):** Inertia receives the updated `fields` prop and seamlessly updates the form,
    preserving the user's other input and scroll position.
 
----
+----->
 
-## Project Structure
+<!--## Project Structure
 
 - **`src/Inertia/Fields`**: Contains the PHP classes for the **Form Builder** (e.g., `TextField`, `SelectField`).
 - **`src/Inertia/Tables`**: Contains the PHP classes for the **Datatable Builder** (e.g., `Table`, `TableColumn`,
@@ -176,7 +140,7 @@ achieved without custom frontend logic or API endpoints by using Inertia's "Part
 - **`resources/js/pages/builder`**: Contains the generic Inertia page components (`index.tsx`, `create.tsx`, `edit.tsx`)
   that render the UI based on props from the backend.
 - **`resources/js/components/builder`**: Contains the reusable React components that make up the form and table
-  builders (e.g., `app-datatable.tsx`, `app-form-builder.tsx`).
+  builders (e.g., `app-datatable.tsx`, `app-form-builder.tsx`).-->
 
 ---
 
