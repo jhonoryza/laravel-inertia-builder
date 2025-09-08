@@ -3,11 +3,11 @@
 namespace Jhonoryza\InertiaBuilder\Inertia;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 use Jhonoryza\InertiaBuilder\Inertia\Fields\Base\AbstractField;
 use Jhonoryza\InertiaBuilder\Inertia\Fields\Concerns\HasColumns;
 use Jhonoryza\InertiaBuilder\Inertia\Fields\Concerns\HasFields;
 use JsonSerializable;
-use Illuminate\Support\Str;
 
 class Form implements JsonSerializable
 {
@@ -64,16 +64,16 @@ class Form implements JsonSerializable
 
     public static function make(): static
     {
-        return new static();
+        return new static;
     }
 
     public function model(?Model $model): self
     {
         if ($model) {
-            $this->model = $model;
+            $this->model     = $model;
             $this->baseRoute = Str::plural(Str::snake(class_basename($model)));
-            $this->title = Str::headline(class_basename($model));
-            $this->routeId = $model->id ?? null;
+            $this->title     = Str::headline(class_basename($model));
+            $this->routeId   = $model->id ?? null;
         }
 
         return $this;
@@ -103,18 +103,21 @@ class Form implements JsonSerializable
     public function create(): self
     {
         $this->mode = 'create';
+
         return $this;
     }
 
     public function edit(): self
     {
         $this->mode = 'edit';
+
         return $this;
     }
 
     public function view(): self
     {
         $this->mode = 'show';
+
         return $this;
     }
 
@@ -130,6 +133,7 @@ class Form implements JsonSerializable
         if (! empty($state)) {
             $this->state = $state;
         }
+
         return $this;
     }
 
@@ -214,13 +218,13 @@ class Form implements JsonSerializable
         $this->checkisStateEmpty();
 
         return [
-            'columns' => $this->getColumns(),
-            'fields'  => $this->evaluateFields(),
+            'columns'   => $this->getColumns(),
+            'fields'    => $this->evaluateFields(),
             'baseRoute' => $this->baseRoute,
-            'routeId' => $this->routeId,
-            'mode' => $this->mode,
+            'routeId'   => $this->routeId,
+            'mode'      => $this->mode,
             'formClass' => $this->formClass,
-            'title' => $this->title,
+            'title'     => $this->title,
         ];
     }
 }

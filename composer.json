@@ -34,6 +34,7 @@
         "spatie/laravel-query-builder": "^6.3"
     },
     "require-dev": {
-        "orchestra/testbench": "^10.0"
+        "orchestra/testbench": "^10.0",
+        "laravel/pint": "^1.24"
     }
 }

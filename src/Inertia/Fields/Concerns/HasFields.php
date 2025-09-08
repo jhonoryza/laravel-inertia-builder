@@ -21,7 +21,7 @@ trait HasFields
             }
         }
 
-        foreach($normalized as $index => $norm) {
+        foreach ($normalized as $index => $norm) {
             $normalized[$index] = $norm->order($index);
         }
 

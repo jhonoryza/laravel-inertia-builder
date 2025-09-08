@@ -6,7 +6,7 @@ use Closure;
 
 trait HasQuery
 {
-    public Closure|null $queryCallback = null;
+    public ?Closure $queryCallback = null;
 
     public function query(callable $query): static
     {

@@ -159,7 +159,7 @@ trait HasController
             $line = "TableColumn::make('$name')" . PHP_EOL;
             if ($column['relationName']) {
                 $relationName = $column['relationName'];
-                $label = Str::studly($relationName);
+                $label        = Str::studly($relationName);
                 $relationName = Str::camel($relationName);
                 $relationKey  = $column['relationKey'];
                 $line         = "TableColumn::make('$relationName.$relationKey')

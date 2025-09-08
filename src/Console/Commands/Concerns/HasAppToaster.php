@@ -13,11 +13,11 @@ trait HasAppToaster
         $filePath = base_path('resources/js/layouts/app-layout.tsx');
         $content  = File::get($filePath);
 
-        $addition = "<Toaster theme={document.documentElement.classList.contains('dark') ? 'dark' : 'light'} />";
+        $addition       = "<Toaster theme={document.documentElement.classList.contains('dark') ? 'dark' : 'light'} />";
         $importAddition = "import { Toaster } from '@/components/ui/sonner';";
 
         if (Str::contains($content, $addition) || Str::contains($content, $importAddition)) {
-            $this->warn("toaster component already exist. Skipping.");
+            $this->warn('toaster component already exist. Skipping.');
 
             return;
         }
@@ -37,7 +37,7 @@ trait HasAppToaster
 
         File::put($filePath, $content);
         Process::run("./node_modules/.bin/prettier --write $filePath");
-        $this->info("toaster component added.");
+        $this->info('toaster component added.');
     }
 
     protected function addToasterMessageToInertiaMiddleware(): void
@@ -61,13 +61,13 @@ trait HasAppToaster
         }";
 
         if (Str::contains($content, $addition) || Str::contains($content, $funcAddition)) {
-            $this->warn("toaster message already exist. Skipping.");
+            $this->warn('toaster message already exist. Skipping.');
 
             return;
         }
 
-        $specific = "];
-    }";
+        $specific = '];
+    }';
 
         if (Str::contains($content, $specific)) {
             $replacement = $addition . PHP_EOL . $specific . PHP_EOL . $funcAddition;
@@ -76,6 +76,6 @@ trait HasAppToaster
 
         File::put($filePath, $content);
         Process::run("./vendor/bin/pint $filePath");
-        $this->info("toaster message added.");
+        $this->info('toaster message added.');
     }
 }

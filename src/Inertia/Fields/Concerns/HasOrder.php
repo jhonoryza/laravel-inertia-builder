@@ -3,7 +3,6 @@
 namespace Jhonoryza\InertiaBuilder\Inertia\Fields\Concerns;
 
 use Closure;
-use Jhonoryza\InertiaBuilder\Inertia\Forms\Get;
 
 trait HasOrder
 {
@@ -12,6 +11,7 @@ trait HasOrder
     public function order(int|callable $order): self
     {
         $this->order = $order;
+
         return $this;
     }
 

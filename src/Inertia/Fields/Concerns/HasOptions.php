@@ -6,7 +6,6 @@ use Closure;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Collection;
-use Jhonoryza\InertiaBuilder\Inertia\Forms\Get;
 
 trait HasOptions
 {

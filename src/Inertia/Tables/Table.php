@@ -9,12 +9,12 @@ use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use Jhonoryza\InertiaBuilder\QueryBuilder\Sorts\SortByRelationColumn;
 use JsonSerializable;
 use Spatie\QueryBuilder\AllowedFilter;
 use Spatie\QueryBuilder\AllowedSort;
 use Spatie\QueryBuilder\QueryBuilder;
-use Illuminate\Support\Str;
 
 class Table implements JsonSerializable
 {
@@ -49,14 +49,14 @@ class Table implements JsonSerializable
      * baseRoute config will not be used
      * must be full url ex: route('posts.index')
      */
-    protected string|null $tableRoute = null;
+    protected ?string $tableRoute = null;
 
     /**
      * this is used for route resolver in AppDataTableToolbar
      * used for actions route
      * default using baseRoute + .actions
      */
-    protected string|null $actionRoute = null;
+    protected ?string $actionRoute = null;
 
     /**
      * this is required to be change when using
@@ -119,9 +119,9 @@ class Table implements JsonSerializable
 
     public function __construct(string $model)
     {
-        $this->model = $model;
+        $this->model     = $model;
         $this->baseRoute = Str::plural(Str::snake(class_basename($model)));
-        $this->title = Str::headline(class_basename($model));
+        $this->title     = Str::headline(class_basename($model));
     }
 
     public function name(string $name = 'data'): static

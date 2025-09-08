@@ -2,7 +2,6 @@
 
 namespace Jhonoryza\InertiaBuilder\Inertia\Fields\Concerns;
 
-use Jhonoryza\InertiaBuilder\Inertia\Forms\Get;
 use Jhonoryza\InertiaBuilder\Inertia\Forms\Set;
 
 trait HasState

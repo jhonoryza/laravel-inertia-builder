@@ -2,8 +2,6 @@
 
 namespace Jhonoryza\InertiaBuilder\Inertia\Fields\Concerns;
 
-use Jhonoryza\InertiaBuilder\Inertia\Forms\Get;
-
 trait HasVisibility
 {
     public \Closure|bool $hidden = false;
