@@ -3,7 +3,6 @@
     "description": "Laravel Inertia UI Builder",
     "type": "library",
     "license": "MIT",
-    "version": "0.0.1",
     "autoload": {
         "psr-4": {
             "Jhonoryza\\InertiaBuilder\\": "src/"
