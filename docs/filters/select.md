@@ -17,7 +17,7 @@ Filter::select('status')
 
 ## Server-side Search Example
 
-For large datasets, you can enable server-side searching and option loading. This is useful when you want to fetch options dynamically as the user types.
+For large datasets, you can enable server-side searching and option loading. This is useful when you want to fetch options dynamically from backend as the user types.
 
 ```php
 use App\Models\District;

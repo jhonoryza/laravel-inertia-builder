@@ -7,7 +7,10 @@ The Text field provides a single-line input for text data such as names, titles,
 ```php
 use Jhonoryza\InertiaBuilder\Inertia\Fields\Factory\Field;
 
-Field::text('first_name');
+Field::text('first_name')
+    ->copyable()
+    ->prefix('Mr/Mrs')
+    ->suffix('@company.com');
 ```
 
 ## Important Options
@@ -17,6 +20,9 @@ Field::text('first_name');
 - **mergeClass(string $class):** Add custom CSS classes.
 - **disable(bool $state = true):** Disable the field.
 - **hidden(bool $state = true):** Hide the field.
+- **copyable(bool $state = true):** Copy field value.
+- **prefix(string $prefix):** Add prefix to the field.
+- **suffix(string $suffix):** Add suffix to the field.
 
 ## Example
 

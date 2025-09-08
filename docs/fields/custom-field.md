@@ -6,8 +6,8 @@ CustomField allows you to integrate your own React components into the Inertia f
 
 ## How It Works
 
-Custom fields must be registered manually in  
-`resources/js/components/custom-fields/index.ts`.
+Custom fields must be registered manually in
+`resources/js/components/builder/custom-fields/index.ts`.
 
 **Example:**
 ```typescript
@@ -107,6 +107,8 @@ Field::custom('rating')
 ---
 
 ## Example RatingField Component
+
+create file in `resources/js/components/builder/custom-fields/rating-field.tsx`.
 
 ```typescript
 import React from 'react';
