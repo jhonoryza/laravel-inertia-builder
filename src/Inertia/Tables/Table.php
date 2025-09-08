@@ -140,7 +140,7 @@ class Table implements JsonSerializable
 
     public function baseRoute(string $base): static
     {
-        $this->name = $base;
+        $this->baseRoute = $base;
 
         return $this;
     }
