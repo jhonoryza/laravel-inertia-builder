@@ -83,7 +83,9 @@ class InstallCommand extends Command
         $this->info('datatable & field builder type copied successfully.');
 
         // copy css themes
+        (new Filesystem)->copyDirectory(__DIR__ . '/../../../public/fonts', public_path('fonts'));
         (new Filesystem)->copyDirectory(__DIR__ . '/../../Stubs/resources/css/theme', resource_path('css/theme'));
+        copy(__DIR__ . '/../../Stubs/resources/css/font.css', resource_path('css/font.css'));
         copy(__DIR__ . '/../../Stubs/resources/css/app.css', resource_path('css/app.css'));
         $this->info('theme copied successfully.');
 

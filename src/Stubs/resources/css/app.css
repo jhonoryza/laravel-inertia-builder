@@ -1,5 +1,6 @@
+@import "./font.css";
 @import 'tailwindcss';
-@import "./theme/claude.css";
+@import "./theme/nova.css";
 @source inline('{sm:,md:,lg:,xl:,2xl:,}grid-cols-{{1..12}}');
 @source inline('{sm:,md:,lg:,xl:,2xl:,}col-span-{{1..12}}');
 @source inline('{sm:,md:,lg:,xl:,2xl:,}order-{{1..12}}');
