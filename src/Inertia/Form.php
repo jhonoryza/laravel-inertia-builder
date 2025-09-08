@@ -31,7 +31,7 @@ class Form implements JsonSerializable
      * ex: .edit .show .destroy .forceDestroy .restore
      * form post or patch is handled by inertia useForm
      */
-    protected string $baseRoute = '';
+    protected ?string $baseRoute = null;
 
     /**
      * this is used for route resolver in AppFormBuilderAction
@@ -50,7 +50,7 @@ class Form implements JsonSerializable
      * to identify which form class is should be called
      * when state is changed
      */
-    protected string $formClass = '';
+    protected ?string $formClass = null;
 
     /**
      * this is used for form title
@@ -71,9 +71,9 @@ class Form implements JsonSerializable
     {
         if ($model) {
             $this->model     = $model;
-            $this->baseRoute = Str::plural(Str::snake(class_basename($model)));
-            $this->title     = Str::headline(class_basename($model));
-            $this->routeId   = $model->id ?? null;
+            $this->baseRoute = $this->baseRoute == null ? Str::plural(Str::snake(class_basename($model))) : $this->baseRoute;
+            $this->title     = $this->title     == null ? Str::headline(class_basename($model)) : $this->title;
+            $this->routeId   = $this->routeId   == null ? ($model->id ?? null) : $this->routeId;
         }
 
         return $this;

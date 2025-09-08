@@ -36,13 +36,13 @@ class Table implements JsonSerializable
     /**
      * table title used in breadcumb and table header
      */
-    protected string $title = '';
+    protected ?string $title = null;
 
     /**
      * this is used for route resolver in AppDatatable
      * route(baseRoute + .index)
      */
-    protected string $baseRoute = '';
+    protected ?string $baseRoute = null;
 
     /**
      * this is used for route resolver in AppDatatable
@@ -120,8 +120,8 @@ class Table implements JsonSerializable
     public function __construct(string $model)
     {
         $this->model     = $model;
-        $this->baseRoute = Str::plural(Str::snake(class_basename($model)));
-        $this->title     = Str::headline(class_basename($model));
+        $this->baseRoute = $this->baseRoute == null ? Str::plural(Str::snake(class_basename($model))) : $this->baseRoute;
+        $this->title     = $this->title     == null ? Str::headline(class_basename($model)) : $this->title;
     }
 
     public function name(string $name = 'data'): static
