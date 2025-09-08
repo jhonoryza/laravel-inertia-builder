@@ -8,7 +8,7 @@ trait HasInfo
 {
     protected bool|Closure $asInfo = false;
 
-    public function info(bool|callable $state = true): self
+    public function info(bool|callable $state = true): static
     {
         $this->asInfo = $state;
 

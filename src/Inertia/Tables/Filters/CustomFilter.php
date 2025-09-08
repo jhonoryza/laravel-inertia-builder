@@ -16,7 +16,7 @@ class CustomFilter extends AbstractFilter
         return 'custom';
     }
 
-    public function component(string $component): self
+    public function component(string $component): static
     {
         $this->component = $component;
 

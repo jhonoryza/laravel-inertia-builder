@@ -301,35 +301,35 @@ class Table implements JsonSerializable
         return $this->actions;
     }
 
-    public function canEdit($state = true): self
+    public function canEdit($state = true): static
     {
         $this->canEdit = $state;
 
         return $this;
     }
 
-    public function canView($state = true): self
+    public function canView($state = true): static
     {
         $this->canView = $state;
 
         return $this;
     }
 
-    public function canDelete($state = true): self
+    public function canDelete($state = true): static
     {
         $this->canDelete = $state;
 
         return $this;
     }
 
-    public function canForceDelete($state = true): self
+    public function canForceDelete($state = true): static
     {
         $this->canForceDelete = $state;
 
         return $this;
     }
 
-    public function canRestore($state = true): self
+    public function canRestore($state = true): static
     {
         $this->canRestore = $state;
 

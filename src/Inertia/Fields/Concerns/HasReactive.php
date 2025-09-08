@@ -13,7 +13,7 @@ trait HasReactive
      * Changing its value on the frontend will trigger a partial reload
      * to update the form's state from the server.
      */
-    public function reactive(bool|callable $state = true): self
+    public function reactive(bool|callable $state = true): static
     {
         $this->isReactive = $state;
 

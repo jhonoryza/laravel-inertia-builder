@@ -64,7 +64,7 @@ class SortByRelationColumn implements Sort
         $query->select("{$baseTable}.*");
     }
 
-    public static function make(string $relationPath, string $column): self
+    public static function make(string $relationPath, string $column): static
     {
         return new self($relationPath, $column);
     }

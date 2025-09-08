@@ -6,7 +6,7 @@ trait HasColumns
 {
     protected array $columns = [];
 
-    public function columns(int|array $columns): self
+    public function columns(int|array $columns): static
     {
         if (is_int($columns)) {
             $this->columns = ['default' => $columns];

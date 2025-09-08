@@ -8,7 +8,7 @@ trait HasServerside
 {
     protected bool|Closure $serverside = false;
 
-    public function serverside(bool|callable $state = true): self
+    public function serverside(bool|callable $state = true): static
     {
         $this->serverside = $state;
 

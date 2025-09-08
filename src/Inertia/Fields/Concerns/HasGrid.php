@@ -12,7 +12,7 @@ trait HasGrid
 
     protected array|int $gridCol = 1;
 
-    public function gridCol(int|array $gridCol): self
+    public function gridCol(int|array $gridCol): static
     {
         if (is_int($gridCol)) {
             $this->gridCol = ['default' => $gridCol];
@@ -29,7 +29,7 @@ trait HasGrid
         return $this->gridCol;
     }
 
-    public function grid(bool|callable $state = true): self
+    public function grid(bool|callable $state = true): static
     {
         $this->hasGrid = $state;
 
@@ -42,7 +42,7 @@ trait HasGrid
             $this->evaluate($this->hasGrid) : $this->hasGrid;
     }
 
-    public function gridKey(string|null|callable $state): self
+    public function gridKey(string|null|callable $state): static
     {
         $this->gridKey = $state;
 

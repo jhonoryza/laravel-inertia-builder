@@ -67,7 +67,7 @@ class Form implements JsonSerializable
         return new static;
     }
 
-    public function model(?Model $model): self
+    public function model(?Model $model): static
     {
         if ($model) {
             $this->model     = $model;
@@ -79,49 +79,49 @@ class Form implements JsonSerializable
         return $this;
     }
 
-    public function title(string $title): self
+    public function title(string $title): static
     {
         $this->title = $title;
 
         return $this;
     }
 
-    public function baseRoute(string $baseRoute): self
+    public function baseRoute(string $baseRoute): static
     {
         $this->baseRoute = $baseRoute;
 
         return $this;
     }
 
-    public function routeId(string|int|null $routeId): self
+    public function routeId(string|int|null $routeId): static
     {
         $this->routeId = $routeId;
 
         return $this;
     }
 
-    public function create(): self
+    public function create(): static
     {
         $this->mode = 'create';
 
         return $this;
     }
 
-    public function edit(): self
+    public function edit(): static
     {
         $this->mode = 'edit';
 
         return $this;
     }
 
-    public function view(): self
+    public function view(): static
     {
         $this->mode = 'show';
 
         return $this;
     }
 
-    public function formClass(string $class): self
+    public function formClass(string $class): static
     {
         $this->formClass = $class;
 

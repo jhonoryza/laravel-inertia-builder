@@ -8,7 +8,7 @@ trait HasCopyable
 {
     protected bool|Closure $copyable = false;
 
-    public function copyable(bool|callable $state = true): self
+    public function copyable(bool|callable $state = true): static
     {
         $this->copyable = $state;
 

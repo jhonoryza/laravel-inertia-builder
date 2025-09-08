@@ -18,7 +18,7 @@ trait HasRelationship
 
     protected mixed $dependencyValue = null;
 
-    public function dependsOn(string $dependencyField, ?string $foreignKey = null, mixed $value = null): self
+    public function dependsOn(string $dependencyField, ?string $foreignKey = null, mixed $value = null): static
     {
         $this->dependencyField      = $dependencyField;
         $this->dependencyForeignKey = $foreignKey ?? $dependencyField; // Infer foreign key if not provided
