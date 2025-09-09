@@ -45,6 +45,7 @@ trait HasAppToaster
         $filePath = base_path('app/Http/Middleware/HandleInertiaRequests.php');
         $content  = File::get($filePath);
 
+        $flash    = "'flash'";
         $addition = "'flash' => [
             'success' => fn() => \$request->session()->get('success'),
             'error' => fn() => \$this->getErrMessage(\$request),
@@ -60,7 +61,7 @@ trait HasAppToaster
             return '';
         }";
 
-        if (Str::contains($content, $addition) || Str::contains($content, $funcAddition)) {
+        if (Str::contains($content, $flash)) {
             $this->warn('toaster message already exist. Skipping.');
 
             return;
