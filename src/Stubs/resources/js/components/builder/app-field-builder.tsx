@@ -1,33 +1,36 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { AppFieldBuilderCheckbox } from "@/components/builder/field/checkbox/checkbox";
 import { AppFieldBuilderCheckboxList } from '@/components/builder/field/checkbox/checkbox-list';
+import { AppFieldBuilderComboboxMultiple } from "@/components/builder/field/combobox/combobox-multiple";
+import { AppFieldBuilderComboboxSingle } from "@/components/builder/field/combobox/combobox-single";
 import { AppFieldBuilderCustom } from '@/components/builder/field/custom';
+import { AppFieldBuilderDate } from "@/components/builder/field/date";
 import { AppFieldBuilderDatetime } from '@/components/builder/field/datetime';
 import { AppFieldBuilderFile } from '@/components/builder/field/file';
 import { AppFieldBuilderFlatpickr } from '@/components/builder/field/flatpickr';
+import { AppFieldBuilderHidden } from "@/components/builder/field/hidden";
 import { AppFieldBuilderKeyValue } from '@/components/builder/field/key-value';
+import { AppFieldBuilderLabel } from "@/components/builder/field/label";
 import { AppFieldBuilderMarkdown } from '@/components/builder/field/markdown';
+import { AppFieldBuilderPassword } from '@/components/builder/field/password';
 import { AppFieldBuilderRepeater } from '@/components/builder/field/repeater';
 import { AppFieldBuilderRichText } from '@/components/builder/field/rich-text';
-import { AppFieldBuilderTags } from '@/components/builder/field/tags';
-import { FieldDefinition } from '@/types/field-builder';
-import React from 'react';
-import { AppFieldBuilderPassword } from './field/password';
-import { AppFieldBuilderText } from "@/components/builder/field/text";
-import { AppFieldBuilderLabel } from "@/components/builder/field/label";
-import { AppFieldBuilderSlider } from "@/components/builder/field/slider";
-import { AppFieldBuilderTextarea } from "@/components/builder/field/textarea";
-import { AppFieldBuilderHidden } from "@/components/builder/field/hidden";
-import { AppFieldBuilderCheckbox } from "@/components/builder/field/checkbox/checkbox";
-import { AppFieldBuilderDate } from "@/components/builder/field/date";
-import { AppFieldBuilderToggle } from "@/components/builder/field/toggle";
-import { AppFieldBuilderComboboxMultiple } from "@/components/builder/field/combobox/combobox-multiple";
-import { AppFieldBuilderComboboxSingle } from "@/components/builder/field/combobox/combobox-single";
+import { AppFieldBuilderSelectMultipleNotSearchable } from "@/components/builder/field/select/multiple/not-searchable";
+import { AppFieldBuilderSelectMultipleSearchable } from "@/components/builder/field/select/multiple/searchable";
 import { AppFieldBuilderSelectSingleNotSearchable } from "@/components/builder/field/select/single/not-searchable";
 import { AppFieldBuilderSelectSingleSearchable } from "@/components/builder/field/select/single/searchable";
-import { AppFieldBuilderSelectMultipleSearchable } from "@/components/builder/field/select/multiple/searchable";
-import { AppFieldBuilderSelectMultipleNotSearchable } from "@/components/builder/field/select/multiple/not-searchable";
-import { AppFieldInfoTextList } from "@/components/builder/info/text-list";
+import { AppFieldBuilderSlider } from "@/components/builder/field/slider";
+import { AppFieldBuilderTags } from '@/components/builder/field/tags';
+import { AppFieldBuilderText } from "@/components/builder/field/text";
+import { AppFieldBuilderTextarea } from "@/components/builder/field/textarea";
+import { AppFieldBuilderToggle } from "@/components/builder/field/toggle";
+import { AppFieldInfoDate } from "@/components/builder/info/date";
+import { AppFieldInfoFile } from "@/components/builder/info/file";
+import { AppFieldInfoMarkdown } from "@/components/builder/info/markdown";
 import { AppFieldInfoText } from "@/components/builder/info/text";
+import { AppFieldInfoTextList } from "@/components/builder/info/text-list";
+import { FieldDefinition } from '@/types/field-builder';
+import React from 'react';
 
 interface FieldBuilderProps {
     field: FieldDefinition;
@@ -44,7 +47,6 @@ export function AppFieldBuilder({
     value,
     onReactive,
     error,
-    isProcessing,
 }: FieldBuilderProps) {
 
     const onChange = (name: string, value: any, operator?: string) => {
@@ -65,11 +67,33 @@ export function AppFieldBuilder({
                 </AppFieldBuilderLabel>
             );
         } else {
-            return (
-                <AppFieldBuilderLabel field={field} error={error}>
-                    <AppFieldInfoText value={value} />
-                </AppFieldBuilderLabel>
-            );
+            switch (field.type) {
+                case 'markdown':
+                    return (
+                        <AppFieldBuilderLabel field={field} error={error}>
+                            <AppFieldInfoMarkdown value={value} />
+                        </AppFieldBuilderLabel>
+                    );
+                case 'datetime-local':
+                case 'date':
+                    return (
+                        <AppFieldBuilderLabel field={field} error={error}>
+                            <AppFieldInfoDate value={value} />
+                        </AppFieldBuilderLabel>
+                    );
+                case 'file':
+                    return (
+                        <AppFieldBuilderLabel field={field} error={error}>
+                            <AppFieldInfoFile value={value} />
+                        </AppFieldBuilderLabel>
+                    );
+                default:
+                    return (
+                        <AppFieldBuilderLabel field={field} error={error}>
+                            <AppFieldInfoText value={value} />
+                        </AppFieldBuilderLabel>
+                    );
+            }
         }
     }
 
