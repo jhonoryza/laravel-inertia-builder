@@ -541,7 +541,7 @@ class Table implements JsonSerializable
                             $value = str($value)
                                 ->wordWrap(break: '<br>');
                         } else {
-                            $value = $value->{$relationAttribute};
+                            $value = $value->{$relationAttribute} ?? null;
                         }
                     }
                     $arr[$col->name] = $value;
