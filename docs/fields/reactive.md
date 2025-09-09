@@ -30,13 +30,14 @@ return Form::make(static::class)
             ->state('no')
             ->reactive(),
 
-        Field::file('upload_image_main')
-            ->label('Image path')
+        Field::file('image_main')
+            ->label('Main Image')
             ->hidden(fn (Get $get) => $get('is_upload') == 'no')
             ->state(fn (?Post $model) => $model?->getImageUrl()),
 
-        Field::text('path_image_main')
-            ->label('Image path')
+        Field::text('image_main')
+            ->key('image_main_2')
+            ->label('Main Image')
             ->hidden(fn (Get $get) => $get('is_upload') == 'yes')
             ->state(fn (?Post $model) => $model?->image_url),
     ]);
@@ -44,8 +45,8 @@ return Form::make(static::class)
 
 **Explanation:**
 - The `is_upload` radio field is marked as `.reactive()`.
-- When the user changes its value, the form reloads and `$isUpload` is recalculated.
-- `$uiUpload` is set to `'file'` or `'text'` depending on the value.
+- When the user changes its value, the form state is updated.
+- `$get('is_upload')` is set to `'yes'` or `'no'` depending on the value.
 - The image fields (`image_main`) are rendered as either file upload fields or text fields, dynamically.
 
 ## Use Cases
