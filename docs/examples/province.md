@@ -105,7 +105,7 @@ class ProvinceController extends Controller
 
     private function getForm(?Province $province = null, $disable = false)
     {
-        return Form::make()
+        return Form::make(static::class)
             ->fields([
                 Field::text('name')
                     ->defaultValue($province?->name)

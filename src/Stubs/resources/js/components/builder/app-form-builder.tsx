@@ -1,13 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useForm, usePage } from '@inertiajs/react';
 import { AppFieldBuilder } from "@/components/builder/app-field-builder";
+import { AppFieldBuilderLoadingPlaceholder } from "@/components/builder/field/loading-placeholder";
+import { gridClasses, maxOrder, sortByOrder } from "@/lib/utils";
+import { FieldDefinition } from "@/types/field-builder";
+import { Form } from '@/types/form';
+import { useForm, usePage } from '@inertiajs/react';
 import React, { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { FieldDefinition } from "@/types/field-builder";
 import { route } from 'ziggy-js';
-import { gridClasses, maxOrder, sortByOrder } from "@/lib/utils";
-import { AppFieldBuilderLoadingPlaceholder } from "@/components/builder/field/loading-placeholder";
-import { Form } from '@/types/form';
 
 type PageProps = {
     form: Form;
@@ -115,6 +115,7 @@ export function AppFormBuilder({ form, children }: PageProps) {
                     value,
                     state: { ...data, [name]: value },
                     formClass,
+                    mode: form.mode,
                 }),
             });
 

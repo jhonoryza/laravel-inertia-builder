@@ -57,19 +57,22 @@ class Form implements JsonSerializable
      */
     protected string $title = '';
 
-    public function __construct()
+    public function __construct(string $formClass)
     {
-        $this->formClass = class_basename($this);
+        $this->formClass = $formClass;
     }
 
-    public static function make(): static
+    public static function make(string $formClass): static
     {
-        return new static;
+        return new static($formClass);
     }
 
-    public function model(?Model $model): static
+    public function model(Model|null|array $model): static
     {
-        if ($model) {
+        if (is_array($model)) {
+            $this->state($model);
+        }
+        if ($model && ! is_array($model)) {
             $this->model     = $model;
             $this->baseRoute = $this->baseRoute == null ? Str::plural(Str::snake(class_basename($model))) : $this->baseRoute;
             $this->title     = $this->title     == null ? Str::headline(class_basename($model)) : $this->title;

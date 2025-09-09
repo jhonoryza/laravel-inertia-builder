@@ -120,7 +120,7 @@ class DistrictController extends Controller
 
     private function getForm(?District $district = null, $disable = false)
     {
-        return Form::make()
+        return Form::make(static::class)
             ->fields([
                 Field::text('name')
                     ->defaultValue($district?->name)

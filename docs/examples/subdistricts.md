@@ -148,7 +148,7 @@ class SubdistrictController extends Controller
 
     private function getForm(?Subdistrict $subdistrict = null, $disable = false)
     {
-        return Form::make()
+        return Form::make(static::class)
             ->fields([
                 Field::select('district_id')
                     ->label('District')

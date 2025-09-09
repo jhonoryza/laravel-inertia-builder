@@ -2,11 +2,10 @@
 
 namespace Jhonoryza\InertiaBuilder\Controllers;
 
-use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Jhonoryza\InertiaBuilder\Inertia\Form;
 
-class ReactiveController extends Controller
+class ReactiveController
 {
     /**
      * Handle the incoming request.
@@ -17,9 +16,10 @@ class ReactiveController extends Controller
         $name      = $request->input('name');
         $value     = $request->input('value');
         $formClass = $request->input('formClass');
+        $mode      = $request->input('mode');
 
         /** @var Form form * */
-        $form = $formClass::build($state);
+        $form = $formClass::$mode($state);
 
         $form->handleLiveUpdate($name, $value, $state);
 

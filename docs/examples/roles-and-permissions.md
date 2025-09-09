@@ -103,7 +103,7 @@ class PermissionController extends Controller
 
     private function getForm(?Permission $permission = null, $disable = false)
     {
-        return Form::make()
+        return Form::make(static::class)
             ->fields([
                 Field::text('name')
                     ->defaultValue($permission?->name)
@@ -268,7 +268,7 @@ class RoleController extends Controller
 
     private function getForm(?Role $role = null, $disable = false)
     {
-        return Form::make()
+        return Form::make(static::class)
             ->fields([
                 Field::text('name')
                     ->defaultValue($role?->name)
@@ -477,7 +477,7 @@ class UserController extends Controller implements HasMiddleware
 
     private function getForm(?User $user = null, $disable = false)
     {
-        return Form::make()
+        return Form::make(static::class)
             ->fields([
                 Field::text('name')
                     ->defaultValue($user?->name)

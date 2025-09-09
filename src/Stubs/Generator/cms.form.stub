@@ -12,9 +12,9 @@ use Jhonoryza\InertiaBuilder\Inertia\Forms\Get;
 
 class {{modelName}}Form implements FormContract
 {
-    public static function view(Model $state): Form
+    public static function view($state): Form
     {
-        return Form::make()
+        return Form::make(static::class)
             ->view()
             ->model($state)
             ->columns(1)
@@ -23,9 +23,9 @@ class {{modelName}}Form implements FormContract
         ]);
     }
 
-    public static function edit(Model $state): Form
+    public static function edit($state): Form
     {
-        return Form::make()
+        return Form::make(static::class)
             ->edit()
             ->model($state)
             ->columns(1)
@@ -34,9 +34,9 @@ class {{modelName}}Form implements FormContract
         ]);
     }
 
-    public static function create(): Form
+    public static function create($state): Form
     {
-        return Form::make()
+        return Form::make(static::class)
             ->create()
             ->model(new {{modelName}})
             ->columns(1)

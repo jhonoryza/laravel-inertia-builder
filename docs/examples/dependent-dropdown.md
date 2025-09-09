@@ -12,7 +12,7 @@ private function getForm(?Subdistrict $subdistrict = null, $disable = false)
     $cityId = $reqCityId ?: ($reqProvinceId ? null : $subdistrict?->district?->city_id);
     $districtId = $reqDistrictId ?: ($reqCityId || $reqProvinceId ? null : $subdistrict?->district_id);
 
-    return Form::make()
+    return Form::make(static::class)
         ->fields([
             Field::select('province_id')
                 ->label('Province')

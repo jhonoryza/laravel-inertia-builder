@@ -15,37 +15,30 @@ Suppose you want to let users choose whether to upload an image file or just ent
 
 ```php
 <?php
-$isUpload = request('is_upload', 'no') == 'yes';
-$uiUpload = $isUpload ? 'file' : 'text';
-
-return Form::make()
+return Form::make(static::class)
     ->columns(1)
     ->fields([
         Field::text('title')
-            ->defaultValue($post?->title)
-            ->disable($disable),
+            ->state($post?->title),
         // ... other fields ...
         Field::radio('is_upload')
             ->label('Upload Image ?')
-            ->defaultValue(request('is_upload', 'no'))
-            ->reactive() // Mark as reactive
             ->options([
                 ['label' => 'yes', 'value' => 'yes'],
                 ['label' => 'no', 'value' => 'no'],
             ])
-            ->disable($disable),
-        Field::$uiUpload('image_main')
+            ->state('no')
+            ->reactive(),
+
+        Field::file('upload_image_main')
             ->label('Image path')
-            ->defaultValue($isUpload ? $post?->getImageUrl() : $post?->image_url)
-            ->disable($disable),
-        Field::$uiUpload('image_twitter')
-            ->label('Image twitter path')
-            ->defaultValue($isUpload ? $post?->getTwitterImageUrl() : $post?->image_tw_url)
-            ->disable($disable),
-        Field::$uiUpload('image_thumb')
-            ->label('Image thumb path')
-            ->defaultValue($isUpload ? $post?->getThumbImageUrl() : $post?->image_thumb_url)
-            ->disable($disable),
+            ->hidden(fn (Get $get) => $get('is_upload') == 'no')
+            ->state(fn (?Post $model) => $model?->getImageUrl()),
+
+        Field::text('path_image_main')
+            ->label('Image path')
+            ->hidden(fn (Get $get) => $get('is_upload') == 'yes')
+            ->state(fn (?Post $model) => $model?->image_url),
     ]);
 ```
 
@@ -53,7 +46,7 @@ return Form::make()
 - The `is_upload` radio field is marked as `.reactive()`.
 - When the user changes its value, the form reloads and `$isUpload` is recalculated.
 - `$uiUpload` is set to `'file'` or `'text'` depending on the value.
-- The image fields (`image_main`, `image_twitter`, `image_thumb`) are rendered as either file upload fields or text fields, dynamically.
+- The image fields (`image_main`) are rendered as either file upload fields or text fields, dynamically.
 
 ## Use Cases
 

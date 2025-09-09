@@ -119,7 +119,7 @@ class CityController extends Controller
 
     private function getForm(?City $city = null, $disable = false)
     {
-        return Form::make()
+        return Form::make(static::class)
             ->fields([
                 Field::text('name')
                     ->defaultValue($city?->name)

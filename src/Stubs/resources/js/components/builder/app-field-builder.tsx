@@ -13,6 +13,7 @@ import { AppFieldBuilderKeyValue } from '@/components/builder/field/key-value';
 import { AppFieldBuilderLabel } from "@/components/builder/field/label";
 import { AppFieldBuilderMarkdown } from '@/components/builder/field/markdown';
 import { AppFieldBuilderPassword } from '@/components/builder/field/password';
+import { AppFieldBuilderRadio } from "@/components/builder/field/radio";
 import { AppFieldBuilderRepeater } from '@/components/builder/field/repeater';
 import { AppFieldBuilderRichText } from '@/components/builder/field/rich-text';
 import { AppFieldBuilderSelectMultipleNotSearchable } from "@/components/builder/field/select/multiple/not-searchable";
@@ -242,7 +243,7 @@ export function AppFieldBuilder({
         case 'radio':
             return (
                 <AppFieldBuilderLabel field={field} error={error}>
-                    <AppFieldBuilderDate field={field} value={value} onChange={onChange} />
+                    <AppFieldBuilderRadio field={field} value={value} onChange={onChange} />
                 </AppFieldBuilderLabel>
             );
         case 'checkbox':

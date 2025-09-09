@@ -6,7 +6,7 @@ this field allows you to make a group from some fields
 
 ```php
 <?php
-return Form::make()
+return Form::make(static::class)
     ->view()
     ->model($state)
     ->columns(1)
