@@ -1,17 +1,18 @@
-import {ActiveFilter, Filter as FilterType} from '@/types/datatable';
-import {Input} from '@/components/ui/input';
-import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from '@/components/ui/select';
-import {Popover, PopoverContent, PopoverTrigger} from '@/components/ui/popover';
-import {Button} from '@/components/ui/button';
-import {Checkbox} from '@/components/ui/checkbox';
-import {AppFieldBuilderFlatpickr} from "@/components/builder/field/flatpickr";
-import {RadioGroup, RadioGroupItem} from "@/components/ui/radio-group";
-import {Label} from "@/components/ui/label";
-import {Check, ChevronDown} from "lucide-react";
-import {Command, CommandEmpty, CommandGroup, CommandInput, CommandItem} from "@/components/ui/command";
-import {cn} from "@/lib/utils";
-import {customFilterComponents} from '@/components/builder/custom-filters';
-import {router} from "@inertiajs/react";
+import { customFilterComponents } from '@/components/builder/custom-filters';
+import { AppFieldBuilderFlatpickr } from "@/components/builder/field/flatpickr";
+import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from "@/components/ui/command";
+import { Input } from '@/components/ui/input';
+import { Label } from "@/components/ui/label";
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { cn } from "@/lib/utils";
+import { ActiveFilter, Filter as FilterType } from '@/types/datatable';
+import { router } from "@inertiajs/react";
+import { Check, ChevronDown } from "lucide-react";
+import { useRef } from 'react';
 
 interface FilterInputProps {
     name: string;
@@ -20,11 +21,13 @@ interface FilterInputProps {
     onFilterChange: (field: string, value: string | string[], operator: string) => void;
 }
 
-export function AppDataTableFilterInput({name, filterDef, activeFilter, onFilterChange}: FilterInputProps) {
+export function AppDataTableFilterInput({ name, filterDef, activeFilter, onFilterChange }: FilterInputProps) {
     const handleValueChange = (value: string | string[], operator: string) => {
         // console.log(filterDef.field, value, operator);
         onFilterChange(filterDef.field, value, operator);
     };
+    const timeoutRef1 = useRef<NodeJS.Timeout | null>(null);
+    const timeoutRef2 = useRef<NodeJS.Timeout | null>(null);
 
     switch (filterDef.type) {
         case 'select':
@@ -42,28 +45,32 @@ export function AppDataTableFilterInput({name, filterDef, activeFilter, onFilter
                                     {selectedValues.size > 0
                                         ? `${selectedValues.size} selected`
                                         : `Select ${filterDef.label}...`}
-                                    <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50"/>
+                                    <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                                 </Button>
                             </PopoverTrigger>
 
                             <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0">
                                 <Command>
                                     <CommandInput placeholder="Search..." className="h-9"
-                                                  onValueChange={(val) => {
-                                                      if (val && filterDef.serverside) {
-                                                          setTimeout(() => {
-                                                              const key = `${filterDef.field}_q`;
-                                                              router.get(window.location.href, {
-                                                                  [key]: val,
-                                                              }, {
-                                                                  preserveState: true,
-                                                                  preserveScroll: true,
-                                                                  replace: true,
-                                                                  only: [name]
-                                                              })
-                                                          }, 500)
-                                                      }
-                                                  }}
+                                        onValueChange={(val) => {
+                                            if (val && filterDef.serverside) {
+                                                if (timeoutRef1.current) {
+                                                    clearTimeout(timeoutRef1.current);
+                                                }
+
+                                                timeoutRef1.current = setTimeout(() => {
+                                                    const key = `${filterDef.field}_q`;
+                                                    router.get(window.location.href, {
+                                                        [key]: val,
+                                                    }, {
+                                                        preserveState: true,
+                                                        preserveScroll: true,
+                                                        replace: true,
+                                                        only: [name]
+                                                    })
+                                                }, 500)
+                                            }
+                                        }}
                                     />
                                     <CommandEmpty>No option found.</CommandEmpty>
                                     <CommandGroup>
@@ -87,7 +94,7 @@ export function AppDataTableFilterInput({name, filterDef, activeFilter, onFilter
                                                         handleValueChange(Array.from(newSet), activeFilter.operator ?? '')
                                                     }}
                                                 >
-                                                    <Checkbox checked={isChecked} className="mr-2"/>
+                                                    <Checkbox checked={isChecked} className="mr-2" />
                                                     {opt.label}
                                                 </CommandItem>
                                             );
@@ -109,37 +116,41 @@ export function AppDataTableFilterInput({name, filterDef, activeFilter, onFilter
                             >
                                 {filterDef.options?.find((opt) => opt.value === activeFilter.value)?.label || (
                                     <span className="text-muted-foreground">
-                                      {`Select ${filterDef.label}...`}
+                                        {`Select ${filterDef.label}...`}
                                     </span>
                                 )}
-                                <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50"/>
+                                <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                             </Button>
                         </PopoverTrigger>
 
                         <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0">
                             <Command>
                                 <CommandInput placeholder="Search..." className="h-9"
-                                              onValueChange={(val) => {
-                                                  if (val && filterDef.serverside) {
-                                                      setTimeout(() => {
-                                                          const key = `${filterDef.field}_q`;
-                                                          router.get(window.location.href, {
-                                                              [key]: val,
-                                                          }, {
-                                                              preserveState: true,
-                                                              preserveScroll: true,
-                                                              replace: true,
-                                                              only: [name],
-                                                          })
-                                                      }, 500)
-                                                  }
-                                              }}
+                                    onValueChange={(val) => {
+                                        if (val && filterDef.serverside) {
+                                            if (timeoutRef2.current) {
+                                                clearTimeout(timeoutRef2.current);
+                                            }
+
+                                            timeoutRef2.current = setTimeout(() => {
+                                                const key = `${filterDef.field}_q`;
+                                                router.get(window.location.href, {
+                                                    [key]: val,
+                                                }, {
+                                                    preserveState: true,
+                                                    preserveScroll: true,
+                                                    replace: true,
+                                                    only: [name],
+                                                })
+                                            }, 500)
+                                        }
+                                    }}
                                 />
                                 <CommandEmpty>No options found.</CommandEmpty>
                                 <CommandGroup>
-                                    {filterDef.options?.map((opt) => (
+                                    {filterDef.options?.map((opt, i) => (
                                         <CommandItem
-                                            key={opt.value}
+                                            key={i + opt.value}
                                             value={opt.value}
                                             onSelect={() => {
                                                 handleValueChange(opt.value, activeFilter.operator ?? '')
@@ -176,16 +187,16 @@ export function AppDataTableFilterInput({name, filterDef, activeFilter, onFilter
                                     {selectedValues.size > 0
                                         ? `${selectedValues.size} selected`
                                         : `Select ${filterDef.label}...`}
-                                    <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50"/>
+                                    <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                                 </Button>
                             </PopoverTrigger>
                             <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-2">
                                 <div className="flex flex-col gap-2 max-h-64 overflow-y-auto">
-                                    {filterDef.options?.map((option) => {
+                                    {filterDef.options?.map((option, i) => {
                                         const isChecked = selectedValues.has(option.value);
                                         return (
                                             <label
-                                                key={option.value}
+                                                key={i + option.value}
                                                 className="flex items-center space-x-2 cursor-pointer"
                                             >
                                                 <Checkbox
@@ -220,7 +231,7 @@ export function AppDataTableFilterInput({name, filterDef, activeFilter, onFilter
                         value={Array.isArray(activeFilter.value) ? '' : activeFilter.value}
                     >
                         <SelectTrigger>
-                            <SelectValue placeholder={`Select ${filterDef.label}...`}/>
+                            <SelectValue placeholder={`Select ${filterDef.label}...`} />
                         </SelectTrigger>
                         <SelectContent>
                             {filterDef.options?.map(option => (
@@ -287,13 +298,13 @@ export function AppDataTableFilterInput({name, filterDef, activeFilter, onFilter
                 >
                     <div key={'true'} className="flex items-center space-x-2">
                         <RadioGroupItem className="cursor-pointer" value="true"
-                                        id={`${filterDef?.field}-true`}/>
+                            id={`${filterDef?.field}-true`} />
                         <Label
                             htmlFor={`${filterDef?.field}-true`}>Yes</Label>
                     </div>
                     <div key={'false'} className="flex items-center space-x-2">
                         <RadioGroupItem className="cursor-pointer" value="false"
-                                        id={`${filterDef?.field}-false`}/>
+                            id={`${filterDef?.field}-false`} />
                         <Label
                             htmlFor={`${filterDef?.field}-false`}>No</Label>
                     </div>

@@ -5,6 +5,7 @@ import { cn } from "@/lib/utils";
 import { FieldDefinition } from "@/types/field-builder";
 import { router } from "@inertiajs/react";
 import { Check, ChevronsUpDown } from "lucide-react";
+import { useRef } from "react";
 
 type Props = {
     field: FieldDefinition;
@@ -15,6 +16,7 @@ type Props = {
 }
 
 export function AppFieldBuilderSelectSingleSearchable({ field, value, onChange, setFields }: Props) {
+    const timeoutRef = useRef<NodeJS.Timeout | null>(null);
     return (
         <Popover>
             <PopoverTrigger asChild>
@@ -40,7 +42,11 @@ export function AppFieldBuilderSelectSingleSearchable({ field, value, onChange, 
                         className="h-9"
                         onValueChange={(val) => {
                             if (val && field.serverside) {
-                                setTimeout(() => {
+                                if (timeoutRef.current) {
+                                    clearTimeout(timeoutRef.current);
+                                }
+
+                                timeoutRef.current = setTimeout(() => {
                                     const key = `${field.key}_q`;
                                     router.get(
                                         window.location.href,
@@ -52,6 +58,7 @@ export function AppFieldBuilderSelectSingleSearchable({ field, value, onChange, 
                                             preserveScroll: true,
                                             replace: true,
                                             onSuccess: (page) => {
+                                                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                                                 const fields = (page.props as any)?.form?.fields as FieldDefinition[];
                                                 if (fields) {
                                                     setFields(fields);
@@ -65,9 +72,9 @@ export function AppFieldBuilderSelectSingleSearchable({ field, value, onChange, 
                     />
                     <CommandEmpty>No options found.</CommandEmpty>
                     <CommandGroup className="max-h-60 overflow-y-auto">
-                        {field.options?.map((opt) => (
+                        {field.options?.map((opt, i) => (
                             <CommandItem
-                                key={field.key + opt.label.toString()}
+                                key={i + field.key + opt.label.toString()}
                                 value={opt.label.toString()}
                                 onSelect={() => onChange(field.key, opt.value)}
                             >

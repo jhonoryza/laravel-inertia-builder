@@ -5,6 +5,7 @@ import { cn } from "@/lib/utils";
 import { FieldDefinition } from "@/types/field-builder";
 import { router } from "@inertiajs/react";
 import { Check, ChevronsUpDown } from "lucide-react";
+import { useRef } from "react";
 
 type Props = {
     field: FieldDefinition;
@@ -15,6 +16,7 @@ type Props = {
 }
 
 export function AppFieldBuilderComboboxSingle({ field, value, onChange, setFields }: Props) {
+    const timeoutRef = useRef<NodeJS.Timeout | null>(null);
     return (
         <Popover>
             <PopoverTrigger asChild>
@@ -40,7 +42,11 @@ export function AppFieldBuilderComboboxSingle({ field, value, onChange, setField
                         className="h-9"
                         onValueChange={(val) => {
                             if (val && field.serverside) {
-                                setTimeout(() => {
+                                if (timeoutRef.current) {
+                                    clearTimeout(timeoutRef.current);
+                                }
+
+                                timeoutRef.current = setTimeout(() => {
                                     const key = `${field.key}_q`;
                                     router.get(
                                         window.location.href,
@@ -65,9 +71,9 @@ export function AppFieldBuilderComboboxSingle({ field, value, onChange, setField
                     />
                     <CommandEmpty>No options found.</CommandEmpty>
                     <CommandGroup className="max-h-60 overflow-y-auto">
-                        {field.options?.map((opt) => (
+                        {field.options?.map((opt, i) => (
                             <CommandItem
-                                key={field.key + opt.label.toString()}
+                                key={i + field.key + opt.label.toString()}
                                 value={opt.label.toString()}
                                 onSelect={() => onChange(field.key, opt.value)}
                             >
