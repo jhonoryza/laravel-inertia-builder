@@ -38,6 +38,7 @@ class InstallCommand extends Command
             'sonner@^2.0.5',
             'ziggy-js@^2.5.3',
             '@types/ziggy-js@^1.8.0',
+            '@fontsource/nunito-sans@^5.2.6',
         ];
         $command   = 'npm install ' . implode(' ', $packages);
         $npmResult = Process::run($command);
@@ -83,9 +84,7 @@ class InstallCommand extends Command
         $this->info('datatable & field builder type copied successfully.');
 
         // copy css themes
-        (new Filesystem)->copyDirectory(__DIR__ . '/../../../public/fonts', public_path('fonts'));
         (new Filesystem)->copyDirectory(__DIR__ . '/../../Stubs/resources/css/theme', resource_path('css/theme'));
-        copy(__DIR__ . '/../../Stubs/resources/css/font.css', resource_path('css/font.css'));
         copy(__DIR__ . '/../../Stubs/resources/css/app.css', resource_path('css/app.css'));
         $this->info('theme copied successfully.');
 

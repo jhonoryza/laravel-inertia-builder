@@ -1,4 +1,4 @@
-@import "./font.css";
+@import "@fontsource/nunito-sans";
 @import 'tailwindcss';
 @import "./theme/nova.css";
 @source inline('{sm:,md:,lg:,xl:,2xl:,}grid-cols-{{1..12}}');
