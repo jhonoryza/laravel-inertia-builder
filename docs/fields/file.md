@@ -9,13 +9,16 @@ The File field allows users to upload files through your form. It supports singl
 use Jhonoryza\InertiaBuilder\Inertia\Fields\Factory\Field;
 
 // Single file upload
-Field::file('document');
+Field::file('document')
+    ->preview(fn ($model) => $model->doc_url);
 
 // Multiple file upload
-Field::file('photos')->multiple();
+Field::file('photos')
+    ->multiple();
 
 // Restrict accepted file types
-Field::file('avatar')->accept(['image/png', 'image/jpeg']);
+Field::file('avatar')
+    ->accept(['image/png', 'image/jpeg']);
 ```
 
 ## Important Options

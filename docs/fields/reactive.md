@@ -33,14 +33,27 @@ return Form::make(static::class)
         Field::file('image_main')
             ->label('Main Image')
             ->hidden(fn (Get $get) => $get('is_upload') == 'no')
-            ->state(fn (?Post $model) => $model?->getImageUrl()),
+            ->preview(fn (Post $model) => $model->getMainImageUrl()),
 
         Field::text('image_main')
             ->key('image_main_2')
             ->label('Main Image')
             ->hidden(fn (Get $get) => $get('is_upload') == 'yes')
-            ->state(fn (?Post $model) => $model?->image_url),
+            ->state(fn (Post $model) => $model->getMainImageUrl()),
     ]);
+```
+
+By default field `key` has the same value with field `name`,
+if you use the same field `name`, make sure set different field `key`
+
+`Post` model class
+
+```php
+<?php
+    public function getMainImageUrl()
+    {
+        return $this->image_url ? : Storage::url($this->image_url) : '';
+    }
 ```
 
 **Explanation:**
