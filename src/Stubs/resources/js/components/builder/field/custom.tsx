@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useEffect, useState } from 'react';
-import { cn } from '@/lib/utils';
 import { customFieldsComponents } from '@/components/builder/custom-fields';
+import { cn } from '@/lib/utils';
+import { useEffect, useState } from 'react';
 
 export function AppFieldBuilderCustom({ field, value, onChange, error }: any) {
     // Use field state as initial value if provided and no value exists yet
@@ -10,10 +10,10 @@ export function AppFieldBuilderCustom({ field, value, onChange, error }: any) {
     useEffect(() => {
         // Initialize state from field.state if value is undefined
         if (!initialized && value === undefined && field.state !== undefined) {
-            onChange(field.name, field.state);
+            onChange(field.key, field.state);
             setInitialized(true);
         }
-    }, [initialized, field.name, field.state, value, onChange]);
+    }, [initialized, field.key, field.state, value, onChange]);
 
     // Render the custom component if specified
     if (field.component) {
@@ -26,7 +26,7 @@ export function AppFieldBuilderCustom({ field, value, onChange, error }: any) {
                         name={field.name}
                         label={field.label}
                         value={value ?? field.state}
-                        onChange={(newValue: any) => onChange(field.name, newValue)}
+                        onChange={(newValue: any) => onChange(field.key, newValue)}
                         error={error}
                         {...(field.extraAttributes || {})}
                     />

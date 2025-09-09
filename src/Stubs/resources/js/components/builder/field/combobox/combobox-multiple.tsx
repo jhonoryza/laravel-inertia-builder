@@ -1,20 +1,20 @@
-import {FieldDefinition} from "@/types/field-builder";
-import {Popover, PopoverContent, PopoverTrigger} from "@/components/ui/popover";
-import {Button} from "@/components/ui/button";
-import {cn} from "@/lib/utils";
-import {Command, CommandEmpty, CommandGroup, CommandInput, CommandItem} from "@/components/ui/command";
-import {router} from "@inertiajs/react";
-import {Checkbox} from "@/components/ui/checkbox";
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from "@/components/ui/command";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { cn } from "@/lib/utils";
+import { FieldDefinition } from "@/types/field-builder";
+import { router } from "@inertiajs/react";
 
 type Props = {
     field: FieldDefinition;
     value: string;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    onChange: (name: string, value: any, operator?: string) => void;
+    onChange: (key: string, value: any, operator?: string) => void;
     setFields: React.Dispatch<React.SetStateAction<FieldDefinition[]>>;
 }
 
-export function AppFieldBuilderComboboxMultiple({field, value, onChange, setFields}: Props) {
+export function AppFieldBuilderComboboxMultiple({ field, value, onChange, setFields }: Props) {
     return (
         <Popover>
             <PopoverTrigger asChild>
@@ -36,7 +36,7 @@ export function AppFieldBuilderComboboxMultiple({field, value, onChange, setFiel
                         onValueChange={(val) => {
                             if (val && field.serverside) {
                                 setTimeout(() => {
-                                    const key = `${field.name}_q`;
+                                    const key = `${field.key}_q`;
                                     router.get(
                                         window.location.href,
                                         {
@@ -75,10 +75,10 @@ export function AppFieldBuilderComboboxMultiple({field, value, onChange, setFiel
                                         } else {
                                             newSet.add(opt.value);
                                         }
-                                        onChange(field.name, Array.from(newSet));
+                                        onChange(field.key, Array.from(newSet));
                                     }}
                                 >
-                                    <Checkbox checked={isChecked} className="mr-2"/>
+                                    <Checkbox checked={isChecked} className="mr-2" />
                                     {opt.label}
                                 </CommandItem>
                             );

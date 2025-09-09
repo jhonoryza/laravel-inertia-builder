@@ -1,17 +1,17 @@
-import {FieldDefinition} from "@/types/field-builder";
-import {Input} from "@/components/ui/input";
-import {cn} from "@/lib/utils";
+import { Input } from "@/components/ui/input";
+import { cn } from "@/lib/utils";
+import { FieldDefinition } from "@/types/field-builder";
 
 type Props = {
     field: FieldDefinition;
     value: string;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    onChange: (name: string, value: any, operator?: string) => void;
+    onChange: (key: string, value: any, operator?: string) => void;
 }
 
-export function AppFieldBuilderHidden({field, value, onChange}: Props) {
+export function AppFieldBuilderHidden({ field, value, onChange }: Props) {
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        onChange(field.name, e.target.value);
+        onChange(field.key, e.target.value);
     };
 
     return (

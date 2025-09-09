@@ -7,18 +7,9 @@ use Jhonoryza\InertiaBuilder\Inertia\Form;
 
 interface FormContract
 {
-    /**
-     * @param  Model|array  $state
-     */
-    public static function view($state): Form;
+    public static function view(Model $state): Form;
 
-    /**
-     * @param  Model|array  $state
-     */
-    public static function edit($state): Form;
+    public static function edit(Model $state): Form;
 
-    /**
-     * @param  Model|array  $state
-     */
-    public static function create($state): Form;
+    public static function create(): Form;
 }

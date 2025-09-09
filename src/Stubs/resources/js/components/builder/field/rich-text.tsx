@@ -1,14 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React from 'react';
-import { useEditor, EditorContent } from '@tiptap/react';
-import StarterKit from '@tiptap/starter-kit';
-import Heading from '@tiptap/extension-heading';
-import Link from '@tiptap/extension-link';
-import Image from '@tiptap/extension-image';
-import TextAlign from '@tiptap/extension-text-align';
-import Underline from '@tiptap/extension-underline';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import Heading from '@tiptap/extension-heading';
+import Image from '@tiptap/extension-image';
+import Link from '@tiptap/extension-link';
+import TextAlign from '@tiptap/extension-text-align';
+import Underline from '@tiptap/extension-underline';
+import { EditorContent, useEditor } from '@tiptap/react';
+import StarterKit from '@tiptap/starter-kit';
 
 interface RichTextFieldProps {
     field: {
@@ -22,7 +21,7 @@ interface RichTextFieldProps {
         mergeClass?: string;
     };
     value: string;
-    onChange: (name: string, value: any, operator?: string) => void;
+    onChange: (key: string, value: any, operator?: string) => void;
 }
 
 export function AppFieldBuilderRichText({ field, value, onChange }: RichTextFieldProps) {
@@ -43,7 +42,7 @@ export function AppFieldBuilderRichText({ field, value, onChange }: RichTextFiel
         ],
         content: value || '',
         onUpdate: ({ editor }) => {
-            onChange(field.name, editor.getHTML());
+            onChange(field.key, editor.getHTML());
         },
         editorProps: {
             attributes: {

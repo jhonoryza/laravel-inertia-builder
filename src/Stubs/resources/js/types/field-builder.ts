@@ -26,10 +26,10 @@ export type FieldDefinition = {
     gridCol?: ColumnDef;
     order: number;
     type: 'text' | 'email' | 'number' | 'date' | 'datetime-local' | 'password'
-        | 'textarea' | 'select' | 'combobox' | 'radio' | 'checkbox' | 'toggle'
-        | 'markdown' | 'flatpickr' | 'hidden' | 'slider' | 'file'
-        | 'checkbox-list' | 'rich-text' | 'repeater' | 'key-value' | 'tags'
-        | 'custom';
+    | 'textarea' | 'select' | 'combobox' | 'radio' | 'checkbox' | 'toggle'
+    | 'markdown' | 'flatpickr' | 'hidden' | 'slider' | 'file'
+    | 'checkbox-list' | 'rich-text' | 'repeater' | 'key-value' | 'tags'
+    | 'custom';
     options?: FieldOption[];
     isDisable?: boolean;
     hidden?: boolean;
@@ -76,4 +76,5 @@ export type FieldDefinition = {
     debounce?: number;
     copyable?: boolean;
     asInfo?: boolean;
+    preview?: string;
 };

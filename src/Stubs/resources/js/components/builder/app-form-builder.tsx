@@ -17,7 +17,7 @@ type PageProps = {
 };
 
 export function AppFormBuilder({ form, children }: PageProps) {
-    const { columns, fields: initialFields, baseRoute, routeId, formClass } = form
+    const { columns, fields: initialFields, baseRoute, routeId, formClass, modelClass } = form
     const { flash } = usePage().props as { flash?: { success?: string, error?: string, description?: string } };
 
     // local state fields that can be updated when reactive/live
@@ -39,7 +39,7 @@ export function AppFormBuilder({ form, children }: PageProps) {
     }, [flash]);
 
     const initialFormValues = fields.reduce((acc, field) => {
-        acc[field.name] = field.defaultValue ?? '';
+        acc[field.key] = field.defaultValue ?? '';
         return acc;
     }, {} as Record<string, any>);
 
@@ -65,7 +65,7 @@ export function AppFormBuilder({ form, children }: PageProps) {
     // the form state also gets updated with any new defaultValues from the server.
     useEffect(() => {
         const newInitialValues = fields.reduce((acc, field) => {
-            acc[field.name] = field.defaultValue ?? data[field.name] ?? '';
+            acc[field.key] = field.defaultValue ?? data[field.key] ?? '';
             return acc;
         }, {} as Record<string, any>);
         setData(newInitialValues);
@@ -73,22 +73,22 @@ export function AppFormBuilder({ form, children }: PageProps) {
 
     const debounceTimeouts = React.useRef<Record<string, NodeJS.Timeout>>({});
 
-    const onReactive = async (name: string, value: any, operator?: string) => {
-        setData((prev: any) => ({ ...prev, [name]: value, operator }));
-        const field = fields.find((f) => f.name === name);
+    const onReactive = async (key: string, value: any, operator?: string) => {
+        setData((prev: any) => ({ ...prev, [key]: value, operator }));
+        const field = fields.find((f) => f.key === key);
         if (!field) return;
         if (!field.reactive) return;
 
         if (field.debounce && field.debounce > 0) {
             // clear timeout before
-            if (debounceTimeouts.current[name]) clearTimeout(debounceTimeouts.current[name]);
+            if (debounceTimeouts.current[key]) clearTimeout(debounceTimeouts.current[key]);
 
             // set new timeout
-            debounceTimeouts.current[name] = setTimeout(() => {
-                sendLiveUpdate(name, value);
+            debounceTimeouts.current[key] = setTimeout(() => {
+                sendLiveUpdate(key, value);
             }, field.debounce);
         } else {
-            sendLiveUpdate(name, value);
+            sendLiveUpdate(key, value);
         }
     }
 
@@ -101,7 +101,7 @@ export function AppFormBuilder({ form, children }: PageProps) {
         );
     }
 
-    const sendLiveUpdate = async (name: string, value: any) => {
+    const sendLiveUpdate = async (key: string, value: any) => {
         try {
             const res = await fetch('/inertia-builder/reactive', {
                 method: 'POST',
@@ -111,11 +111,13 @@ export function AppFormBuilder({ form, children }: PageProps) {
                     // 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
                 },
                 body: JSON.stringify({
-                    name,
+                    key,
                     value,
-                    state: { ...data, [name]: value },
+                    state: { ...data, [key]: value },
                     formClass,
+                    modelClass,
                     mode: form.mode,
+                    routeId,
                 }),
             });
 
@@ -127,7 +129,7 @@ export function AppFormBuilder({ form, children }: PageProps) {
             const result = await res.json();
             if (result.fields) {
                 const newState = result.fields.reduce((acc: any, field: any) => {
-                    acc[field.name] = field.defaultValue ?? data[field.name] ?? '';
+                    acc[field.key] = field.defaultValue ?? data[field.key] ?? '';
                     return acc;
                 }, {} as Record<string, any>);
 
@@ -190,14 +192,14 @@ export function AppFormBuilder({ form, children }: PageProps) {
                             <div key={group.key} className={gridClasses(gridCol) + " gap-4"}>
                                 {group.fields.map(field => (
                                     processing ? (
-                                        <AppFieldBuilderLoadingPlaceholder field={field} />
+                                        <AppFieldBuilderLoadingPlaceholder key={field.key + 'lg'} field={field} />
                                     ) : (
                                         <AppFieldBuilder
                                             key={field.key}
                                             field={field}
-                                            value={data[field.name]}
+                                            value={data[field.key]}
                                             onReactive={onReactive}
-                                            error={errors[field.name]}
+                                            error={errors[field.key]}
                                             isProcessing={processing}
                                             setFields={setFields}
                                         />
@@ -210,14 +212,14 @@ export function AppFormBuilder({ form, children }: PageProps) {
                     // non-grid
                     return group.fields.map(field => (
                         processing ? (
-                            <AppFieldBuilderLoadingPlaceholder field={field} />
+                            <AppFieldBuilderLoadingPlaceholder key={field.key + 'lng'} field={field} />
                         ) : (
                             <AppFieldBuilder
                                 key={field.key}
                                 field={field}
-                                value={data[field.name]}
+                                value={data[field.key]}
                                 onReactive={onReactive}
-                                error={errors[field.name]}
+                                error={errors[field.key]}
                                 isProcessing={processing}
                                 setFields={setFields}
                             />
@@ -230,9 +232,9 @@ export function AppFormBuilder({ form, children }: PageProps) {
                     <AppFieldBuilder
                         key={hiddenField.key}
                         field={hiddenField}
-                        value={data[hiddenField.name]}
+                        value={data[hiddenField.key]}
                         onReactive={onReactive}
-                        error={errors[hiddenField.name]}
+                        error={errors[hiddenField.key]}
                         isProcessing={processing}
                         setFields={setFields}
                     />

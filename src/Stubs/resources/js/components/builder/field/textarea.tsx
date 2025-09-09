@@ -1,16 +1,16 @@
-import {Textarea} from "@/components/ui/textarea";
-import {FieldDefinition} from "@/types/field-builder";
+import { Textarea } from "@/components/ui/textarea";
+import { FieldDefinition } from "@/types/field-builder";
 
 type Props = {
     field: FieldDefinition;
     value: string;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    onChange: (name: string, value: any, operator?: string) => void;
+    onChange: (key: string, value: any, operator?: string) => void;
 }
 
-export function AppFieldBuilderTextarea({field, value, onChange}: Props) {
+export function AppFieldBuilderTextarea({ field, value, onChange }: Props) {
     const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-        onChange(field.name, e.target.value);
+        onChange(field.key, e.target.value);
     };
 
     return (

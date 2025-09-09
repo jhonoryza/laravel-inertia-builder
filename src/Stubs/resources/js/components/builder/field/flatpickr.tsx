@@ -1,20 +1,20 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, {useCallback, useEffect, useRef} from 'react';
-import {Input} from '@/components/ui/input';
+import { Input } from '@/components/ui/input';
+import { cn } from "@/lib/utils";
+import { FieldDefinition } from "@/types/field-builder";
+import { format, parse } from "date-fns";
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/themes/dark.css';
-import {cn} from "@/lib/utils";
-import {format, parse} from "date-fns";
-import {FieldDefinition} from "@/types/field-builder";
+import { useCallback, useEffect, useRef } from 'react';
 
 interface FlatpickrFieldProps {
     field: FieldDefinition;
     value: any;
     operator?: string;
-    onChange: (name: string, value: any, operator?: string) => void;
+    onChange: (key: string, value: any, operator?: string) => void;
 }
 
-export function AppFieldBuilderFlatpickr({field, value, operator, onChange}: FlatpickrFieldProps) {
+export function AppFieldBuilderFlatpickr({ field, value, operator, onChange }: FlatpickrFieldProps) {
     const operatorRef = useRef(operator);
     operatorRef.current = operator;
 
@@ -95,30 +95,30 @@ export function AppFieldBuilderFlatpickr({field, value, operator, onChange}: Fla
                             selectedDates[1],
                             field.withTime === false ? 'yyyy-MM-dd' : 'yyyy-MM-dd HH:mm:ss'
                         );
-                        onChange(field.name, `${formattedOne},${formattedTwo}`, currentOperator);
+                        onChange(field.key, `${formattedOne},${formattedTwo}`, currentOperator);
                         return;
                     }
                     const tmpValue = `${selectedDates[0].toISOString()},${selectedDates[1].toISOString()}`;
-                    onChange(field.name, tmpValue, currentOperator);
+                    onChange(field.key, tmpValue, currentOperator);
                 } else if (selectedDates.length == 1) {
                     if (field.utcConvert === false) {
                         const formatted = format(
                             selectedDates[0],
                             field.withTime === false ? 'yyyy-MM-dd' : 'yyyy-MM-dd HH:mm:ss'
                         );
-                        onChange(field.name, formatted, currentOperator);
+                        onChange(field.key, formatted, currentOperator);
                         return;
                     }
-                    onChange(field.name, selectedDates[0].toISOString(), currentOperator);
+                    onChange(field.key, selectedDates[0].toISOString(), currentOperator);
                 } else {
-                    onChange(field.name, null, currentOperator);
+                    onChange(field.key, null, currentOperator);
                 }
             },
         };
 
-        let config = {...defaultConfig, ...field.config};
+        let config = { ...defaultConfig, ...field.config };
         if (operatorRef.current === '><' || operatorRef.current === '!><') {
-            config = {...config, ...{mode: 'range'}};
+            config = { ...config, ...{ mode: 'range' } };
         }
         flatpickrInstance.current = flatpickr(inputRef.current, config);
 
@@ -127,7 +127,7 @@ export function AppFieldBuilderFlatpickr({field, value, operator, onChange}: Fla
             flatpickrInstance.current.setDate(initialDate);
         }
 
-    }, [field.config, field.name, operator, field.utcConvert, field.withTime, parseValue, onChange, value]);
+    }, [field.config, field.key, operator, field.utcConvert, field.withTime, parseValue, onChange, value]);
 
     useEffect(() => {
         if (flatpickrInstance.current && flatpickrInstance.current.operator !== operatorRef.current) {

@@ -1,18 +1,18 @@
-import {useEffect, useRef, useState} from 'react';
-import {Textarea} from '@/components/ui/textarea';
-import {Tabs, TabsList, TabsTrigger, TabsContent} from '@/components/ui/tabs';
-import {cn} from '@/lib/utils';
-import {marked} from 'marked';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Textarea } from '@/components/ui/textarea';
+import { cn } from '@/lib/utils';
 import { FieldDefinition } from '@/types/field-builder';
+import { marked } from 'marked';
+import { useEffect, useRef, useState } from 'react';
 
 type Props = {
     field: FieldDefinition;
     value: string;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    onChange: (name: string, value: any, operator?: string) => void;
+    onChange: (key: string, value: any, operator?: string) => void;
 };
 
-export function AppFieldBuilderMarkdown({field, value, onChange}: Props) {
+export function AppFieldBuilderMarkdown({ field, value, onChange }: Props) {
     const [tab, setTab] = useState<'write' | 'preview'>('write');
     const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -23,7 +23,7 @@ export function AppFieldBuilderMarkdown({field, value, onChange}: Props) {
     }, [tab]);
 
     const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-        onChange(field.name, e.target.value);
+        onChange(field.key, e.target.value);
     };
 
     return (
@@ -49,7 +49,7 @@ export function AppFieldBuilderMarkdown({field, value, onChange}: Props) {
                 <TabsContent value="preview">
                     <div
                         className={cn("prose-sm dark:prose-dark max-w-none p-3 border rounded bg-muted")}
-                        dangerouslySetInnerHTML={{__html: marked.parse(value || '')}}
+                        dangerouslySetInnerHTML={{ __html: marked.parse(value || '') }}
                     />
                 </TabsContent>
             </Tabs>

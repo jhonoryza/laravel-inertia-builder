@@ -141,10 +141,10 @@ class Form implements JsonSerializable
     }
 
     // will be called when there is reactive call from frontend
-    public function handleLiveUpdate(string $name, $value, array &$state): array
+    public function handleLiveUpdate(string $key, $value, array &$state): array
     {
         /** @var AbstractField|null $field */
-        $field = $this->findField($name);
+        $field = $this->findField($key);
 
         if (! $field || ! $field->getIsReactive()) {
             return $state;
@@ -155,8 +155,8 @@ class Form implements JsonSerializable
         // update form state
         foreach ($this->getFields() as $f) {
             /** @var AbstractField $f */
-            if (isset($state[$f->getName()])) {
-                $this->state[$f->getName()] = $state[$f->getName()];
+            if (isset($state[$f->getKey()])) {
+                $this->state[$f->getKey()] = $state[$f->getKey()];
             }
         }
 
@@ -188,7 +188,7 @@ class Form implements JsonSerializable
 
                 // set form state to field state
                 $field->form($this);
-                $formState = $this->state[$field->getName()];
+                $formState = $this->state[$field->getKey()] ?? null;
                 $field->state($formState);
 
                 return $field;
@@ -207,11 +207,11 @@ class Form implements JsonSerializable
             foreach ($this->getFields() as $field) {
                 $field->form($this);
 
-                $state      = $this->model?->{$field->getName()} ?? null;
+                $state      = $this->model?->{$field->getKey()} ?? null;
                 $fieldState = $field->getState();
                 $state      = $fieldState !== null ? $fieldState : $state;
 
-                $this->state[$field->getName()] = $state;
+                $this->state[$field->getKey()] = $state;
             }
         }
     }
@@ -221,13 +221,14 @@ class Form implements JsonSerializable
         $this->checkisStateEmpty();
 
         return [
-            'columns'   => $this->getColumns(),
-            'fields'    => $this->evaluateFields(),
-            'baseRoute' => $this->baseRoute,
-            'routeId'   => $this->routeId,
-            'mode'      => $this->mode,
-            'formClass' => $this->formClass,
-            'title'     => $this->title,
+            'columns'    => $this->getColumns(),
+            'fields'     => $this->evaluateFields(),
+            'baseRoute'  => $this->baseRoute,
+            'modelClass' => get_class($this->model),
+            'routeId'    => $this->routeId,
+            'mode'       => $this->mode,
+            'formClass'  => $this->formClass,
+            'title'      => $this->title,
         ];
     }
 }

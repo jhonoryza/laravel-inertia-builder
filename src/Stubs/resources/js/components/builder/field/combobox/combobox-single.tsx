@@ -1,20 +1,20 @@
-import {FieldDefinition} from "@/types/field-builder";
-import {Popover, PopoverContent, PopoverTrigger} from "@/components/ui/popover";
-import {Button} from "@/components/ui/button";
-import {cn} from "@/lib/utils";
-import {Command, CommandEmpty, CommandGroup, CommandInput, CommandItem} from "@/components/ui/command";
-import {router} from "@inertiajs/react";
-import {Check, ChevronsUpDown} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from "@/components/ui/command";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { cn } from "@/lib/utils";
+import { FieldDefinition } from "@/types/field-builder";
+import { router } from "@inertiajs/react";
+import { Check, ChevronsUpDown } from "lucide-react";
 
 type Props = {
     field: FieldDefinition;
     value: string;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    onChange: (name: string, value: any, operator?: string) => void;
+    onChange: (key: string, value: any, operator?: string) => void;
     setFields: React.Dispatch<React.SetStateAction<FieldDefinition[]>>;
 }
 
-export function AppFieldBuilderComboboxSingle({field, value, onChange, setFields}: Props) {
+export function AppFieldBuilderComboboxSingle({ field, value, onChange, setFields }: Props) {
     return (
         <Popover>
             <PopoverTrigger asChild>
@@ -29,7 +29,7 @@ export function AppFieldBuilderComboboxSingle({field, value, onChange, setFields
                         <span
                             className="text-muted-foreground">{field.placeholder || 'Select an option'}</span>
                     )}
-                    <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50"/>
+                    <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                 </Button>
             </PopoverTrigger>
 
@@ -41,7 +41,7 @@ export function AppFieldBuilderComboboxSingle({field, value, onChange, setFields
                         onValueChange={(val) => {
                             if (val && field.serverside) {
                                 setTimeout(() => {
-                                    const key = `${field.name}_q`;
+                                    const key = `${field.key}_q`;
                                     router.get(
                                         window.location.href,
                                         {
@@ -69,10 +69,10 @@ export function AppFieldBuilderComboboxSingle({field, value, onChange, setFields
                             <CommandItem
                                 key={field.key + opt.label.toString()}
                                 value={opt.label.toString()}
-                                onSelect={() => onChange(field.name, opt.value)}
+                                onSelect={() => onChange(field.key, opt.value)}
                             >
                                 <Check
-                                    className={cn('mr-2 h-4 w-4', opt.value === value ? 'opacity-100' : 'opacity-0')}/>
+                                    className={cn('mr-2 h-4 w-4', opt.value === value ? 'opacity-100' : 'opacity-0')} />
                                 {opt.label}
                             </CommandItem>
                         ))}

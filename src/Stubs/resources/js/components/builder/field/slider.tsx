@@ -1,16 +1,16 @@
-import {Slider} from "@/components/ui/slider";
-import {FieldDefinition} from "@/types/field-builder";
+import { Slider } from "@/components/ui/slider";
+import { FieldDefinition } from "@/types/field-builder";
 
 type Props = {
     value: number;
     field: FieldDefinition;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    onChange: (name: string, value: any, operator?: string) => void;
+    onChange: (key: string, value: any, operator?: string) => void;
 }
 
-export function AppFieldBuilderSlider({field, value, onChange}: Props) {
+export function AppFieldBuilderSlider({ field, value, onChange }: Props) {
     const handleChange = (value: number) => {
-        onChange(field.name, value);
+        onChange(field.key, value);
     };
     return (
         <div className="pt-4">

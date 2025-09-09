@@ -56,10 +56,10 @@ trait HasFields
         return $this;
     }
 
-    public function findField(string $name)
+    public function findField(string $key)
     {
         return collect($this->getFields())
-            ->first(fn ($field) => $field->getName() === $name);
+            ->first(fn ($field) => $field->getKey() === $key);
     }
 
     public function getSchema(): array

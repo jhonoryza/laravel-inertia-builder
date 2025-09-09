@@ -37,7 +37,7 @@ interface FieldBuilderProps {
     field: FieldDefinition;
     value: any;
     setFields: React.Dispatch<React.SetStateAction<FieldDefinition[]>>;
-    onReactive: (name: string, value: any, operator?: string) => void;
+    onReactive: (key: string, value: any, operator?: string) => void;
     error?: string;
     isProcessing?: boolean;
 }
@@ -50,8 +50,8 @@ export function AppFieldBuilder({
     error,
 }: FieldBuilderProps) {
 
-    const onChange = (name: string, value: any, operator?: string) => {
-        onReactive(name, value, operator);
+    const onChange = (key: string, value: any, operator?: string) => {
+        onReactive(key, value, operator);
     };
 
     if (field.hidden) {
@@ -85,7 +85,7 @@ export function AppFieldBuilder({
                 case 'file':
                     return (
                         <AppFieldBuilderLabel field={field} error={error}>
-                            <AppFieldInfoFile value={value} />
+                            <AppFieldInfoFile value={value || field.preview} />
                         </AppFieldBuilderLabel>
                     );
                 default:

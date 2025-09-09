@@ -1,23 +1,23 @@
-import {Button} from '@/components/ui/button';
-import {Input} from '@/components/ui/input';
-import {cn} from '@/lib/utils';
-import {FieldDefinition} from '@/types/field-builder';
-import {Copy, Eye, EyeOff} from 'lucide-react';
-import {useState} from 'react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { cn } from '@/lib/utils';
+import { FieldDefinition } from '@/types/field-builder';
+import { Copy, Eye, EyeOff } from 'lucide-react';
+import { useState } from 'react';
 
 type Props = {
     field: FieldDefinition;
     value: string;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    onChange: (name: string, value: any, operator?: string) => void;
+    onChange: (key: string, value: any, operator?: string) => void;
 };
 
-export function AppFieldBuilderPassword({field, value, onChange}: Props) {
+export function AppFieldBuilderPassword({ field, value, onChange }: Props) {
     const [showPassword, setShowPassword] = useState(false);
     const [copied, setCopied] = useState(false);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        onChange(field.name, e.target.value);
+        onChange(field.key, e.target.value);
     };
 
     const handleCopy = async () => {
@@ -55,7 +55,7 @@ export function AppFieldBuilderPassword({field, value, onChange}: Props) {
                     onClick={() => setShowPassword((prev) => !prev)}
                     tabIndex={-1}
                 >
-                    {showPassword ? <EyeOff className="h-4 w-4"/> : <Eye className="h-4 w-4"/>}
+                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </button>
 
                 {/* input */}
@@ -82,7 +82,7 @@ export function AppFieldBuilderPassword({field, value, onChange}: Props) {
                         className="absolute inset-y-0 right-2 h-8 w-8"
                         disabled={!value}
                     >
-                        <Copy className="h-4 w-4"/>
+                        <Copy className="h-4 w-4" />
                         <span className="sr-only">Copy</span>
                     </Button>
                 )}

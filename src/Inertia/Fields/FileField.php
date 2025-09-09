@@ -3,12 +3,15 @@
 namespace Jhonoryza\InertiaBuilder\Inertia\Fields;
 
 use Jhonoryza\InertiaBuilder\Inertia\Fields\Base\AbstractField;
+use Jhonoryza\InertiaBuilder\Inertia\Fields\Concerns\HasMultiple;
+use Jhonoryza\InertiaBuilder\Inertia\Fields\Concerns\HasPreview;
 
 class FileField extends AbstractField
 {
-    public ?array $accept = null;
+    use HasMultiple;
+    use HasPreview;
 
-    public bool $multiple = false;
+    public ?array $accept = null;
 
     protected static function getType(): string
     {
@@ -28,23 +31,14 @@ class FileField extends AbstractField
     }
 
     /**
-     * Allow multiple file uploads
-     */
-    public function multiple(bool $multiple = true): static
-    {
-        $this->multiple = $multiple;
-
-        return $this;
-    }
-
-    /**
      * Convert the field to an array
      */
     public function toArray(): array
     {
         return array_merge(parent::toArray(), [
             'accept'   => $this->accept,
-            'multiple' => $this->multiple,
+            'multiple' => $this->getIsMultiple(),
+            'preview'  => $this->getPreview(),
         ]);
     }
 }

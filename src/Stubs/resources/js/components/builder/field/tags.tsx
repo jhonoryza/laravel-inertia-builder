@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useState, useRef, useEffect } from 'react';
-import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { X, PlusCircle, Check } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { Check, PlusCircle, X } from 'lucide-react';
+import React, { useEffect, useRef, useState } from 'react';
 
 interface TagsFieldProps {
     field: {
@@ -18,7 +18,7 @@ interface TagsFieldProps {
         mergeClass?: string;
     };
     value: string[] | null;
-    onChange: (name: string, value: any, operator?: string) => void;
+    onChange: (key: string, value: any, operator?: string) => void;
     error?: string;
 }
 
@@ -31,7 +31,7 @@ export function AppFieldBuilderTags({ field, value, onChange, error }: TagsField
 
     const updateTags = (newTags: string[]) => {
         setTags(newTags);
-        onChange(field.name, newTags);
+        onChange(field.key, newTags);
     };
 
     // Close suggestions when clicking outside

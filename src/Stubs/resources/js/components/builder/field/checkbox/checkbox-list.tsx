@@ -1,14 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React from 'react';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
-import {FieldDefinition} from "@/types/field-builder";
-import {gridClasses} from "@/lib/utils";
+import { gridClasses } from "@/lib/utils";
+import { FieldDefinition } from "@/types/field-builder";
 
 interface CheckboxListFieldProps {
     field: FieldDefinition;
     value: any;
-    onChange: (name: string, value: any, operator?: string) => void;
+    onChange: (key: string, value: any, operator?: string) => void;
 }
 
 export function AppFieldBuilderCheckboxList({ field, value, onChange }: CheckboxListFieldProps) {
@@ -26,7 +25,7 @@ export function AppFieldBuilderCheckboxList({ field, value, onChange }: Checkbox
             newValues = selectedValues.filter(v => v !== checkboxValue);
         }
 
-        onChange(field.name, newValues);
+        onChange(field.key, newValues);
     };
 
     return (
@@ -34,14 +33,14 @@ export function AppFieldBuilderCheckboxList({ field, value, onChange }: Checkbox
             {field.options?.map((option) => (
                 <div key={field.key + option.value.toString()} className="flex items-center space-x-2">
                     <Checkbox
-                        id={`${field.name}-${option.value}`}
+                        id={`${field.key}-${option.value}`}
                         checked={selectedValues.includes(option.value)}
                         onCheckedChange={(checked) => handleCheckboxChange(option.value, !!checked)}
                         className={field.mergeClass}
                         disabled={field.isDisable}
                     />
                     <Label
-                        htmlFor={`${field.name}-${option.value}`}
+                        htmlFor={`${field.key}-${option.value}`}
                         className="text-sm font-normal"
                     >
                         {option.label}

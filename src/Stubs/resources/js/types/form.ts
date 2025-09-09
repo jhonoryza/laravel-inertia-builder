@@ -7,5 +7,6 @@ export type Form = {
     routeId?: string | undefined;
     mode: string;
     formClass: string;
+    modelClass: string;
     title: string;
 };

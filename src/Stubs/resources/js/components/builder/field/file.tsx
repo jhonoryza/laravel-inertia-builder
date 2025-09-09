@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, {useEffect, useRef, useState} from 'react';
 import { Button } from '@/components/ui/button';
-import {FieldDefinition} from "@/types/field-builder";
+import { FieldDefinition } from "@/types/field-builder";
+import React, { useEffect, useRef, useState } from 'react';
 
 interface FileFieldProps {
     field: FieldDefinition & {
@@ -9,7 +9,7 @@ interface FileFieldProps {
         multiple?: boolean;
     };
     value: any;
-    onChange: (name: string, value: any, operator?: string) => void;
+    onChange: (key: string, value: any, operator?: string) => void;
 }
 
 interface FilePreview {
@@ -24,24 +24,26 @@ export function AppFieldBuilderFile({ field, value, onChange }: FileFieldProps) 
     const [serverPreviews, setServerPreviews] = useState<FilePreview[]>([]);
     const [localPreviews, setLocalPreviews] = useState<FilePreview[]>([]);
 
+    const preview = field.preview;
+
     // generate preview awal dari server
     useEffect(() => {
-        if (!value) {
+        if (!preview) {
             setServerPreviews([]);
             return;
         }
 
         let previews: FilePreview[] = [];
 
-        if (typeof value === 'string') {
+        if (typeof preview === 'string') {
             previews = [{
-                name: value.split('/').pop() || 'file',
-                url: value,
-                type: guessFileType(value),
+                name: preview.split('/').pop() || 'file',
+                url: preview,
+                type: guessFileType(preview),
                 isFromServer: true
             }];
-        } else if (Array.isArray(value) && typeof value[0] === 'string') {
-            previews = value.map((url: string) => ({
+        } else if (Array.isArray(preview) && typeof preview[0] === 'string') {
+            previews = preview.map((url: string) => ({
                 name: url.split('/').pop() || 'file',
                 url,
                 type: guessFileType(url),
@@ -50,7 +52,7 @@ export function AppFieldBuilderFile({ field, value, onChange }: FileFieldProps) 
         }
 
         setServerPreviews(previews);
-    }, [value]);
+    }, [preview]);
 
     const guessFileType = (url: string) => {
         const ext = url.split('.').pop()?.toLowerCase();
@@ -62,7 +64,7 @@ export function AppFieldBuilderFile({ field, value, onChange }: FileFieldProps) 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const files = e.target.files;
         if (files) {
-            onChange(field.name, field.multiple ? files : files[0]);
+            onChange(field.key, field.multiple ? files : files[0]);
 
             // buat preview URL
             const previews: FilePreview[] = Array.from(files).map(file => ({

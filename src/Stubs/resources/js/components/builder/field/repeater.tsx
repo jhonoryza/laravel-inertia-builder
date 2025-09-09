@@ -1,13 +1,13 @@
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { PlusCircle, Trash2, ChevronUp, ChevronDown, GripVertical } from 'lucide-react';
-import { AppFieldBuilder } from '../app-field-builder';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { cn } from '@/lib/utils';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
-import {FieldDefinition} from "@/types/field-builder";
+import { cn } from '@/lib/utils';
+import { FieldDefinition } from "@/types/field-builder";
+import { ChevronDown, ChevronUp, GripVertical, PlusCircle, Trash2 } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { AppFieldBuilder } from '../app-field-builder';
 
 interface RepeaterFieldProps {
     field: FieldDefinition & {
@@ -22,7 +22,7 @@ interface RepeaterFieldProps {
     };
     value: any[];
     setFields: React.Dispatch<React.SetStateAction<FieldDefinition[]>>;
-    onReactive: (name: string, value: any, operator?: string) => void;
+    onReactive: (key: string, value: any, operator?: string) => void;
     error?: string | Record<string, any>;
 }
 
@@ -65,7 +65,7 @@ export function AppFieldBuilderRepeater({ field, value, setFields, onReactive, e
 
         // Add the new item to the array
         const updatedItems = [...items, newItem];
-        onReactive(field.name, updatedItems);
+        onReactive(field.key, updatedItems);
 
         // Auto-open the new item if collapsible
         if (field.collapsible) {
@@ -84,7 +84,7 @@ export function AppFieldBuilderRepeater({ field, value, setFields, onReactive, e
 
         const updatedItems = [...items];
         updatedItems.splice(index, 1);
-        onReactive(field.name, updatedItems);
+        onReactive(field.key, updatedItems);
     };
 
     const updateItemField = (index: number, fieldName: string, fieldValue: any) => {
@@ -93,7 +93,7 @@ export function AppFieldBuilderRepeater({ field, value, setFields, onReactive, e
             ...updatedItems[index],
             [fieldName]: fieldValue,
         };
-        onReactive(field.name, updatedItems);
+        onReactive(field.key, updatedItems);
     };
 
     const toggleCollapse = (index: number) => {
@@ -110,7 +110,7 @@ export function AppFieldBuilderRepeater({ field, value, setFields, onReactive, e
         const [movedItem] = updatedItems.splice(fromIndex, 1);
         updatedItems.splice(toIndex, 0, movedItem);
 
-        onReactive(field.name, updatedItems);
+        onReactive(field.key, updatedItems);
     };
 
     const handleDragStart = (index: number) => {

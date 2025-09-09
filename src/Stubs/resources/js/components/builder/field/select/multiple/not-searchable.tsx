@@ -1,18 +1,18 @@
-import {FieldDefinition} from "@/types/field-builder";
-import {Popover, PopoverContent, PopoverTrigger} from "@/components/ui/popover";
-import {Button} from "@/components/ui/button";
-import {cn} from "@/lib/utils";
-import {Checkbox} from "@/components/ui/checkbox";
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { cn } from "@/lib/utils";
+import { FieldDefinition } from "@/types/field-builder";
 
 type Props = {
     field: FieldDefinition;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     value: any;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    onChange: (name: string, value: any, operator?: string) => void;
+    onChange: (key: string, value: any, operator?: string) => void;
 }
 
-export function AppFieldBuilderSelectMultipleNotSearchable({field, value, onChange}: Props) {
+export function AppFieldBuilderSelectMultipleNotSearchable({ field, value, onChange }: Props) {
     return (
         <Popover>
             <PopoverTrigger asChild>
@@ -32,7 +32,7 @@ export function AppFieldBuilderSelectMultipleNotSearchable({field, value, onChan
                         const checked = (value || []).includes(opt.value);
                         return (
                             <label key={field.key + opt.value.toString()}
-                                   className="flex cursor-pointer items-center space-x-2">
+                                className="flex cursor-pointer items-center space-x-2">
                                 <Checkbox
                                     checked={checked}
                                     onCheckedChange={(isChecked) => {
@@ -42,7 +42,7 @@ export function AppFieldBuilderSelectMultipleNotSearchable({field, value, onChan
                                         } else {
                                             newValue.delete(opt.value);
                                         }
-                                        onChange(field.name, Array.from(newValue));
+                                        onChange(field.key, Array.from(newValue));
                                     }}
                                 />
                                 <span className="text-sm">{opt.label}</span>

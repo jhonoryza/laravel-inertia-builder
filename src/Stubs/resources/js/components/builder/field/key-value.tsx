@@ -1,15 +1,15 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useState } from 'react';
-import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { PlusCircle, Trash2, GripVertical } from 'lucide-react';
+import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
 import { FieldDefinition } from '@/types/field-builder';
+import { GripVertical, PlusCircle, Trash2 } from 'lucide-react';
+import React, { useState } from 'react';
 
 interface KeyValueFieldProps {
     field: FieldDefinition;
     value: Record<string, string> | null;
-    onChange: (name: string, value: any, operator?: string) => void;
+    onChange: (key: string, value: any, operator?: string) => void;
     error?: string | Record<string, string>;
 }
 
@@ -33,7 +33,7 @@ export function AppFieldBuilderKeyValue({ field, value, onChange, error }: KeyVa
         }, {} as Record<string, string>);
 
         setItems(newItems);
-        onChange(field.name, newData);
+        onChange(field.key, newData);
     };
 
     const addItem = () => {

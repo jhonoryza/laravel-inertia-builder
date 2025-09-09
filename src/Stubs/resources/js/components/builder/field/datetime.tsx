@@ -1,20 +1,20 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import {useEffect, useState} from 'react';
-import {format} from 'date-fns';
-import {Calendar} from '@/components/ui/calendar';
-import {Popover, PopoverContent, PopoverTrigger} from '@/components/ui/popover';
-import {Input} from '@/components/ui/input';
-import {Button} from '@/components/ui/button';
-import {cn} from '@/lib/utils';
-import {FieldDefinition} from "@/types/field-builder";
+import { Button } from '@/components/ui/button';
+import { Calendar } from '@/components/ui/calendar';
+import { Input } from '@/components/ui/input';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { cn } from '@/lib/utils';
+import { FieldDefinition } from "@/types/field-builder";
+import { format } from 'date-fns';
+import { useEffect, useState } from 'react';
 
 type Props = {
     field: FieldDefinition;
     value: string | null;
-    onChange: (name: string, value: any, operator?: string) => void;
+    onChange: (key: string, value: any, operator?: string) => void;
 };
 
-export function AppFieldBuilderDatetime({field, value, onChange}: Props) {
+export function AppFieldBuilderDatetime({ field, value, onChange }: Props) {
     const [datePart, setDatePart] = useState<Date | null>(value ? new Date(value) : null);
     const [timePart, setTimePart] = useState<string>(() => {
         if (value) {
@@ -31,7 +31,7 @@ export function AppFieldBuilderDatetime({field, value, onChange}: Props) {
             fullDate.setHours(hours);
             fullDate.setMinutes(minutes);
             fullDate.setSeconds(seconds);
-            onChange(field.name, fullDate.toISOString());
+            onChange(field.key, fullDate.toISOString());
         }
     }, [datePart, timePart]);
 

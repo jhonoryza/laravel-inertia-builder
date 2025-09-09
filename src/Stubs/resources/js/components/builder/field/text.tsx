@@ -1,22 +1,22 @@
-import {Button} from '@/components/ui/button';
-import {Input} from '@/components/ui/input';
-import {cn} from '@/lib/utils';
-import {FieldDefinition} from '@/types/field-builder';
-import {Copy} from 'lucide-react';
-import {useState} from 'react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { cn } from '@/lib/utils';
+import { FieldDefinition } from '@/types/field-builder';
+import { Copy } from 'lucide-react';
+import { useState } from 'react';
 
 type Props = {
     field: FieldDefinition;
     value: string;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    onChange: (name: string, value: any, operator?: string) => void;
+    onChange: (key: string, value: any, operator?: string) => void;
 };
 
-export function AppFieldBuilderText({field, value, onChange}: Props) {
+export function AppFieldBuilderText({ field, value, onChange }: Props) {
     const [copied, setCopied] = useState(false);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        onChange(field.name, e.target.value);
+        onChange(field.key, e.target.value);
     };
 
     const handleCopy = async () => {
@@ -67,8 +67,8 @@ export function AppFieldBuilderText({field, value, onChange}: Props) {
                 )}
                 {field.copyable && (
                     <Button type="button" variant="ghost" size="icon" onClick={handleCopy}
-                            className="ml-1 h-9 w-9" disabled={!value}>
-                        <Copy className="h-4 w-4"/>
+                        className="ml-1 h-9 w-9" disabled={!value}>
+                        <Copy className="h-4 w-4" />
                         <span className="sr-only">Copy</span>
                     </Button>
                 )}
