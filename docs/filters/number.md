@@ -5,6 +5,7 @@ The Number filter allows you to filter table data based on numeric values. It su
 ## Usage
 
 ```php
+<?php
 use Jhonoryza\InertiaBuilder\Inertia\Tables\Filters\Factory\Filter;
 
 // Basic number filter
@@ -32,6 +33,7 @@ Filter::number('age');
 ## Example
 
 ```php
+<?php
 Filter::number('price')
     ->label('Product Price')
     ->operators([

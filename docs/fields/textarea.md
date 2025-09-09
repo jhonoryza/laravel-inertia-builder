@@ -5,6 +5,7 @@ The Textarea field provides a multi-line text input for longer content such as c
 ## Usage
 
 ```php
+<?php
 use Jhonoryza\InertiaBuilder\Inertia\Fields\Factory\Field;
 
 Field::textarea('description');
@@ -24,6 +25,7 @@ Field::textarea('description');
 ## Example
 
 ```php
+<?php
 Field::textarea('notes')
     ->cols(50)
     ->rows(6)

@@ -5,6 +5,7 @@ The Email field provides an input for email addresses, with built-in validation 
 ## Usage
 
 ```php
+<?php
 use Jhonoryza\InertiaBuilder\Inertia\Fields\Factory\Field;
 
 Field::email('contact_email');
@@ -21,6 +22,7 @@ Field::email('contact_email');
 ## Example
 
 ```php
+<?php
 Field::email('user_email')
     ->placeholder('user@example.com')
     ->mergeClass('w-full');

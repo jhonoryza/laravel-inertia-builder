@@ -3,6 +3,7 @@
 create migration
 
 ```php
+<?php
     public function up(): void
     {
         Schema::create('districts', function (Blueprint $table) {
@@ -19,6 +20,7 @@ generate scaffold `php artisan inertia-builder:generate districts`
 edit `District` model
 
 ```php
+<?php
     protected $keyType = 'string';
 
     protected function casts(): array
@@ -33,6 +35,7 @@ edit `District` model
 edit `DistrictController` like this
 
 ```php
+<?php
 <?php
 
 namespace App\Http\Controllers;

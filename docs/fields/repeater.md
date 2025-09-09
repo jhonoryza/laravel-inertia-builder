@@ -5,6 +5,7 @@ The Repeater Field allows you to create an array of data with a repeatable field
 ## Example Usage
 
 ```php
+<?php
 use Jhonoryza\InertiaBuilder\Inertia\Fields\Factory\Field;
 
 Field::repeater('sections')
@@ -42,6 +43,7 @@ Field::repeater('sections')
 
 Example:
 ```php
+<?php
 ->itemLabel('Section :index - {title}')
 ```
 will produce labels like: `Section 1 - Introduction`, `Section 2 - About`, etc.
@@ -50,6 +52,7 @@ will produce labels like: `Section 1 - Introduction`, `Section 2 - About`, etc.
 
 You can combine array validation for repeater fields in Laravel, for example:
 ```php
+<?php
 'sections' => 'required|array|min:1|max:5',
 'sections.*.title' => 'required|string',
 'sections.*.content' => 'nullable|string',

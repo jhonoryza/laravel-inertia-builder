@@ -3,6 +3,7 @@
 create migration
 
 ```php
+<?php
     public function up(): void
     {
         Schema::create('provinces', function (Blueprint $table) {
@@ -17,6 +18,7 @@ generate scaffold `php artisan inertia-builder:generate provinces`
 edit `Province` model
 
 ```php
+<?php
     protected $keyType = 'string';
 
     protected function casts(): array
@@ -30,6 +32,7 @@ edit `Province` model
 edit `ProvinceController` like this
 
 ```php
+<?php
 <?php
 
 namespace App\Http\Controllers;

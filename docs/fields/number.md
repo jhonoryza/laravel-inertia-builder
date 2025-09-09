@@ -5,6 +5,7 @@ The Number field provides an input for numeric values, supporting validation and
 ## Usage
 
 ```php
+<?php
 use Jhonoryza\InertiaBuilder\Inertia\Fields\Factory\Field;
 
 Field::number('quantity');
@@ -21,6 +22,7 @@ Field::number('quantity');
 ## Example
 
 ```php
+<?php
 Field::number('age')
     ->placeholder('18')
     ->mergeClass('w-32');

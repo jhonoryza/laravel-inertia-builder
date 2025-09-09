@@ -5,6 +5,7 @@ The Markdown field provides a rich editor for writing and previewing Markdown co
 ## Usage
 
 ```php
+<?php
 use Jhonoryza\InertiaBuilder\Inertia\Fields\Factory\Field;
 
 Field::markdown('content');
@@ -21,6 +22,7 @@ Field::markdown('content');
 ## Example
 
 ```php
+<?php
 Field::markdown('description')
     ->placeholder('Enter markdown content here')
     ->mergeClass('h-40');

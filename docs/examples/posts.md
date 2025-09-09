@@ -4,6 +4,7 @@ create a migration
 
 ```php
 <?php
+<?php
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -57,7 +58,7 @@ return new class extends Migration
 };
 ```
 
-generate scaffolding 
+generate scaffolding
 
 ```bash
 php artisan inertia-builder:categories
@@ -67,6 +68,7 @@ php artisan inertia-builder:posts
 edit `PostController` like this
 
 ```php
+<?php
 <?php
 
 namespace App\Http\Controllers;
@@ -327,6 +329,7 @@ class PostController extends Controller
 edit `Post` model and find this relation change to `User`
 
 ```php
+<?php
     public function author(): BelongsTo
     {
 
@@ -338,6 +341,7 @@ edit `Post` model and find this relation change to `User`
 edit `CategoryController` and find this code add null safety `?` to `$value`
 
 ```php
+<?php
                 TableColumn::make('deleted_at')
                     ->renderUsing(function ($value) {
                         return $value

@@ -5,6 +5,7 @@ this field allows you to make a group from some fields
 ## Usage
 
 ```php
+<?php
 return Form::make()
     ->view()
     ->model($state)
@@ -46,6 +47,7 @@ return Form::make()
 if you want a responsive grid on different screen size.
 
 ```php
+<?php
 Grid::make()
     ->columns([
         'default' => 1

@@ -5,6 +5,7 @@ The TableColumn class defines the columns displayed in a table, including label,
 ## Usage
 
 ```php
+<?php
 use Jhonoryza\InertiaBuilder\Inertia\Tables\TableColumn;
 
 // Basic column
@@ -56,6 +57,7 @@ TableColumn::make('tags.name')
 ## Example
 
 ```php
+<?php
 TableColumn::make('status')
     ->label('Status')
     ->sortable()

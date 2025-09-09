@@ -5,6 +5,7 @@ The Date and Datetime fields provide simple date and datetime pickers for your f
 ## Usage
 
 ```php
+<?php
 use Jhonoryza\InertiaBuilder\Inertia\Fields\Factory\Field;
 
 // Date picker
@@ -31,6 +32,7 @@ All methods return the field instance, allowing method chaining.
 ## Example
 
 ```php
+<?php
 Field::date('start_date')
     ->placeholder('Pick a start date')
     ->mergeClass('w-40')

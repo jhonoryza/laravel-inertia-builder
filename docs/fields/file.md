@@ -5,6 +5,7 @@ The File field allows users to upload files through your form. It supports singl
 ## Usage
 
 ```php
+<?php
 use Jhonoryza\InertiaBuilder\Inertia\Fields\Factory\Field;
 
 // Single file upload
@@ -32,6 +33,7 @@ Field::file('avatar')->accept(['image/png', 'image/jpeg']);
 ## Example
 
 ```php
+<?php
 Field::file('attachments')
     ->accept(['application/pdf', 'image/*'])
     ->multiple()

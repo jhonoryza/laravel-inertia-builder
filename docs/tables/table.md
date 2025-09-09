@@ -5,6 +5,7 @@ The Table class provides a flexible way to display and manage data in a paginate
 ## Usage
 
 ```php
+<?php
 use Jhonoryza\InertiaBuilder\Inertia\Tables\Table;
 use Jhonoryza\InertiaBuilder\Inertia\Tables\TableColumn;
 use Jhonoryza\InertiaBuilder\Inertia\Tables\Filters\Factory\Filter;

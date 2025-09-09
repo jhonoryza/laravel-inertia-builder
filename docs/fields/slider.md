@@ -5,6 +5,7 @@ The Slider field provides an interactive slider for selecting a numeric value wi
 ## Usage
 
 ```php
+<?php
 use Jhonoryza\InertiaBuilder\Inertia\Fields\Factory\Field;
 
 Field::slider('rating');
@@ -25,6 +26,7 @@ Field::slider('rating');
 ## Example
 
 ```php
+<?php
 Field::slider('progress')
     ->min(0)
     ->max(100)

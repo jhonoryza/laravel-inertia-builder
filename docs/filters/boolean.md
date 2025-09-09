@@ -5,6 +5,7 @@ The Boolean filter allows you to filter table data based on true/false values. I
 ## Usage
 
 ```php
+<?php
 use Jhonoryza\InertiaBuilder\Inertia\Tables\Filters\Factory\Filter;
 
 // Basic boolean filter
@@ -20,6 +21,7 @@ Filter::boolean('is_active');
 ## Example
 
 ```php
+<?php
 Filter::boolean('published')
     ->label('Published');
 ```

@@ -5,6 +5,7 @@ This class is used to wrap dynamic fields
 ## Usage
 
 ```php
+<?php
 return Form::make()
     ->view()
     ->model($state)

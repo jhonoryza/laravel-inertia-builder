@@ -9,6 +9,7 @@ lets create a new variable `rewardDistribution` and `leaderboard` to be returned
 you also need to create a new custom view called `game_period/show`
 
 ```php
+<?php
 public function show(GamePeriod $gamePeriod): Response
 {
     $rewardDistribution = GamePeriodTable::getRewardDistribution($gamePeriod);
@@ -30,6 +31,7 @@ you need to set :
 2. `prefix` : can be anything / random, but unique, this is required to isolate table state from other table.
 
 ```php
+<?php
 public static function getLeaderboard(GamePeriod $gamePeriod)
 {
     return Table::make(LeaderboardWithReward::class)
@@ -39,6 +41,7 @@ public static function getLeaderboard(GamePeriod $gamePeriod)
 ```
 
 ```php
+<?php
 public static function getRewardDistribution(GamePeriod $gamePeriod)
 {
     return Table::make(LeaderboardReward::class)

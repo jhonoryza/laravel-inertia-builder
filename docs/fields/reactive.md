@@ -14,6 +14,7 @@ Reactive fields allow your form to dynamically update its UI and available optio
 Suppose you want to let users choose whether to upload an image file or just enter an image URL. You can use a reactive radio field to toggle between a file input and a text input.
 
 ```php
+<?php
 $isUpload = request('is_upload', 'no') == 'yes';
 $uiUpload = $isUpload ? 'file' : 'text';
 

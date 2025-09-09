@@ -5,6 +5,7 @@ The Hidden field allows you to store data in your form without displaying it to 
 ## Usage
 
 ```php
+<?php
 use Jhonoryza\InertiaBuilder\Inertia\Fields\Factory\Field;
 
 Field::hidden('user_id')->defaultValue(auth()->id());
@@ -21,6 +22,7 @@ Field::hidden('user_id')->defaultValue(auth()->id());
 ## Example
 
 ```php
+<?php
 Field::hidden('token')
     ->defaultValue('abc123')
     ->mergeClass('my-hidden-class');

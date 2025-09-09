@@ -5,6 +5,7 @@ The Text field provides a single-line input for text data such as names, titles,
 ## Usage
 
 ```php
+<?php
 use Jhonoryza\InertiaBuilder\Inertia\Fields\Factory\Field;
 
 Field::text('first_name')
@@ -27,6 +28,7 @@ Field::text('first_name')
 ## Example
 
 ```php
+<?php
 Field::text('username')
     ->placeholder('Enter username')
     ->mergeClass('w-full');

@@ -5,6 +5,7 @@ The Password field provides a secure input for passwords, hiding the entered tex
 ## Usage
 
 ```php
+<?php
 use Jhonoryza\InertiaBuilder\Inertia\Fields\Factory\Field;
 
 Field::password('user_password');
@@ -21,6 +22,7 @@ Field::password('user_password');
 ## Example
 
 ```php
+<?php
 Field::password('password')
     ->placeholder('••••••••')
     ->mergeClass('w-full');

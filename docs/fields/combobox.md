@@ -5,6 +5,7 @@ The ComboBox field provides a searchable dropdown for selecting one or multiple 
 ## Usage
 
 ```php
+<?php
 use Jhonoryza\InertiaBuilder\Inertia\Fields\Factory\Field;
 
 Field::combobox('country')
@@ -27,6 +28,7 @@ Field::combobox('country')
 ## Example
 
 ```php
+<?php
 Field::combobox('tags')
     ->options([
         ['label' => 'PHP', 'value' => 'php'],

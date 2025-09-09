@@ -4,7 +4,7 @@ Custom filters allow you to create interactive and reusable filter components, b
 
 Custom filters are defined as **flat JSON objects** sent from the backend (Laravel) to the frontend (React).
 
-On the backend, each filter inherits from `AbstractFilter` and can define or override the available **operators**.  
+On the backend, each filter inherits from `AbstractFilter` and can define or override the available **operators**.
 On the frontend, you provide a custom React component and register it for dynamic usage.
 
 ---
@@ -14,6 +14,7 @@ On the frontend, you provide a custom React component and register it for dynami
 ### Example: Rating Filter
 
 ```php
+<?php
 use Jhonoryza\InertiaBuilder\Inertia\Tables\Filters\Filter;
 use Jhonoryza\InertiaBuilder\Inertia\Tables\Filters\Enums\Operator;
 

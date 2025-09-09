@@ -10,6 +10,7 @@ If you want to customize the display (for example, modify raw value, show a html
 If you want to render a cell with custom display
 
 ```php
+<?php
 ->renderUsing(function($state) {
     return ucwords($state);
 })
@@ -20,6 +21,7 @@ If you want to render a cell with custom display
 Besides components, a cell can also be rendered with raw HTML using the `__html` key:
 
 ```php
+<?php
 TableColumn::make('link')
     ->label('Website')
     ->renderUsing(function ($value) {
@@ -42,6 +44,7 @@ Result:
 If you want to render a cell using a registered React component:
 
 ```php
+<?php
 TableColumn::make('status')
     ->label('Status')
     ->renderUsing(fn ($value) => [

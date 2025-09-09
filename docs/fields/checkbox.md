@@ -7,6 +7,7 @@ Checkbox fields allow users to toggle a single boolean value, while CheckboxList
 ### Checkbox
 
 ```php
+<?php
 use Jhonoryza\InertiaBuilder\Inertia\Fields\Factory\Field;
 
 Field::checkbox('is_active');
@@ -15,6 +16,7 @@ Field::checkbox('is_active');
 ### CheckboxList
 
 ```php
+<?php
 Field::checkboxList('interests')
     ->options([
         ['label' => 'Technology', 'value' => 'technology'],
@@ -33,6 +35,7 @@ Field::checkboxList('interests')
 ## Example
 
 ```php
+<?php
 Field::checkbox('newsletter');
 
 Field::checkboxList('skills')

@@ -15,6 +15,7 @@ edit `PermissionController` like this
 
 ```php
 <?php
+<?php
 
 namespace App\Http\Controllers;
 
@@ -171,6 +172,7 @@ class PermissionController extends Controller
 edit `RoleController` like this
 
 ```php
+<?php
 <?php
 
 namespace App\Http\Controllers;
@@ -354,7 +356,7 @@ class RoleController extends Controller
 }
 ```
 
-try create new permission using the ui 
+try create new permission using the ui
 
 - users index
 - users show
@@ -365,6 +367,7 @@ try create new permission using the ui
 edit `UserController` like this
 
 ```php
+<?php
 <?php
 
 namespace App\Http\Controllers;
@@ -557,4 +560,4 @@ class UserController extends Controller implements HasMiddleware
 }
 ```
 
-then try assign the user a role using the ui 
+then try assign the user a role using the ui

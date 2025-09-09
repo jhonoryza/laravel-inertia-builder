@@ -5,6 +5,7 @@ The Toggle field provides a switch for boolean values, allowing users to enable 
 ## Usage
 
 ```php
+<?php
 use Jhonoryza\InertiaBuilder\Inertia\Fields\Factory\Field;
 
 Field::toggle('is_active');
@@ -19,6 +20,7 @@ Field::toggle('is_active');
 ## Example
 
 ```php
+<?php
 Field::toggle('newsletter')
     ->mergeClass('ml-2');
 ```

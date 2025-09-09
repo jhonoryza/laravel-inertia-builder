@@ -3,6 +3,7 @@
 create migration
 
 ```php
+<?php
     public function up(): void
     {
         Schema::create('cities', function (Blueprint $table) {
@@ -19,6 +20,7 @@ generate scaffold `php artisan inertia-builder:generate cities`
 edit `City` model
 
 ```php
+<?php
     protected $keyType = 'string';
 
     protected function casts(): array

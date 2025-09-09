@@ -5,6 +5,7 @@ The Select field provides a dropdown for choosing one or multiple options, with 
 ## Usage
 
 ```php
+<?php
 use Jhonoryza\InertiaBuilder\Inertia\Fields\Factory\Field;
 
 Field::select('role')
@@ -19,6 +20,7 @@ Field::select('role')
 For large datasets, you can enable server-side searching and option loading. This is useful when you have thousands of options and want to fetch them dynamically as the user types.
 
 ```php
+<?php
 use App\Models\District;
 
 Field::select('district_id')
@@ -65,6 +67,7 @@ All methods return the SelectField instance, allowing method chaining.
 ## Example
 
 ```php
+<?php
 Field::select('categories')
     ->options([
         ['label' => 'Tech', 'value' => 'tech'],

@@ -5,6 +5,7 @@ The Flatpickr field provides a flexible date and time picker powered by the [fla
 ## Usage
 
 ```php
+<?php
 use Jhonoryza\InertiaBuilder\Inertia\Fields\Factory\Field;
 
 // Basic date picker
@@ -35,6 +36,7 @@ Field::flatpickr('period')->mode('range');
 ## Example
 
 ```php
+<?php
 Field::flatpickr('meeting')
     ->withTime(true)
     ->mode('single')

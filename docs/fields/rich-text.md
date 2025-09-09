@@ -7,6 +7,7 @@ The Rich Text Field provides a powerful WYSIWYG editor for your forms, allowing 
 You can add a rich text field to your form using the `Field::richText()` factory method:
 
 ```php
+<?php
 use Jhonoryza\InertiaBuilder\Inertia\Fields\Factory\Field;
 
 Field::richText('content')
@@ -68,6 +69,7 @@ Add custom CSS classes to the editor for further styling.
 ## Example
 
 ```php
+<?php
 Field::richText('description')
     ->label('Description')
     ->toolbar(['bold', 'italic', 'h1', 'bulletList', 'link'])
@@ -87,4 +89,3 @@ The field will render a rich text editor in your form, and the submitted value w
 - Use `minHeight` and `maxHeight` to control the editor's size.
 
 For more advanced usage, refer to the [TipTap documentation](https://tiptap.dev/).
-

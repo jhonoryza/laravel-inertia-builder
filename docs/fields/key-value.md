@@ -1,6 +1,6 @@
 # KeyValueField
 
-The `KeyValueField` allows you to manage a list of key → value pairs that can be added, edited, removed, and reordered.  
+The `KeyValueField` allows you to manage a list of key → value pairs that can be added, edited, removed, and reordered.
 This field is useful for storing metadata, custom attributes, or any flexible configuration data.
 
 ---
@@ -19,6 +19,7 @@ When saving to the database, you should cast the column to an array or JSON type
 Make sure your model casts the attribute as an array (or JSON) in Laravel:
 
 ```php
+<?php
 class Post extends Model
 {
     protected $casts = [
@@ -32,6 +33,7 @@ class Post extends Model
 ## Basic Usage
 
 ```php
+<?php
 use Jhonoryza\InertiaBuilder\Inertia\Fields\Field;
 
 Field::keyValue('meta');
@@ -48,6 +50,7 @@ You can customize the behavior of the field using method chaining.
 ### Disable adding new pairs
 
 ```php
+<?php
 Field::keyValue('meta')
     ->addable(false);
 ```
@@ -55,6 +58,7 @@ Field::keyValue('meta')
 ### Disable editing existing pairs
 
 ```php
+<?php
 Field::keyValue('meta')
     ->editable(false);
 ```
@@ -62,6 +66,7 @@ Field::keyValue('meta')
 ### Disable removing pairs
 
 ```php
+<?php
 Field::keyValue('meta')
     ->removable(false);
 ```
@@ -69,6 +74,7 @@ Field::keyValue('meta')
 ### Enable drag & drop reordering
 
 ```php
+<?php
 Field::keyValue('meta')
     ->reorderable(true);
 ```
@@ -80,6 +86,7 @@ Field::keyValue('meta')
 You can override the default labels and placeholders:
 
 ```php
+<?php
 Field::keyValue('meta')
     ->keyLabel('Attribute')
     ->valueLabel('Content')
@@ -111,6 +118,7 @@ Field::keyValue('meta')
 The submitted data will be returned as an associative array of key-value pairs:
 
 ```php
+<?php
 [
     'title' => 'Hello World',
     'author' => 'John Doe',

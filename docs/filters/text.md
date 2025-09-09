@@ -5,6 +5,7 @@ The Text filter allows you to filter table data based on text input. It supports
 ## Usage
 
 ```php
+<?php
 use Jhonoryza\InertiaBuilder\Inertia\Tables\Filters\Factory\Filter;
 
 // Basic text filter
@@ -29,10 +30,11 @@ Filter::text('name');
 - Not starts with (`!=*`)
 - Ends with (`*=`)
 - Not ends with (`!*=`)
-  
+
 ## Example
 
 ```php
+<?php
 Filter::text('email')
     ->label('Email')
     ->operators([

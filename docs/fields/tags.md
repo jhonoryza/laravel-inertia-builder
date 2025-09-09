@@ -7,6 +7,7 @@ The **Tags Field** allows users to input and manage multiple tags in a single fi
 Here's how to define a tags field in your form:
 
 ```php
+<?php
 use Jhonoryza\InertiaBuilder\Inertia\Fields\Factory\Field;
 
 Field::tags('skills')
@@ -34,6 +35,7 @@ Field::tags('skills')
 ## Example
 
 ```php
+<?php
 Field::tags('topics')
     ->label('Topics')
     ->suggestions(['API', 'Backend', 'Frontend', 'DevOps'])
@@ -57,4 +59,3 @@ Field::tags('topics')
 
 - If `maxTags` is reached, the input will be disabled until a tag is removed.
 - The `separator` option allows users to quickly add multiple tags by typing them separated by the specified character.
-

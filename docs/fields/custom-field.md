@@ -24,6 +24,7 @@ export const customFieldsComponents: Record<string, React.ComponentType<any>> = 
 
 In your PHP field definition:
 ```php
+<?php
 Field::custom('rating')
     ->component('rating');
 ```
@@ -36,6 +37,7 @@ This will make the system look for the `rating` key in the registry above and re
 If you want to store the custom field value in the database, add a cast in your Eloquent model:
 
 ```php
+<?php
 class Review extends Model
 {
     protected $casts = [
@@ -49,6 +51,7 @@ class Review extends Model
 ## Basic Usage
 
 ```php
+<?php
 use Jhonoryza\InertiaBuilder\Inertia\Fields\Field;
 
 Field::custom('rating')
@@ -63,6 +66,7 @@ Field::custom('rating')
 You can pass extra props to the component using `extraAttributes` or `extraAttribute`:
 
 ```php
+<?php
 Field::custom('rating')
     ->component('rating')
     ->extraAttributes([
@@ -74,6 +78,7 @@ Field::custom('rating')
 
 Or individually:
 ```php
+<?php
 Field::custom('rating')
     ->component('rating')
     ->extraAttribute('readonly', true);
@@ -86,6 +91,7 @@ Field::custom('rating')
 Define the initial state for the field:
 
 ```php
+<?php
 Field::custom('rating')
     ->component('rating')
     ->state(3); // Default: 3 stars selected
@@ -98,6 +104,7 @@ Field::custom('rating')
 Transform the state before displaying:
 
 ```php
+<?php
 Field::custom('rating')
     ->component('rating')
     ->state(4)

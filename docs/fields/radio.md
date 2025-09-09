@@ -5,6 +5,7 @@ The Radio field allows users to select one option from a list of choices.
 ## Usage
 
 ```php
+<?php
 use Jhonoryza\InertiaBuilder\Inertia\Fields\Factory\Field;
 
 Field::radio('gender')
@@ -25,6 +26,7 @@ Field::radio('gender')
 ## Example
 
 ```php
+<?php
 Field::radio('status')
     ->options([
         ['label' => 'Active', 'value' => 'active'],

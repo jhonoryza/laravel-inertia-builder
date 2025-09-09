@@ -5,6 +5,7 @@ The Select filter allows you to filter table data by selecting one or multiple o
 ## Usage
 
 ```php
+<?php
 use Jhonoryza\InertiaBuilder\Inertia\Tables\Filters\Factory\Filter;
 
 // Basic select filter
@@ -20,6 +21,7 @@ Filter::select('status')
 For large datasets, you can enable server-side searching and option loading. This is useful when you want to fetch options dynamically from backend as the user types.
 
 ```php
+<?php
 use App\Models\District;
 
 Filter::select('district_id')
@@ -71,6 +73,7 @@ Filter::select('district_id')
 ## Example
 
 ```php
+<?php
 Filter::select('category')
     ->label('Category')
     ->multiple(true)

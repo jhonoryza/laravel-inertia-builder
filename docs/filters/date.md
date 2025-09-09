@@ -5,6 +5,7 @@ The Date filter allows you to filter table data based on date values. It support
 ## Usage
 
 ```php
+<?php
 use Jhonoryza\InertiaBuilder\Inertia\Tables\Filters\Factory\Filter;
 
 // Basic date filter
@@ -36,6 +37,7 @@ Filter::date('created_at');
 ## Example
 
 ```php
+<?php
 Filter::date('published_at')
     ->label('Published Date')
     ->withTime(true)
