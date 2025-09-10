@@ -4,6 +4,7 @@ namespace App\Builder\Tables;
 
 use App\Models\{{modelName}};
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Storage;
 use Jhonoryza\InertiaBuilder\Inertia\Concerns\TableContract;
 use Jhonoryza\InertiaBuilder\Inertia\Tables\Actions\Action;
 use Jhonoryza\InertiaBuilder\Inertia\Tables\Filters\Factory\Filter;
