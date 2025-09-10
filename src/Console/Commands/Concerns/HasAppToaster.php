@@ -49,6 +49,7 @@ trait HasAppToaster
         $addition = "'flash' => [
             'success' => fn() => \$request->session()->get('success'),
             'error' => fn() => \$this->getErrMessage(\$request),
+            'link' => fn () => \$request->session()->get('link'),
         ],";
 
         $funcAddition = "private function getErrMessage(Request \$request): string

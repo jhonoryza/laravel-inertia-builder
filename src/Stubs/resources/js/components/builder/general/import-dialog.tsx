@@ -1,91 +1,87 @@
+import { Button } from "@/components/ui/button";
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-  DialogFooter,
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
 } from "@/components/ui/dialog";
 import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useForm } from "@inertiajs/react";
 import { useState } from "react";
+import { route } from "ziggy-js";
 
 interface ImportDialogProps {
-  routeName: string;
+    baseRoute: string;
 }
 
-export default function ImportDialog({ routeName }: ImportDialogProps) {
-  const [open, setOpen] = useState(false);
+export default function ImportDialog({ baseRoute }: ImportDialogProps) {
+    const [open, setOpen] = useState(false);
 
-  const form = useForm({
-    file: null as File | null,
-  });
-
-  const onSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (!form.data.file) return;
-
-    const data = new FormData();
-    data.append("file", form.data.file);
-
-    form.post(route(`${routeName}.import`), {
-      data,
-      forceFormData: true,
-      preserveScroll: true,
-      onFinish: () => {
-        form.reset();
-        setOpen(false);
-      },
+    const form = useForm({
+        file: null as File | null,
+        action: "export"
     });
-  };
 
-  return (
-    <>
-      <DropdownMenuItem
-        key="import"
-        className="cursor-pointer"
-        onClick={(e) => {
-          e.preventDefault();
-          setOpen(true);
-        }}
-      >
-        Import
-      </DropdownMenuItem>
+    const onSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
 
-      <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent>
-          <form onSubmit={onSubmit} className="space-y-4">
-            <DialogHeader>
-              <DialogTitle>Import Data</DialogTitle>
-              <DialogDescription>
-                Pilih file untuk diimport (format .xlsx atau .csv).
-              </DialogDescription>
-            </DialogHeader>
+        form.post(route(`${baseRoute}.imports`), {
+            forceFormData: true,
+            preserveScroll: true,
+            onFinish: () => {
+                form.reset();
+                setOpen(false);
+            },
+        });
+    };
 
-            <div>
-              <Input
-                type="file"
-                accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-                onChange={(e) =>
-                  form.setData("file", e.target.files?.[0] || null)
-                }
-              />
-              {form.errors.file && (
-                <p className="text-sm text-red-500 mt-1">{form.errors.file}</p>
-              )}
-            </div>
-
-            <DialogFooter>
-              <Button type="submit" className="bg-green-600 hover:bg-green-700">
+    return (
+        <>
+            <DropdownMenuItem
+                key="import"
+                className="cursor-pointer"
+                onClick={(e) => {
+                    e.preventDefault();
+                    setOpen(true);
+                }}
+            >
                 Import
-              </Button>
-            </DialogFooter>
-          </form>
-        </DialogContent>
-      </Dialog>
-    </>
-  );
+            </DropdownMenuItem>
+
+            <Dialog open={open} onOpenChange={setOpen}>
+                <DialogContent>
+                    <form onSubmit={onSubmit} className="space-y-4">
+                        <DialogHeader>
+                            <DialogTitle>Import Data</DialogTitle>
+                            <DialogDescription>
+                                Pilih file untuk diimport (format .xlsx atau .csv).
+                            </DialogDescription>
+                        </DialogHeader>
+
+                        <div>
+                            <Input
+                                type="file"
+                                accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                                onChange={(e) =>
+                                    form.setData("file", e.target.files?.[0] || null)
+                                }
+                            />
+                            {form.errors.file && (
+                                <p className="text-sm text-red-500 mt-1">{form.errors.file}</p>
+                            )}
+                        </div>
+
+                        <DialogFooter>
+                            <Button type="submit" className="bg-green-600 hover:bg-green-700 hover:cursor-pointer">
+                                Import
+                            </Button>
+                        </DialogFooter>
+                    </form>
+                </DialogContent>
+            </Dialog>
+        </>
+    );
 }

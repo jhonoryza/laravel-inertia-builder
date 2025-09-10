@@ -1,14 +1,3 @@
-import React, { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuGroup,
-    DropdownMenuItem,
-    DropdownMenuLabel,
-    DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import {
     AlertDialog,
     AlertDialogAction,
@@ -19,7 +8,20 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuGroup,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Input } from "@/components/ui/input";
+import React, { useState } from "react";
 
+import { Action, ActiveFilter, Column, DataTableProps, Filter } from "@/types/datatable";
+import { router, usePage } from "@inertiajs/react";
 import {
     CheckIcon,
     Eye,
@@ -27,8 +29,6 @@ import {
     WrenchIcon,
     XIcon,
 } from "lucide-react";
-import { Action, ActiveFilter, Column, DataTableProps, Filter } from "@/types/datatable";
-import { router } from "@inertiajs/react";
 import { route } from 'ziggy-js';
 
 interface AppDataTableToolbarProps {
@@ -63,6 +63,7 @@ export function AppDataTableToolbar({
     }>(null);
 
     const { baseRoute, actionRoute, filters, actions } = data;
+    const { url } = usePage();
 
     const handleAction = (action: Action) => {
         if (action.rowSelected && selectedIds.length === 0) return;
@@ -78,8 +79,10 @@ export function AppDataTableToolbar({
             data: {
                 ids: selectedIds,
                 action: action.name,
+                url,
             },
             preserveScroll: true,
+            preserveState: true,
         });
     };
 

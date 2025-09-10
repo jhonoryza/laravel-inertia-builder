@@ -18,23 +18,42 @@ type PageProps = {
 
 export function AppFormBuilder({ form, children }: PageProps) {
     const { columns, fields: initialFields, baseRoute, routeId, formClass, modelClass } = form
-    const { flash } = usePage().props as { flash?: { success?: string, error?: string, description?: string } };
+    const { flash } = usePage().props as { flash?: { success?: string, error?: string, link?: string } };
 
     // local state fields that can be updated when reactive/live
     const [fields, setFields] = useState<FieldDefinition[]>(initialFields);
 
     useEffect(() => {
+        if (flash?.success) {
+            toast.success('success', {
+                position: 'top-right',
+                closeButton: true,
+                description: flash.success,
+            });
+        }
         if (flash?.error) {
             toast.error('error', {
-                position: "top-center",
+                position: 'top-right',
+                closeButton: true,
                 description: flash.error,
             });
         }
-        if (flash?.success) {
-            toast.success('success', {
-                position: 'top-center',
-                description: flash.success,
-            });
+        if (flash?.link) {
+            toast.success("download", {
+                position: 'top-right',
+                duration: 10_000,
+                closeButton: true,
+                description: (
+                    <a
+                        href={flash.link}
+                        className="text-blue-500 underline hover:cursor-pointer"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                    >
+                        Download file
+                    </a>
+                ),
+            })
         }
     }, [flash]);
 

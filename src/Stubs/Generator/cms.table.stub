@@ -13,7 +13,7 @@ use Jhonoryza\InertiaBuilder\Inertia\Tables\TableColumn;
 
 class {{modelName}}Table implements TableContract
 {
-    public static function build(): Table 
+    public static function build(): Table
     {
         return Table::make({{modelName}}::class)
             ->columns([
@@ -33,7 +33,7 @@ class {{modelName}}Table implements TableContract
             ]);
     }
 
-    public static function actions(): RedirectResponse 
+    public static function actions(): RedirectResponse
     {
         $action = request()->get('action');
         $ids = request()->get('ids');
@@ -46,6 +46,19 @@ class {{modelName}}Table implements TableContract
                 return redirect()
                     ->route('{{routeName}}.index')
                     ->with('success', 'Items ' . collect($ids)->implode(', ') . ' deleted successfully.');
+            case 'export':
+                $fileName = 'export_'.now()->format('Ymd_His').'.csv';
+                $fileUrl = Storage::url($fileName);
+                $filePath = storage_path('app/public/'.$fileName);
+
+                static::build()
+                    ->disablePagination()
+                    ->export($filePath);
+
+                return redirect()
+                    ->route('{{routeName}}.index', request()->query())
+                    ->with('success', 'exported data successfully.')
+                    ->with('link', $fileUrl);
             default:
                 return redirect()
                     ->route('{{routeName}}.index')

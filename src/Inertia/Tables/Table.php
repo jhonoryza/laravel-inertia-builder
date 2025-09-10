@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Jhonoryza\InertiaBuilder\QueryBuilder\Sorts\SortByRelationColumn;
 use JsonSerializable;
+use Rap2hpoutre\FastExcel\FastExcel;
 use Spatie\QueryBuilder\AllowedFilter;
 use Spatie\QueryBuilder\AllowedSort;
 use Spatie\QueryBuilder\QueryBuilder;
@@ -763,5 +764,18 @@ class Table implements JsonSerializable
     public function jsonSerialize(): mixed
     {
         return $this->toArray();
+    }
+
+    public function export(string $filePath): void
+    {
+        $fullUrl = request()->get('url');
+        $queryString = parse_url($fullUrl, PHP_URL_QUERY);
+        parse_str($queryString, $queryParams);
+        request()->query->add($queryParams);
+
+        $data = $this->get();
+
+        (new FastExcel($data))
+            ->export($filePath);
     }
 }

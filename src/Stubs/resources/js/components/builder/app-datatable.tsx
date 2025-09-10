@@ -3,10 +3,10 @@ import { ActiveFilter, DataItem, DataTableProps } from '@/types/datatable';
 import { router, usePage } from '@inertiajs/react';
 import { useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
+import { route } from 'ziggy-js';
 import { AppDataTableContent } from './table/content';
 import { AppDataTablePagination } from './table/pagination';
 import { AppDataTableToolbar } from './table/toolbar';
-import { route } from 'ziggy-js';
 
 type DataTable = {
     data: DataTableProps;
@@ -22,7 +22,7 @@ export default function AppDataTable({ data, children }: DataTable) {
     const openPopover = (field: string) => setOpenFilterPopovers((prev) => ({ ...prev, [field]: true }));
     const closePopover = (field: string) => setOpenFilterPopovers((prev) => ({ ...prev, [field]: false }));
 
-    const { flash } = usePage().props as { flash?: { success?: string; error?: string; description?: string } };
+    const { flash } = usePage().props as { flash?: { success?: string; error?: string; link?: string } };
 
     const [selectedIds, setSelectedIds] = useState<(string | number)[]>([]);
 
@@ -128,15 +128,34 @@ export default function AppDataTable({ data, children }: DataTable) {
     useEffect(() => {
         if (flash?.success) {
             toast.success('success', {
-                position: 'top-center',
+                position: 'top-right',
+                closeButton: true,
                 description: flash.success,
             });
         }
         if (flash?.error) {
             toast.error('error', {
-                position: 'top-center',
+                position: 'top-right',
+                closeButton: true,
                 description: flash.error,
             });
+        }
+        if (flash?.link) {
+            toast.success("download", {
+                position: 'top-right',
+                duration: 10_000,
+                closeButton: true,
+                description: (
+                    <a
+                        href={flash.link}
+                        className="text-blue-500 underline hover:cursor-pointer"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                    >
+                        Download file
+                    </a>
+                ),
+            })
         }
     }, [flash]);
 
