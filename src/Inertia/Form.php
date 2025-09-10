@@ -57,6 +57,8 @@ class Form implements JsonSerializable
      */
     protected string $title = '';
 
+    protected bool $canEdit = true;
+
     public function __construct(string $formClass)
     {
         $this->formClass = $formClass;
@@ -113,6 +115,13 @@ class Form implements JsonSerializable
     public function edit(): static
     {
         $this->mode = 'edit';
+
+        return $this;
+    }
+
+    public function canEdit($state = true): static
+    {
+        $this->canEdit = $state;
 
         return $this;
     }
@@ -229,6 +238,7 @@ class Form implements JsonSerializable
             'mode'       => $this->mode,
             'formClass'  => $this->formClass,
             'title'      => $this->title,
+            'canEdit'    => $this->canEdit,
         ];
     }
 }

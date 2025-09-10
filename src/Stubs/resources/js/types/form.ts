@@ -9,4 +9,5 @@ export type Form = {
     formClass: string;
     modelClass: string;
     title: string;
+    canEdit: boolean;
 };
