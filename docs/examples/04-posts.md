@@ -424,7 +424,7 @@ class CategoryForm implements FormContract
             ->edit()
             ->schema([
                 Field::text('name')
-                    ->formatStateUsing(fn ($state) => ucwords($state))
+                    ->state(fn ($state) => ucwords($state))
                     ->reactive()
                     ->afterStateUpdated(function ($state, Set $set) {
                         $set('slug', Str::slug($state));
@@ -442,7 +442,7 @@ class CategoryForm implements FormContract
             ->create()
             ->schema([
                 Field::text('name')
-                    ->formatStateUsing(fn ($state) => ucwords($state))
+                    ->state(fn ($state) => ucwords($state))
                     ->reactive()
                     ->afterStateUpdated(function ($state, Set $set) {
                         $set('slug', Str::slug($state));
@@ -534,7 +534,7 @@ class PostForm implements FormContract
                     ->relationship(Category::class, 'name')
                     ->searchable()
                     ->multiple()
-                    ->formatStateUsing(fn (?Post $model) => $model?->categories?->pluck('id')?->toArray()),
+                    ->state(fn (?Post $model) => $model?->categories?->pluck('id')?->toArray()),
                 Field::markdown('content'),
                 Field::flatpickr('published_at'),
                 Field::select('author_id')
@@ -597,7 +597,7 @@ class PostForm implements FormContract
                     ->relationship(Category::class, 'name')
                     ->searchable()
                     ->multiple()
-                    ->formatStateUsing(fn (?Post $model) => $model?->categories?->pluck('id')?->toArray()),
+                    ->state(fn (?Post $model) => $model?->categories?->pluck('id')?->toArray()),
                 Field::markdown('content'),
                 Field::flatpickr('published_at'),
                 Field::select('author_id')

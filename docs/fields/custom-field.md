@@ -1,6 +1,8 @@
 # CustomField
 
-CustomField allows you to integrate your own React components into the Inertia form system. This feature is useful for creating input types not available by default, such as rating selectors, color pickers, or other custom UI widgets.
+CustomField allows you to integrate your own React components into the Inertia
+form system. This feature is useful for creating input types not available by
+default, such as rating selectors, color pickers, or other custom UI widgets.
 
 ---
 
@@ -10,31 +12,39 @@ Custom fields must be registered manually in
 `resources/js/components/builder/custom-fields/index.ts`.
 
 **Example:**
+
 ```typescript
 import { ColorPickerField } from "./color-picker-field";
 import { RatingField } from "./rating-field";
 
 // Register all custom field components here.
 // The key (e.g., 'rating') must match the name used in PHP.
-export const customFieldsComponents: Record<string, React.ComponentType<any>> = {
-    'color-picker': ColorPickerField,
-    'rating': RatingField,
+export const customFieldsComponents: Record<
+  string,
+  React.ComponentType<any>
+> = {
+  "color-picker": ColorPickerField,
+  rating: RatingField,
 };
 ```
 
 In your PHP field definition:
+
 ```php
 <?php
 Field::custom('rating')
     ->component('rating');
 ```
-This will make the system look for the `rating` key in the registry above and render the `RatingField` component.
+
+This will make the system look for the `rating` key in the registry above and
+render the `RatingField` component.
 
 ---
 
 ## Database Casting
 
-If you want to store the custom field value in the database, add a cast in your Eloquent model:
+If you want to store the custom field value in the database, add a cast in your
+Eloquent model:
 
 ```php
 <?php
@@ -63,7 +73,8 @@ Field::custom('rating')
 
 ## Adding Extra Attributes
 
-You can pass extra props to the component using `extraAttributes` or `extraAttribute`:
+You can pass extra props to the component using `extraAttributes` or
+`extraAttribute`:
 
 ```php
 <?php
@@ -77,6 +88,7 @@ Field::custom('rating')
 ```
 
 Or individually:
+
 ```php
 <?php
 Field::custom('rating')
@@ -108,7 +120,7 @@ Transform the state before displaying:
 Field::custom('rating')
     ->component('rating')
     ->state(4)
-    ->formatStateUsing(fn ($state) => $state . ' stars');
+    ->state(fn ($state) => $state . ' stars');
 ```
 
 ---
@@ -211,13 +223,13 @@ export function RatingField({
 
 ## API Reference
 
-| Method | Description |
-| ------ | ----------- |
-| `component(string $component)` | Set the component to use (must match the key in index.ts) |
-| `extraAttributes(array $attributes)` | Pass multiple extra props to the component |
-| `extraAttribute(string $key, mixed $value)` | Pass a single extra prop |
-| `state(mixed $state)` | Define the initial state value |
-| `formatStateUsing(Closure $callback)` | Transform the state before rendering |
+| Method                                      | Description                                               |
+| ------------------------------------------- | --------------------------------------------------------- |
+| `component(string $component)`              | Set the component to use (must match the key in index.ts) |
+| `extraAttributes(array $attributes)`        | Pass multiple extra props to the component                |
+| `extraAttribute(string $key, mixed $value)` | Pass a single extra prop                                  |
+| `state(mixed $state)`                       | Define the initial state value                            |
+| `state(Closure $callback)`                  | Transform the state before rendering                      |
 
 ---
 

@@ -2,7 +2,8 @@
 
 this example will use `spatie/permission` package
 
-install `composer require spatie/laravel-permission` and run `php artisan migrate`
+install `composer require spatie/laravel-permission` and run
+`php artisan migrate`
 
 then generate roles and permissions with generator scaffolding
 
@@ -398,7 +399,7 @@ class RoleForm implements FormContract
                 Field::text('guard_name')
                     ->info(),
                 Field::checkboxList('permissions')
-                    ->defaultValue($state?->permissions->pluck('id')->toArray())
+                    ->state($state?->permissions->pluck('id')->toArray())
                     ->loadOptionsUsing(function () use ($state) {
                         return $state?->permissions()->get();
                     })
@@ -726,7 +727,7 @@ class UserForm implements FormContract
                 Field::text('name'),
                 Field::text('email'),
                 Field::select('role')
-                    ->defaultValue($state?->roleId())
+                    ->state($state?->roleId())
                     ->loadOptionsUsing(function () {
                         return Role::query();
                     }),

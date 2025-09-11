@@ -10,8 +10,6 @@ trait HasState
 
     protected ?\Closure $afterStateUpdated = null;
 
-    protected ?\Closure $formatStateUsing = null;
-
     public function state(array|string|bool|int|callable|null $state): static
     {
         $this->state = $state;
@@ -19,39 +17,22 @@ trait HasState
         return $this;
     }
 
-    public function defaultValue(array|string|bool|int|callable|null $value = null): static
-    {
-        $this->state = $value;
-
-        return $this;
-    }
-
-    public function evaluateState(): static
-    {
-        if ($this->formatStateUsing) {
-            $this->state = $this->evaluate($this->formatStateUsing);
-
-            return $this;
-        }
-
-        $this->state = is_callable($this->state) ?
-            $this->evaluate($this->state) : $this->state;
-
-        return $this;
-    }
-
     public function getState()
     {
-        $this->evaluateState();
+        $this->state = is_callable($this->state) ?
+            $this->evaluate($this->state) : $this->state;
 
         return $this->state;
     }
 
-    public function formatStateUsing(callable $callable): static
+    public function hasStateCallback(): bool
     {
-        $this->formatStateUsing = $callable;
+        return is_callable($this->state);
+    }
 
-        return $this;
+    public function hasAfterStateUpdated(): bool
+    {
+        return $this->afterStateUpdated != null;
     }
 
     public function afterStateUpdated(callable $state): static

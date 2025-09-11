@@ -1,6 +1,8 @@
 # Date & Datetime Fields
 
-The Date and Datetime fields provide simple date and datetime pickers for your forms. They are suitable for basic date selection without advanced configuration.
+The Date and Datetime fields provide simple date and datetime pickers for your
+forms. They are suitable for basic date selection without advanced
+configuration.
 
 ## Usage
 
@@ -22,7 +24,7 @@ Field::datetimeLocal('appointment');
 - **disable(bool $state = true):** Disable the field, making it non-interactive.
 - **hidden(bool $state = true):** Hide the field from the form.
 - **label(string $label):** Set a custom label for the field.
-- **defaultValue(mixed $value):** Set the default value for the field.
+- **state(mixed $value):** Set the default value for the field.
 - **inline():** Display the field inline with others.
 - **columnSpan(array $span):** Set the column span for grid layouts.
 - **columnOrder(array $order):** Set the column order for grid layouts.
@@ -39,7 +41,7 @@ Field::date('start_date')
     ->disable(false)
     ->hidden(false)
     ->label('Start Date')
-    ->defaultValue('2024-06-01');
+    ->state('2024-06-01');
 
 Field::datetimeLocal('event_time')
     ->placeholder('Pick date and time')
@@ -52,4 +54,5 @@ Field::datetimeLocal('event_time')
 
 - Date field uses a calendar for date selection.
 - Datetime field allows both date and time selection.
-- For more advanced date/time picking (range, time, etc.), use the [Flatpickr field](./flatpickr.md).
+- For more advanced date/time picking (range, time, etc.), use the
+  [Flatpickr field](./flatpickr.md).

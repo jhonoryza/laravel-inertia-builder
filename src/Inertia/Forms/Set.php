@@ -15,16 +15,16 @@ class Set
     {
         // Jika inputnya field langsung
         if ($path instanceof AbstractField) {
-            $name = $path->getName();
+            $key = $path->getKey();
         } else {
-            $name = $path;
+            $key = $path;
         }
 
         $newValue = $state instanceof \Closure
             ? $state()
             : $state;
 
-        data_set($this->formState, $name, $newValue);
+        data_set($this->formState, $key, $newValue);
 
         return $newValue;
     }

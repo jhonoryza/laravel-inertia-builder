@@ -150,26 +150,26 @@ class Form implements JsonSerializable
     }
 
     // will be called when there is reactive call from frontend
-    public function handleLiveUpdate(string $key, $value, array &$state): array
+    public function handleLiveUpdate(string $key, $value, array &$state): void
     {
         /** @var AbstractField|null $field */
         $field = $this->findField($key);
 
+        // skip if not found or not reactive
         if (! $field || ! $field->getIsReactive()) {
-            return $state;
+            return;
         }
 
+        // trigger after state update callback if has one
         $field->triggerAfterStateUpdated($value, $state);
 
-        // update form state
+        // update the rest field state
         foreach ($this->getFields() as $f) {
             /** @var AbstractField $f */
-            if (isset($state[$f->getKey()])) {
-                $this->state[$f->getKey()] = $state[$f->getKey()];
-            }
-        }
+            $f->form($this);
 
-        return $state;
+            $this->state[$f->getKey()] = $f->hasStateCallback() ? $f->getState() : $state[$f->getKey()];
+        }
     }
 
     public function getModel(): ?Model
