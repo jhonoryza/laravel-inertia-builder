@@ -18,7 +18,7 @@ export function AppFormBuilderAction({ form, processing }: Props) {
                     {canEdit && (
                         <Button
                             onClick={() => {
-                                router.visit(route(`${baseRoute}.edit`, routeId));
+                                router.visit(route(`${baseRoute}.edit`, routeId || 0));
                             }}
                             variant="default"
                             type="button"
@@ -58,13 +58,15 @@ export function AppFormBuilderAction({ form, processing }: Props) {
             )}
             {(mode === 'edit' || mode === 'create') && (
                 <div className="mb-2">
-                    <Link
-                        href={route(`${baseRoute}.edit`, routeId)}
-                        className="flex items-center gap-2 text-sm hover:cursor-pointer hover:opacity-60"
-                    >
-                        <RefreshCw className="h-4 w-4 text-destructive" />
-                        <span>reset</span>
-                    </Link>
+                    {canEdit && (
+                        <Link
+                            href={route(`${baseRoute}.edit`, routeId || 0)}
+                            className="flex items-center gap-2 text-sm hover:cursor-pointer hover:opacity-60"
+                        >
+                            <RefreshCw className="h-4 w-4 text-destructive" />
+                            <span>reset</span>
+                        </Link>
+                    )}
                 </div>
             )}
         </div>
