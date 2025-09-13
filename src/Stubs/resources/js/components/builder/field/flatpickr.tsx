@@ -74,6 +74,27 @@ export function AppFieldBuilderFlatpickr({ field, value, operator, onChange }: F
         if (!inputRef.current) return;
 
         const defaultConfig = {
+            enableTime: field.withTime !== false,
+            time_24hr: true,
+            dateFormat: field.withTime === false ? 'Y-m-d' : 'Y-m-d H:i:S',
+            minuteIncrement: 1,
+            allowInput: false,
+            onClose: (selectedDates: Date[], dateStr: string, instance: any) => {
+                // Handle final value when popup closes
+                const currentOperator = operatorRef.current;
+
+                if (selectedDates.length === 1 && field.withTime === true) {
+                    if (field.utcConvert === false) {
+                        const formatted = format(
+                            selectedDates[0],
+                            'yyyy-MM-dd HH:mm:ss'
+                        );
+                        onChange(field.key, formatted, currentOperator);
+                        return;
+                    }
+                    onChange(field.key, selectedDates[0].toISOString(), currentOperator);
+                }
+            },
             onChange: (selectedDates: Date[], dateStr: string, instance: any) => {
                 // console.log(selectedDates, dateStr, instance);
                 const currentOperator = operatorRef.current;
@@ -101,15 +122,23 @@ export function AppFieldBuilderFlatpickr({ field, value, operator, onChange }: F
                     const tmpValue = `${selectedDates[0].toISOString()},${selectedDates[1].toISOString()}`;
                     onChange(field.key, tmpValue, currentOperator);
                 } else if (selectedDates.length == 1) {
-                    if (field.utcConvert === false) {
-                        const formatted = format(
-                            selectedDates[0],
-                            field.withTime === false ? 'yyyy-MM-dd' : 'yyyy-MM-dd HH:mm:ss'
-                        );
-                        onChange(field.key, formatted, currentOperator);
+                    // For date-only fields, trigger onChange immediately
+                    if (field.withTime === false) {
+                        if (field.utcConvert === false) {
+                            const formatted = format(
+                                selectedDates[0],
+                                'yyyy-MM-dd'
+                            );
+                            onChange(field.key, formatted, currentOperator);
+                            return;
+                        }
+                        onChange(field.key, selectedDates[0].toISOString(), currentOperator);
                         return;
                     }
-                    onChange(field.key, selectedDates[0].toISOString(), currentOperator);
+
+                    // For time picker fields, don't trigger onChange here
+                    // Let onClose handle it when user is done selecting time
+                    return;
                 } else {
                     onChange(field.key, null, currentOperator);
                 }
