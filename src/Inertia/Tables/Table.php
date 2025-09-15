@@ -627,8 +627,11 @@ class Table implements JsonSerializable
             $allowedFilters[] = AllowedFilter::callback($key, function (Builder $query) use ($key, $operator, $value, $filter) {
                 $isDateType = $filter->type === 'date' && ($filter->withTime ?? false) == false;
                 if ($filter->queryCallback) {
-                    $call = $filter->queryCallback;
-                    $call($query, $operator, $value);
+                    $this->evaluate($filter->queryCallback, [
+                        'query' => $query,
+                        'operator' => $operator,
+                        'value' => $value,
+                    ]);
 
                     return;
                 }
