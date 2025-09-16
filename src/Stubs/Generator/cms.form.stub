@@ -14,8 +14,7 @@ class {{modelName}}Form implements FormContract
 {
     public static function view(Model $state): Form
     {
-        return Form::make(static::class)
-            ->view()
+        return Form::view(static::class)
             ->model($state)
             ->columns(1)
             ->schema([
@@ -25,8 +24,7 @@ class {{modelName}}Form implements FormContract
 
     public static function edit(Model $state): Form
     {
-        return Form::make(static::class)
-            ->edit()
+        return Form::edit(static::class)
             ->model($state)
             ->columns(1)
             ->schema([
@@ -36,8 +34,7 @@ class {{modelName}}Form implements FormContract
 
     public static function create(): Form
     {
-        return Form::make(static::class)
-            ->create()
+        return Form::create(static::class)
             ->model(new {{modelName}})
             ->columns(1)
             ->schema([

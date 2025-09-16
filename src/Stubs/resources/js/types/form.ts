@@ -10,4 +10,5 @@ export type Form = {
     modelClass: string;
     title: string;
     canEdit: boolean;
+    prefix: string;
 };

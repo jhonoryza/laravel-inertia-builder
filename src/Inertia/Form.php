@@ -59,6 +59,8 @@ class Form implements JsonSerializable
 
     protected bool $canEdit = true;
 
+    protected ?string $prefix = null;
+
     public function __construct(string $formClass)
     {
         $this->formClass = $formClass;
@@ -67,6 +69,28 @@ class Form implements JsonSerializable
     public static function make(string $formClass): static
     {
         return new static($formClass);
+    }
+
+    public static function create(string $formClass): static
+    {
+        return new static($formClass)->createMode();
+    }
+
+    public static function view(string $formClass): static
+    {
+        return new static($formClass)->viewMode();
+    }
+
+    public static function edit(string $formClass): static
+    {
+        return new static($formClass)->editMode();
+    }
+
+    public function prefix(string $prefix): static
+    {
+        $this->prefix = $prefix;
+
+        return $this;
     }
 
     public function model(Model|null|array $model): static
@@ -105,14 +129,14 @@ class Form implements JsonSerializable
         return $this;
     }
 
-    public function create(): static
+    public function createMode(): static
     {
         $this->mode = 'create';
 
         return $this;
     }
 
-    public function edit(): static
+    public function editMode(): static
     {
         $this->mode = 'edit';
 
@@ -126,7 +150,7 @@ class Form implements JsonSerializable
         return $this;
     }
 
-    public function view(): static
+    public function viewMode(): static
     {
         $this->mode = 'show';
 
@@ -229,7 +253,10 @@ class Form implements JsonSerializable
     {
         $this->checkisStateEmpty();
 
+        $prefix = $this->prefix ?? Str::snake(class_basename($this->formClass)) . '-' . $this->mode;
+
         return [
+            'prefix'     => $prefix,
             'columns'    => $this->getColumns(),
             'fields'     => $this->evaluateFields(),
             'baseRoute'  => $this->baseRoute,
