@@ -121,6 +121,7 @@ class Table implements JsonSerializable
     public function __construct(string $model)
     {
         $this->model     = $model;
+        $this->prefix    = Str::snake(class_basename($model));
         $this->baseRoute = $this->baseRoute == null ? Str::plural(Str::snake(class_basename($model))) : $this->baseRoute;
         $this->title     = $this->title     == null ? Str::headline(class_basename($model)) : $this->title;
     }
@@ -628,9 +629,9 @@ class Table implements JsonSerializable
                 $isDateType = $filter->type === 'date' && ($filter->withTime ?? false) == false;
                 if ($filter->queryCallback) {
                     $this->evaluate($filter->queryCallback, [
-                        'query' => $query,
+                        'query'    => $query,
                         'operator' => $operator,
-                        'value' => $value,
+                        'value'    => $value,
                     ]);
 
                     return;
@@ -771,7 +772,7 @@ class Table implements JsonSerializable
 
     public function export(string $filePath): void
     {
-        $fullUrl = request()->get('url');
+        $fullUrl     = request()->get('url');
         $queryString = parse_url($fullUrl, PHP_URL_QUERY);
         parse_str($queryString, $queryParams);
         request()->query->add($queryParams);
