@@ -10,11 +10,21 @@ class RichTextField extends AbstractField
         'bold',
         'italic',
         'underline',
+        'strike',
         'h1',
         'h2',
+        'h3',
+        'h4',
+        'h5',
         'bulletList',
         'orderedList',
         'link',
+        'alignLeft',
+        'alignCenter',
+        'alignRight',
+        'code',
+        'codeBlock',
+        'blockquote',
     ];
 
     public ?int $minHeight = 250;
