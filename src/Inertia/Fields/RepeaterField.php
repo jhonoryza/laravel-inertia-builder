@@ -8,9 +8,9 @@ class RepeaterField extends AbstractField
 {
     public array $schema = [];
 
-    public ?int $minItems = null;
+    public ?int $minItems = 1;
 
-    public ?int $maxItems = null;
+    public ?int $maxItems = 100;
 
     public ?string $addButtonLabel = null;
 
