@@ -86,8 +86,7 @@ For more detailed examples and documentation, please check the following resourc
 - Nodejs >= 20
 - Tailwind 4
 - Laravel [official starter kit with React](https://laravel.com/docs/12.x/starter-kits#react)
-
-currently not supported for `official vue starter kit`
+- Laravel [official starter kit with Vue](https://laravel.com/docs/12.x/starter-kits#vue)
 
 ## Getting Started
 

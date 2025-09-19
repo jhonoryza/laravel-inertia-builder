@@ -74,7 +74,7 @@ class GenerateCommand extends Command
         $this->generateForm($modelName, $schema);
         $this->generateController($tableName, $modelName, $schema);
         $this->addRoutes($tableName, $modelName);
-        $this->addAppSidebar($tableName, $modelName);
+        $this->addAppSidebar($tableName);
 
         $this->info("$modelName generated successfully!");
         $this->warn('Please review the generated files, especially for relationships and complex field types.');

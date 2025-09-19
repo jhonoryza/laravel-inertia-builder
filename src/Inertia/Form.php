@@ -192,7 +192,7 @@ class Form implements JsonSerializable
             /** @var AbstractField $f */
             $f->form($this);
 
-            $this->state[$f->getKey()] = $f->hasStateCallback() ? $f->getState() : $state[$f->getKey()];
+            $this->state[$f->getKey()] = $f->hasStateCallback() ? $f->getState() : $state[$f->getKey()] ?? null;
         }
     }
 

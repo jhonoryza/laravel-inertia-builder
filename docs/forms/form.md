@@ -6,8 +6,7 @@ This class is used to wrap dynamic fields
 
 ```php
 <?php
-return Form::make(static::class)
-    ->view()
+return Form::view(static::class)
     ->model($state)
     ->columns(1)
     ->schema([

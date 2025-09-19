@@ -8,7 +8,7 @@ use Illuminate\Support\Str;
 
 trait HasAppToaster
 {
-    protected function addToasterComponent(): void
+    protected function addToasterReactComponent(): void
     {
         $filePath = base_path('resources/js/layouts/app-layout.tsx');
         $content  = File::get($filePath);
@@ -33,6 +33,49 @@ trait HasAppToaster
         if (Str::contains($content, $importContent)) {
             $replacement = $importContent . PHP_EOL . $importAddition;
             $content     = Str::replaceFirst($importContent, $replacement, $content);
+        }
+
+        File::put($filePath, $content);
+        Process::run("./node_modules/.bin/prettier --write $filePath");
+        $this->info('toaster component added.');
+    }
+
+    protected function addToasterVueComponent(): void
+    {
+        $filePath = base_path('resources/js/layouts/AppLayout.vue');
+        $content  = File::get($filePath);
+
+        $addition       = '<Toaster :theme="theme" />';
+        $importAddition = "import { Toaster } from '@/components/ui/sonner';
+        import 'vue-sonner/style.css';
+        import { computed } from 'vue';";
+        $scriptAddition = "const theme = computed(() =>
+            document.documentElement.classList.contains('dark') ? 'dark' : 'light'
+        );";
+
+        if (Str::contains($content, 'Toaster')) {
+            $this->warn('toaster component already exist. Skipping.');
+
+            return;
+        }
+
+        $breadcumbs = '<AppLayout :breadcrumbs="breadcrumbs">';
+
+        if (Str::contains($content, $breadcumbs)) {
+            $replacement = $breadcumbs . PHP_EOL . $addition;
+            $content     = Str::replaceFirst($breadcumbs, $replacement, $content);
+        }
+
+        $importContent = "import AppLayout from '@/layouts/app/AppSidebarLayout.vue';";
+        if (Str::contains($content, $importContent)) {
+            $replacement = $importContent . PHP_EOL . $importAddition;
+            $content     = Str::replaceFirst($importContent, $replacement, $content);
+        }
+
+        $scriptContent = '</script>';
+        if (Str::contains($content, $scriptContent)) {
+            $replacement = $scriptAddition . PHP_EOL . $scriptContent;
+            $content     = Str::replaceFirst($scriptContent, $replacement, $content);
         }
 
         File::put($filePath, $content);
