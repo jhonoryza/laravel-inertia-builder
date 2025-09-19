@@ -18,7 +18,7 @@ class TestUpdateRequest extends FormRequest
             'reactive'               => ['required', 'string', 'min:1', 'max:255'],
             'password'               => ['required', 'string', 'min:1', 'max:255'],
             'email'                  => ['required', 'string', 'min:1', 'max:255'],
-            'number'                 => ['required', 'int', 'min:1', 'max:255'],
+            'number'                 => ['required', 'int', 'min:1', 'max:9999999'],
             'textarea'               => ['required', 'string', 'min:1', 'max:255'],
             'rich'                   => ['required', 'string', 'min:1'],
             'markdown'               => ['required', 'string', 'min:1'],
