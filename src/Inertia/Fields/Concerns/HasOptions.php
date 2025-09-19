@@ -66,6 +66,12 @@ trait HasOptions
     {
         $this->evaluateOptions();
 
-        return $this->options;
+        return collect($this->options)
+            ->map(fn ($item) => [
+                'id'    => uniqid(),
+                'label' => $item['label'],
+                'value' => $item['value'],
+            ])
+            ->toArray();
     }
 }

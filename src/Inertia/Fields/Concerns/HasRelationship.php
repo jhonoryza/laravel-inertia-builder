@@ -85,6 +85,7 @@ trait HasRelationship
                 ->get()
                 ->map(function ($item) {
                     return [
+                        'id'    => uniqid(),
                         'label' => $item->{$this->relationTitle},
                         'value' => $item->{$this->relationKey},
                     ];

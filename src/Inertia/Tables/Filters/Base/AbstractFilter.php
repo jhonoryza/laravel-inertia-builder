@@ -12,7 +12,7 @@ abstract class AbstractFilter implements JsonSerializable
 
     public string $type;
 
-    public array $operators;
+    public array $operators = [];
 
     abstract protected static function getType(): string;
 
@@ -66,10 +66,9 @@ abstract class AbstractFilter implements JsonSerializable
 
     public function __construct(string $field)
     {
-        $this->field     = $field;
-        $this->label     = ucwords(str_replace('_', ' ', $field));
-        $this->type      = static::getType();
-        $this->operators = $this->getOperators();
+        $this->field = $field;
+        $this->label = ucwords(str_replace('_', ' ', $field));
+        $this->type  = static::getType();
     }
 
     public function label(string $label): static
@@ -95,7 +94,7 @@ abstract class AbstractFilter implements JsonSerializable
             'field'     => $this->field,
             'label'     => $this->label,
             'type'      => $this->type,
-            'operators' => $this->operators,
+            'operators' => empty($this->operators) ? $this->getOperators() : $this->operators,
         ];
     }
 

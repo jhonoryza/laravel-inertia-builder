@@ -631,7 +631,9 @@ class Table implements JsonSerializable
                     $this->evaluate($filter->queryCallback, [
                         'query'    => $query,
                         'operator' => $operator,
+                        'op'       => $operator,
                         'value'    => $value,
+                        'val'      => $value,
                     ]);
 
                     return;

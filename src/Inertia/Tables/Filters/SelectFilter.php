@@ -26,6 +26,13 @@ class SelectFilter extends AbstractFilter
 
     protected function getOperators(): array
     {
+        if ($this->getIsMultiple() === true) {
+            return [
+                Operator::in(),
+                Operator::notIn(),
+            ];
+        }
+
         return [
             Operator::equals(),
             Operator::notEquals(),
