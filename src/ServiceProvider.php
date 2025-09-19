@@ -7,6 +7,7 @@ use Illuminate\Foundation\Http\Middleware\TrimStrings;
 use Illuminate\Support\ServiceProvider as LaravelServiceProvider;
 use Jhonoryza\InertiaBuilder\Console\Commands\GenerateCommand;
 use Jhonoryza\InertiaBuilder\Console\Commands\InstallCommand;
+use Jhonoryza\InertiaBuilder\Console\Commands\PublishTestCommand;
 
 class ServiceProvider extends LaravelServiceProvider
 {
@@ -36,6 +37,7 @@ class ServiceProvider extends LaravelServiceProvider
         $this->commands([
             GenerateCommand::class,
             InstallCommand::class,
+            PublishTestCommand::class,
         ]);
     }
 
@@ -44,6 +46,7 @@ class ServiceProvider extends LaravelServiceProvider
         return [
             GenerateCommand::class,
             InstallCommand::class,
+            PublishTestCommand::class,
         ];
     }
 }
