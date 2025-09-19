@@ -81,7 +81,7 @@ trait InstallForReactTrait
         $this->info('theme copied successfully.');
 
         // copy tailwind config
-        copy(__DIR__ . '/../../Stubs/tailwind.config.js', base_path('tailwind.config.js'));
+        copy(__DIR__ . '/../../Stubs/react/tailwind.config.js', base_path('tailwind.config.js'));
         $this->info('tailwind config file copied successfully.');
 
         // publish generator stubs
