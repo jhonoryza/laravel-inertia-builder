@@ -518,6 +518,7 @@ class Table implements JsonSerializable
                             'row'   => $row,
                             'model' => $row,
                         ]);
+                        $value = str($value)->limit();
                     } elseif ($col->relation && $col->relationKey && $col->relationType === 'belongsTo') {
                         if (str_contains($col->relation, '.')) {
                             $tmps  = explode('.', $col->relation);
@@ -526,13 +527,17 @@ class Table implements JsonSerializable
                                 $value = $value->{$tmp};
                             }
                             $value = $value->{$col->relationKey} ?? null;
+                            $value = str($value)->limit();
                         } else {
                             $value = $row->{$col->relation}->{$col->relationKey} ?? null;
+                            $value = str($value)->limit();
                         }
                     } elseif ($col->relation && $col->relationKey && $col->relationType === 'hasMany') {
                         $value = $row->{$col->relation}->implode($col->relationKey, ' ');
                         $value = str($value)
-                            ->wordWrap(break: '<br>');
+                            ->wordWrap(break: '<br>')
+                            ->limit();
+                        $value = ['__html' => "<span>$value</span>"];
                     } elseif (str_contains($col->name, '.')) {
                         [$relationName, $relationAttribute] = extractRelation($col->name);
                         $value                              = $row->{$relationName};
@@ -541,9 +546,12 @@ class Table implements JsonSerializable
                                 ->pluck($relationAttribute)
                                 ->implode(' ');
                             $value = str($value)
-                                ->wordWrap(break: '<br>');
+                                ->wordWrap(break: '<br>')
+                                ->limit();
+                            $value = ['__html' => "<span>$value</span>"];
                         } else {
                             $value = $value->{$relationAttribute} ?? null;
+                            $value = str($value)->limit();
                         }
                     }
                     $arr[$col->name] = $value;
