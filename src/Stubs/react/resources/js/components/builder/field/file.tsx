@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
 import { FieldDefinition } from "@/types/field-builder";
 import React, { useEffect, useRef, useState } from 'react';
 
@@ -95,7 +96,7 @@ export function AppFieldBuilderFile({ field, value, onChange }: FileFieldProps) 
         <div className="space-y-2">
             {previewsToShow.length > 0 && (
                 <div className="mt-2 space-y-2">
-                    <ul className="text-sm text-muted-foreground mt-1 space-y-2">
+                    <ul className="mt-1 space-y-2 text-sm text-muted-foreground">
                         {previewsToShow.map((file, index) => (
                             <li key={index} className="flex flex-col gap-1">
                                 <span>{file.name}</span>
@@ -103,7 +104,7 @@ export function AppFieldBuilderFile({ field, value, onChange }: FileFieldProps) 
                                     <img
                                         src={file.url}
                                         alt={file.name}
-                                        className="w-32 h-32 object-cover rounded border"
+                                        className="h-32 w-32 rounded border object-cover"
                                     />
                                 ) : (
                                     <a
@@ -135,9 +136,10 @@ export function AppFieldBuilderFile({ field, value, onChange }: FileFieldProps) 
                 type="button"
                 variant="outline"
                 onClick={handleButtonClick}
-                className={field.mergeClass}
+                className={cn(field.mergeClass, 'dark:bg-background hover:cursor-pointer')}
             >
-                {field.placeholder || (field.multiple ? 'Choose Files' : 'Choose File')}
+                {field.placeholder ||
+                    (field.multiple ? 'Choose Files' : 'Choose File')}
             </Button>
         </div>
     );

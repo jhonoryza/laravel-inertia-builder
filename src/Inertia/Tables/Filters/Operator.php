@@ -108,6 +108,16 @@ class Operator implements JsonSerializable
         return self::make('is not set', 'isNotNull');
     }
 
+    public function getLabel(): string
+    {
+        return $this->label;
+    }
+
+    public function getValue(): string
+    {
+        return $this->value;
+    }
+
     public function toArray(): array
     {
         return [

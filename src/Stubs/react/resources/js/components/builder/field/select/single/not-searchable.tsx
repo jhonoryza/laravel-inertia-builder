@@ -16,13 +16,18 @@ export function AppFieldBuilderSelectSingleNotSearchable({ field, value, onChang
             onValueChange={(val) => onChange(field.key, val)}
             disabled={field.isDisable}
         >
-            <SelectTrigger>
-                <SelectValue placeholder={field.placeholder || 'Select an option'} />
+            <SelectTrigger className="dark:bg-background">
+                <SelectValue
+                    placeholder={field.placeholder || 'Select an option'}
+                />
             </SelectTrigger>
             <SelectContent className="max-h-60 overflow-y-auto">
                 {field.options?.map((opt) => (
-                    <SelectItem key={field.key + opt.value as Key} value={opt.value.toString() as string}
-                        className={field.mergeClass}>
+                    <SelectItem
+                        key={(field.key + opt.value) as Key}
+                        value={opt.value.toString() as string}
+                        className={field.mergeClass}
+                    >
                         {opt.label}
                     </SelectItem>
                 ))}

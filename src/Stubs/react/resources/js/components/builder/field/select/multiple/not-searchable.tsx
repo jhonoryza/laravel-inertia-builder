@@ -20,7 +20,7 @@ export function AppFieldBuilderSelectMultipleNotSearchable({ field, value, onCha
                     variant="outline"
                     role="combobox"
                     disabled={field.isDisable}
-                    className={cn('w-full justify-between text-muted-foreground hover:text-muted-foreground', field.mergeClass)}
+                    className={cn('w-full justify-between text-muted-foreground hover:text-muted-foreground dark:bg-background', field.mergeClass)}
                 >
                     {value && value?.length > 0 ? `${value.length} selected` : field.placeholder || 'Select options'}
                 </Button>

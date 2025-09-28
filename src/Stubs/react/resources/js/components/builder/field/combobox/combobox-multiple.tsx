@@ -24,9 +24,14 @@ export function AppFieldBuilderComboboxMultiple({ field, value, onChange, setFie
                     variant="outline"
                     role="combobox"
                     disabled={field.isDisable}
-                    className={cn('w-full justify-between', field.mergeClass)}
+                    className={cn(
+                        'w-full justify-between dark:bg-background',
+                        field.mergeClass,
+                    )}
                 >
-                    {value ? `${value.length} selected` : field.placeholder || 'Select options'}
+                    {value
+                        ? `${value.length} selected`
+                        : field.placeholder || 'Select options'}
                 </Button>
             </PopoverTrigger>
 
@@ -53,8 +58,12 @@ export function AppFieldBuilderComboboxMultiple({ field, value, onChange, setFie
                                             preserveScroll: true,
                                             replace: true,
                                             onSuccess: (page) => {
-                                                // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                                                const fields = (page.props as any)?.form?.fields as FieldDefinition[];
+                                                 
+                                                const fields = (
+                                                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                                                    page.props as any
+                                                )?.form
+                                                    ?.fields as FieldDefinition[];
                                                 if (fields) {
                                                     setFields(fields);
                                                 }
@@ -68,13 +77,19 @@ export function AppFieldBuilderComboboxMultiple({ field, value, onChange, setFie
                     <CommandEmpty>No option found.</CommandEmpty>
                     <CommandGroup className="max-h-60 overflow-y-auto">
                         {field.options?.map((opt, i) => {
-                            const isChecked = Array.isArray(value) ? value.includes(opt.value) : String(value) === String(opt.value);
+                            const isChecked = Array.isArray(value)
+                                ? value.includes(opt.value)
+                                : String(value) === String(opt.value);
                             return (
                                 <CommandItem
                                     key={i + field.key + opt.label.toString()}
                                     value={opt.label.toString()}
                                     onSelect={() => {
-                                        const current = Array.isArray(value) ? value : value ? [value] : [];
+                                        const current = Array.isArray(value)
+                                            ? value
+                                            : value
+                                              ? [value]
+                                              : [];
                                         const newSet = new Set(current);
                                         if (isChecked) {
                                             newSet.delete(opt.value);
@@ -84,7 +99,10 @@ export function AppFieldBuilderComboboxMultiple({ field, value, onChange, setFie
                                         onChange(field.key, Array.from(newSet));
                                     }}
                                 >
-                                    <Checkbox checked={isChecked} className="mr-2" />
+                                    <Checkbox
+                                        checked={isChecked}
+                                        className="mr-2"
+                                    />
                                     {opt.label}
                                 </CommandItem>
                             );

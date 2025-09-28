@@ -25,11 +25,16 @@ export function AppFieldBuilderSelectSingleSearchable({ field, value, onChange, 
                     role="combobox"
                     aria-expanded="false"
                     disabled={field.isDisable}
-                    className={cn('w-full justify-between', field.mergeClass)}
+                    className={cn(
+                        'w-full justify-between dark:bg-background',
+                        field.mergeClass,
+                    )}
                 >
-                    {field.options?.find((opt) => opt.value === value)?.label || (
-                        <span
-                            className="text-muted-foreground">{field.placeholder || 'Select an option'}</span>
+                    {field.options?.find((opt) => opt.value === value)
+                        ?.label || (
+                        <span className="text-muted-foreground">
+                            {field.placeholder || 'Select an option'}
+                        </span>
                     )}
                     <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                 </Button>
@@ -58,8 +63,12 @@ export function AppFieldBuilderSelectSingleSearchable({ field, value, onChange, 
                                             preserveScroll: true,
                                             replace: true,
                                             onSuccess: (page) => {
-                                                // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                                                const fields = (page.props as any)?.form?.fields as FieldDefinition[];
+                                                 
+                                                const fields = (
+                                                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                                                    page.props as any
+                                                )?.form
+                                                    ?.fields as FieldDefinition[];
                                                 if (fields) {
                                                     setFields(fields);
                                                 }
@@ -79,7 +88,13 @@ export function AppFieldBuilderSelectSingleSearchable({ field, value, onChange, 
                                 onSelect={() => onChange(field.key, opt.value)}
                             >
                                 <Check
-                                    className={cn('mr-2 h-4 w-4', opt.value === value ? 'opacity-100' : 'opacity-0')} />
+                                    className={cn(
+                                        'mr-2 h-4 w-4',
+                                        opt.value === value
+                                            ? 'opacity-100'
+                                            : 'opacity-0',
+                                    )}
+                                />
                                 {opt.label}
                             </CommandItem>
                         ))}
