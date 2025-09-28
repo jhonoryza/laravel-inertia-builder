@@ -15,10 +15,10 @@
   --accent: #38bdf8;               /* sky-400 */
   --accent-foreground: #0f172a;
 
-  --destructive: #ef4444;          /* red-500 */
-  --destructive-foreground: #ffffff;
+  --destructive: #f1599b;          /* red-500 */
+  --destructive-foreground: #f1599b;
 
-  --border: #5cacd7;               /* gray-200 */
+  --border: #bae6fd;               /* gray-200 */
   --input: #bae6fd;                /* sky 200 */
   --ring: #7dd3fc;                 /* sky-300 */
 
@@ -49,19 +49,19 @@
   --popover-foreground: #f1f5f9;
 
   --primary: #0ea5e9;              /* sky-500 */
-  --primary-foreground: #ffffff;
+  --primary-foreground: #06618b;
   --secondary: #374151;            /* gray-700 */
   --secondary-foreground: #e5e7eb; /* gray-200 */
-  --muted: #42618b;                /* gray-800 */
-  --muted-foreground: #9ca3af;     /* gray-400 */
-  --accent: #065070;               /* sky-400 */
-  --accent-foreground: #75b2da;    /* sky-900 */
+  --muted: #3a414a;                /* gray-800 */
+  --muted-foreground: #e2e9f5;     /* gray-400 */
+  --accent: #083749;               /* sky-400 */
+  --accent-foreground: #5a97c4;    /* sky-900 */
 
-  --destructive: #f87171;          /* red-400 */
-  --destructive-foreground: #111827;
+  --destructive: #f1599b;          /* red-400 */
+  --destructive-foreground: #e70a6a;
 
   --border: #374151;               /* gray-700 */
-  --input: #4b5563;                 /* gray-600 */
+  --input: #476da1;                 /* gray-600 */
   --ring: #38bdf8;                  /* sky-400 */
 
   --sidebar: #020617;              /* slate-900 */
