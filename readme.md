@@ -44,6 +44,7 @@ For more detailed examples and documentation, please check the following resourc
   - [Password Field](./docs/fields/password.md)
   - [Textarea Field](./docs/fields/textarea.md)
   - [Grid Field](./docs/fields/grid.md)
+  - [Tab Field](./docs/fields/tab.md)
   - [Reactive Field](./docs/fields/reactive.md)
   - [Serverside Field](./docs/fields/serverside.md)
   - [Slider Field](./docs/fields/slider.md)
