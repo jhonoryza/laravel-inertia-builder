@@ -61,40 +61,39 @@ export function AppFieldBuilder({
     value = value == "[]" ? [] : value;
 
     if (field.asInfo) {
-        if (Array.isArray(value)) {
-            return (
-                <AppFieldBuilderLabel field={field} error={error}>
-                    <AppFieldInfoTextList value={value} />
-                </AppFieldBuilderLabel>
-            );
-        } else {
-            switch (field.type) {
-                case 'markdown':
+        switch (field.type) {
+            case 'markdown':
+                return (
+                    <AppFieldBuilderLabel field={field} error={error}>
+                        <AppFieldInfoMarkdown value={value} />
+                    </AppFieldBuilderLabel>
+                );
+            case 'datetime-local':
+            case 'date':
+                return (
+                    <AppFieldBuilderLabel field={field} error={error}>
+                        <AppFieldInfoDate value={value} />
+                    </AppFieldBuilderLabel>
+                );
+            case 'file':
+                return (
+                    <AppFieldBuilderLabel field={field} error={error}>
+                        <AppFieldInfoFile value={field.preview || value} />
+                    </AppFieldBuilderLabel>
+                );
+            default:
+                if (Array.isArray(value)) {
                     return (
                         <AppFieldBuilderLabel field={field} error={error}>
-                            <AppFieldInfoMarkdown value={value} />
+                            <AppFieldInfoTextList value={value} />
                         </AppFieldBuilderLabel>
                     );
-                case 'datetime-local':
-                case 'date':
-                    return (
-                        <AppFieldBuilderLabel field={field} error={error}>
-                            <AppFieldInfoDate value={value} />
-                        </AppFieldBuilderLabel>
-                    );
-                case 'file':
-                    return (
-                        <AppFieldBuilderLabel field={field} error={error}>
-                            <AppFieldInfoFile value={value || field.preview} />
-                        </AppFieldBuilderLabel>
-                    );
-                default:
-                    return (
-                        <AppFieldBuilderLabel field={field} error={error}>
-                            <AppFieldInfoText value={value} />
-                        </AppFieldBuilderLabel>
-                    );
-            }
+                }
+                return (
+                    <AppFieldBuilderLabel field={field} error={error}>
+                        <AppFieldInfoText value={value} />
+                    </AppFieldBuilderLabel>
+                );
         }
     }
 

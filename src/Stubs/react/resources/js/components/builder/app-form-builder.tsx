@@ -5,7 +5,7 @@ import { gridClasses, maxOrder, sortByOrder } from "@/lib/utils";
 import { FieldDefinition } from "@/types/field-builder";
 import { Form } from '@/types/form';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { useForm, usePage } from '@inertiajs/react';
+import { router, useForm, usePage } from '@inertiajs/react';
 import React, { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { route } from 'ziggy-js';
@@ -165,7 +165,10 @@ export function AppFormBuilder({ form, children }: PageProps) {
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         if (routeId) {
-            post(route(`${baseRoute}.update`, routeId));
+            post(route(`${baseRoute}.update`, routeId), {
+                preserveState: false,
+                preserveScroll: true,
+            });
             return;
         }
         post(route(`${baseRoute}.store`));

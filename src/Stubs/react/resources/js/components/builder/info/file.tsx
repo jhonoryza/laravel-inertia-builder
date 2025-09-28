@@ -54,15 +54,22 @@ export function AppFieldInfoFile({ value }: FileFieldProps) {
         <div className="space-y-2">
             {serverPreviews.length > 0 && (
                 <div className="mt-2 space-y-2">
-                    <ul className="text-sm text-muted-foreground mt-1 space-y-2">
+                    <ul className="mt-1 flex flex-wrap gap-4 space-y-2 text-sm text-muted-foreground">
                         {serverPreviews.map((file, index) => (
                             <li key={index} className="flex flex-col gap-1">
-                                <span>{file.name}</span>
+                                <a
+                                    href={file.url}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="text-primary underline"
+                                >
+                                    open
+                                </a>
                                 {file.type.startsWith('image/') ? (
                                     <img
                                         src={file.url}
                                         alt={file.name}
-                                        className="w-32 h-32 object-cover rounded border"
+                                        className="h-32 w-32 rounded border object-cover"
                                     />
                                 ) : (
                                     <a

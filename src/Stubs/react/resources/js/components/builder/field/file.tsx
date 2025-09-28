@@ -96,10 +96,17 @@ export function AppFieldBuilderFile({ field, value, onChange }: FileFieldProps) 
         <div className="space-y-2">
             {previewsToShow.length > 0 && (
                 <div className="mt-2 space-y-2">
-                    <ul className="mt-1 space-y-2 text-sm text-muted-foreground">
+                    <ul className="mt-1 flex flex-wrap gap-4 space-y-2 text-sm text-muted-foreground">
                         {previewsToShow.map((file, index) => (
                             <li key={index} className="flex flex-col gap-1">
-                                <span>{file.name}</span>
+                                <a
+                                    href={file.url}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="text-primary underline"
+                                >
+                                    open
+                                </a>
                                 {file.type.startsWith('image/') ? (
                                     <img
                                         src={file.url}
@@ -111,7 +118,7 @@ export function AppFieldBuilderFile({ field, value, onChange }: FileFieldProps) 
                                         href={file.url}
                                         target="_blank"
                                         rel="noopener noreferrer"
-                                        className="text-blue-500 underline"
+                                        className="text-primary underline"
                                     >
                                         Preview
                                     </a>
@@ -136,7 +143,10 @@ export function AppFieldBuilderFile({ field, value, onChange }: FileFieldProps) 
                 type="button"
                 variant="outline"
                 onClick={handleButtonClick}
-                className={cn(field.mergeClass, 'dark:bg-background hover:cursor-pointer')}
+                className={cn(
+                    field.mergeClass,
+                    'hover:cursor-pointer dark:bg-background',
+                )}
             >
                 {field.placeholder ||
                     (field.multiple ? 'Choose Files' : 'Choose File')}

@@ -6,7 +6,7 @@ use Closure;
 
 trait HasPreview
 {
-    public string|null|Closure $preview = null;
+    public string|null|Closure|array $preview = null;
 
     public function preview(string|callable $preview): static
     {
@@ -15,7 +15,7 @@ trait HasPreview
         return $this;
     }
 
-    public function getPreview(): ?string
+    public function getPreview(): string|null|array
     {
         return is_callable($this->preview) ?
             $this->evaluate($this->preview) : $this->preview;
