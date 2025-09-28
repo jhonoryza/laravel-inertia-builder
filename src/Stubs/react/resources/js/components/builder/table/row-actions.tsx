@@ -56,7 +56,7 @@ export default function AppDatatableRowActions({
                         <Button
                             variant="ghost"
                             size="icon"
-                            className="cursor-pointer"
+                            className="cursor-pointer text-primary"
                             onClick={() => router.visit(route(`${baseRoute}.edit`, id))}
                         >
                             <Pencil className="h-4 w-4" />
@@ -69,7 +69,7 @@ export default function AppDatatableRowActions({
                                 <Button
                                     variant="ghost"
                                     size="icon"
-                                    className="text-red-500 hover:text-red-600 cursor-pointer"
+                                    className="text-destructive hover:text-destructive-foreground cursor-pointer"
                                 >
                                     <Trash2 className="h-4 w-4" />
                                 </Button>
@@ -82,9 +82,9 @@ export default function AppDatatableRowActions({
                                     </AlertDialogDescription>
                                 </AlertDialogHeader>
                                 <AlertDialogFooter>
-                                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                    <AlertDialogCancel className="cursor-pointer">Cancel</AlertDialogCancel>
                                     <AlertDialogAction
-                                        className="bg-red-500 hover:bg-red-600 cursor-pointer"
+                                        className="bg-destructive hover:bg-destructive-foreground cursor-pointer"
                                         onClick={() =>
                                             router.delete(route(`${baseRoute}.destroy`, id), {
                                                 preserveScroll: true,
@@ -108,7 +108,7 @@ export default function AppDatatableRowActions({
                                 <Button
                                     variant="ghost"
                                     size="icon"
-                                    className="text-green-500 hover:text-green-600 cursor-pointer"
+                                    className="text-primary hover:text-primary-foreground cursor-pointer"
                                 >
                                     <RefreshCw className="h-4 w-4" />
                                 </Button>
@@ -121,9 +121,9 @@ export default function AppDatatableRowActions({
                                     </AlertDialogDescription>
                                 </AlertDialogHeader>
                                 <AlertDialogFooter>
-                                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                    <AlertDialogCancel className="cursor-pointer">Cancel</AlertDialogCancel>
                                     <AlertDialogAction
-                                        className="bg-green-500 hover:bg-green-600 cursor-pointer"
+                                        className="bg-primary hover:bg-primary-foreground cursor-pointer"
                                         onClick={() =>
                                             router.put(route(`${baseRoute}.restore`, id), {
                                                 preserveScroll: true,
@@ -143,7 +143,7 @@ export default function AppDatatableRowActions({
                                 <Button
                                     variant="ghost"
                                     size="icon"
-                                    className="text-red-500 hover:text-red-600 cursor-pointer"
+                                    className="text-destructive hover:text-destructive-foreground cursor-pointer"
                                 >
                                     <XCircle className="h-4 w-4" />
                                 </Button>
@@ -156,9 +156,9 @@ export default function AppDatatableRowActions({
                                     </AlertDialogDescription>
                                 </AlertDialogHeader>
                                 <AlertDialogFooter>
-                                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                    <AlertDialogCancel className="cursor-pointer">Cancel</AlertDialogCancel>
                                     <AlertDialogAction
-                                        className="bg-red-700 hover:bg-red-800 cursor-pointer"
+                                        className="bg-destructive hover:bg-destructive-foreground cursor-pointer"
                                         onClick={() =>
                                             router.delete(route(`${baseRoute}.forceDestroy`, id), {
                                                 preserveScroll: true,

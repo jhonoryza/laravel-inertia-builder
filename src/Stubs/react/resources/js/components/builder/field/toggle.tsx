@@ -9,11 +9,12 @@ type Props = {
 }
 
 export function AppFieldBuilderToggle({ field, value, onChange }: Props) {
+    const defValue = value ? true : false;
     return (
         <div>
             <Switch
                 id={field.name}
-                checked={!!value}
+                checked={defValue}
                 onCheckedChange={(checked) => onChange(field.key, checked)}
                 className={field.mergeClass}
                 disabled={field.isDisable}
