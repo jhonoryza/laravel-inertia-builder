@@ -4,6 +4,7 @@ namespace Jhonoryza\InertiaBuilder\Inertia\Fields\Concerns;
 
 use Jhonoryza\InertiaBuilder\Inertia\Fields\Base\AbstractField;
 use Jhonoryza\InertiaBuilder\Inertia\Grids\Grid;
+use Jhonoryza\InertiaBuilder\Inertia\Tabs\Tabs;
 
 trait HasFields
 {
@@ -15,6 +16,8 @@ trait HasFields
 
         foreach ($fields as $field) {
             if ($field instanceof Grid) {
+                $normalized = array_merge($normalized, $field->getSchema());
+            } elseif ($field instanceof Tabs) {
                 $normalized = array_merge($normalized, $field->getSchema());
             } else {
                 $normalized[] = $field;

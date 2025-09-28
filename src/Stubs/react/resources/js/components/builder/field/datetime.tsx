@@ -45,7 +45,7 @@ export function AppFieldBuilderDatetime({ field, value, onChange }: Props) {
                                 variant={'outline'}
                                 id={field.name}
                                 className={cn(
-                                    'w-full justify-start text-left font-normal',
+                                    'w-full justify-start text-left font-normal dark:bg-background',
                                     !datePart && 'text-muted-foreground',
                                     field.mergeClass,
                                 )}

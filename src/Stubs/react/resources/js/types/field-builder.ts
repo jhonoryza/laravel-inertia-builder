@@ -24,6 +24,8 @@ export type FieldDefinition = {
     grid?: boolean;
     gridKey?: string;
     gridCol?: ColumnDef;
+    tab:boolean;
+    tabKey?: string;
     order: number;
     type: 'text' | 'email' | 'number' | 'date' | 'datetime-local' | 'password'
     | 'textarea' | 'select' | 'combobox' | 'radio' | 'checkbox' | 'toggle'

@@ -518,7 +518,6 @@ class Table implements JsonSerializable
                             'row'   => $row,
                             'model' => $row,
                         ]);
-                        $value = str($value)->limit();
                     } elseif ($col->relation && $col->relationKey && $col->relationType === 'belongsTo') {
                         if (str_contains($col->relation, '.')) {
                             $tmps  = explode('.', $col->relation);
@@ -780,8 +779,18 @@ class Table implements JsonSerializable
         return $this->toArray();
     }
 
-    public function export(string $filePath): void
+    public function getItems()
     {
+        return $this->get();
+    }
+
+    public function export(string|callable $filePath): void
+    {
+        if (is_callable($filePath)) {
+            $this->evaluate($filePath);
+
+            return;
+        }
         $fullUrl     = request()->get('url');
         $queryString = parse_url($fullUrl, PHP_URL_QUERY);
         parse_str($queryString, $queryParams);

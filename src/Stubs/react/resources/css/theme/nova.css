@@ -52,8 +52,8 @@
   --primary-foreground: #ffffff;
   --secondary: #374151;            /* gray-700 */
   --secondary-foreground: #e5e7eb; /* gray-200 */
-  --muted: #1f2937;                /* gray-800 */
-  --muted-foreground: #9ca3af;     /* gray-400 */
+  --muted: #3a414a;                /* gray-800 */
+  --muted-foreground: #e2e9f5;     /* gray-400 */
   --accent: #2e6e87;               /* sky-400 */
   --accent-foreground: #5a97c4;    /* sky-900 */
 
@@ -61,7 +61,7 @@
   --destructive-foreground: #111827;
 
   --border: #374151;               /* gray-700 */
-  --input: #4b5563;                 /* gray-600 */
+  --input: #476da1;                 /* gray-600 */
   --ring: #38bdf8;                  /* sky-400 */
 
   --sidebar: #020617;              /* slate-900 */

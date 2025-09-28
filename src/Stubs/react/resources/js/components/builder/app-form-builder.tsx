@@ -4,10 +4,12 @@ import { AppFieldBuilderLoadingPlaceholder } from "@/components/builder/field/lo
 import { gridClasses, maxOrder, sortByOrder } from "@/lib/utils";
 import { FieldDefinition } from "@/types/field-builder";
 import { Form } from '@/types/form';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useForm, usePage } from '@inertiajs/react';
 import React, { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { route } from 'ziggy-js';
+import { Card, CardContent } from "@/components/ui/card";
 
 type PageProps = {
     form: Form;
@@ -169,17 +171,26 @@ export function AppFormBuilder({ form, children }: PageProps) {
         post(route(`${baseRoute}.store`));
     };
 
-    const gridGroups = Object.entries(
+    const tabGroups = Object.entries(
         fields
-            .filter(f => f.grid && f.type !== 'hidden')
+            .filter(f => f.tab && f.type !== 'hidden')
+            .reduce((acc, f) => {
+                acc[f.tabKey || ''] = acc[f.tabKey || ''] || [];
+                acc[f.tabKey || ''].push(f);
+                return acc;
+            }, {} as Record<string, typeof fields>)
+    );
+    const nonTabFields = fields.filter(f => !f.tab && f.type !== 'hidden');
+    const gridGroups = Object.entries(
+        nonTabFields
+            .filter(f => f.grid)
             .reduce((acc, f) => {
                 acc[f.gridKey || ''] = acc[f.gridKey || ''] || [];
                 acc[f.gridKey || ''].push(f);
                 return acc;
             }, {} as Record<string, typeof fields>)
     );
-
-    const nonGridFields = fields.filter(f => !f.grid && f.type !== 'hidden');
+    const nonTabNonGridFields = nonTabFields.filter(f => !f.grid);
 
     const groups = [
         ...gridGroups.map(([gridKey, group]) => ({
@@ -191,9 +202,15 @@ export function AppFormBuilder({ form, children }: PageProps) {
         {
             type: "non-grid" as const,
             key: "non-grid",
-            fields: sortByOrder(nonGridFields),
-            maxOrder: maxOrder(nonGridFields),
+            fields: sortByOrder(nonTabNonGridFields),
+            maxOrder: maxOrder(nonTabNonGridFields),
         },
+        ...tabGroups.map(([tabKey, group]) => ({
+            type: "tab" as const,
+            key: tabKey,
+            fields: sortByOrder(group),
+            maxOrder: maxOrder(group),
+        }))
     ];
 
     const hiddenFields = fields.filter(f => f.type === 'hidden');
@@ -202,50 +219,144 @@ export function AppFormBuilder({ form, children }: PageProps) {
 
     return (
         <form onSubmit={handleSubmit} className="flex flex-col gap-4" encType="multipart/form-data">
-            {/* field builder */}
-            <div className={gridClasses(columns) + " gap-4"}>
-                {sortedGroups.map(group => {
-                    if (group.type === "grid") {
-                        const gridCol = group.fields[0]?.gridCol;
-                        return (
-                            <div key={group.key} className={gridClasses(gridCol) + " gap-4"}>
-                                {group.fields.map(field => (
-                                    processing ? (
-                                        <AppFieldBuilderLoadingPlaceholder key={field.key + 'lg'} field={field} />
-                                    ) : (
-                                        <AppFieldBuilder
-                                            key={field.key}
-                                            field={field}
-                                            value={data[field.key]}
-                                            onReactive={onReactive}
-                                            error={errors[field.key]}
-                                            isProcessing={processing}
-                                            setFields={setFields}
-                                        />
-                                    )
-                                ))}
-                            </div>
-                        );
-                    }
+            {(() => {
+                const tabDisplayGroups = sortedGroups.filter(g => g.type === 'tab');
+                const nonTabDisplayGroups = sortedGroups.filter(g => g.type !== 'tab');
 
-                    // non-grid
-                    return group.fields.map(field => (
-                        processing ? (
-                            <AppFieldBuilderLoadingPlaceholder key={field.key + 'lng'} field={field} />
-                        ) : (
-                            <AppFieldBuilder
-                                key={field.key}
-                                field={field}
-                                value={data[field.key]}
-                                onReactive={onReactive}
-                                error={errors[field.key]}
-                                isProcessing={processing}
-                                setFields={setFields}
-                            />
-                        )
-                    ))
-                })}
-            </div>
+                return (
+                    <>
+                        {tabDisplayGroups.length > 0 && (
+                            <Tabs
+                                defaultValue={tabDisplayGroups[0].key}
+                                className="w-full"
+                            >
+                                <TabsList>
+                                    {tabDisplayGroups.map((group) => (
+                                        <TabsTrigger
+                                            className="cursor-pointer"
+                                            key={group.key}
+                                            value={group.key}
+                                        >
+                                            {group.key}
+                                        </TabsTrigger>
+                                    ))}
+                                </TabsList>
+                                {tabDisplayGroups.map((group) => (
+                                    <TabsContent
+                                        key={group.key}
+                                        value={group.key}
+                                    >
+                                        <Card>
+                                            <CardContent
+                                                className={
+                                                    gridClasses(columns) +
+                                                    ' gap-4'
+                                                }
+                                            >
+                                                {group.fields.map((field) =>
+                                                    processing ? (
+                                                        <AppFieldBuilderLoadingPlaceholder
+                                                            key={
+                                                                field.key + 'lt'
+                                                            }
+                                                            field={field}
+                                                        />
+                                                    ) : (
+                                                        <AppFieldBuilder
+                                                            key={field.key}
+                                                            field={field}
+                                                            value={
+                                                                data[field.key]
+                                                            }
+                                                            onReactive={
+                                                                onReactive
+                                                            }
+                                                            error={
+                                                                errors[
+                                                                    field.key
+                                                                ]
+                                                            }
+                                                            isProcessing={
+                                                                processing
+                                                            }
+                                                            setFields={
+                                                                setFields
+                                                            }
+                                                        />
+                                                    ),
+                                                )}
+                                            </CardContent>
+                                        </Card>
+                                    </TabsContent>
+                                ))}
+                            </Tabs>
+                        )}
+
+                        {nonTabDisplayGroups.map((group) => {
+                            if (group.type === 'grid') {
+                                const gridCol = group.fields[0]?.gridCol;
+                                return (
+                                    <div
+                                        key={group.key}
+                                        className={
+                                            gridClasses(gridCol) + ' gap-4'
+                                        }
+                                    >
+                                        {group.fields.map((field) =>
+                                            processing ? (
+                                                <AppFieldBuilderLoadingPlaceholder
+                                                    key={field.key + 'lg'}
+                                                    field={field}
+                                                />
+                                            ) : (
+                                                <AppFieldBuilder
+                                                    key={field.key}
+                                                    field={field}
+                                                    value={data[field.key]}
+                                                    onReactive={onReactive}
+                                                    error={errors[field.key]}
+                                                    isProcessing={processing}
+                                                    setFields={setFields}
+                                                />
+                                            ),
+                                        )}
+                                    </div>
+                                );
+                            }
+                            if (group.type === 'non-grid') {
+                                return (
+                                    <div
+                                        key={group.key}
+                                        className={
+                                            gridClasses(columns) + ' gap-4'
+                                        }
+                                    >
+                                        {group.fields.map((field) =>
+                                            processing ? (
+                                                <AppFieldBuilderLoadingPlaceholder
+                                                    key={field.key + 'nnt'}
+                                                    field={field}
+                                                />
+                                            ) : (
+                                                <AppFieldBuilder
+                                                    key={field.key}
+                                                    field={field}
+                                                    value={data[field.key]}
+                                                    onReactive={onReactive}
+                                                    error={errors[field.key]}
+                                                    isProcessing={processing}
+                                                    setFields={setFields}
+                                                />
+                                            ),
+                                        )}
+                                    </div>
+                                );
+                            }
+                            return null;
+                        })}
+                    </>
+                );
+            })()}
             {hiddenFields.map(hiddenField => {
                 return (
                     <AppFieldBuilder

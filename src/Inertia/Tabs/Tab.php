@@ -1,15 +1,13 @@
 <?php
 
-namespace Jhonoryza\InertiaBuilder\Inertia\Grids;
+namespace Jhonoryza\InertiaBuilder\Inertia\Tabs;
 
 use Illuminate\Support\Str;
-use Jhonoryza\InertiaBuilder\Inertia\Fields\Concerns\HasColumns;
+use Jhonoryza\InertiaBuilder\Inertia\Fields\Base\AbstractField;
 use JsonSerializable;
 
-class Grid implements JsonSerializable
+class Tab implements JsonSerializable
 {
-    use HasColumns;
-
     protected array $fields = [];
 
     protected ?string $key = null;
@@ -38,10 +36,11 @@ class Grid implements JsonSerializable
     public function getSchema(): array
     {
         foreach ($this->fields as $index => $field) {
+            /** @var AbstractField $field */
             $this->fields[$index] = $field
-                ->grid()
-                ->gridKey($this->key)
-                ->gridCol($this->getColumns());
+                ->tab()
+                ->tabKey($this->key)
+                ->key($this->key . '_' . $field->getKey());
         }
 
         return $this->fields;
@@ -50,10 +49,9 @@ class Grid implements JsonSerializable
     public function toArray(): array
     {
         return [
-            'type'    => 'grid',
-            'key'     => $this->key,
-            'columns' => $this->getColumns(),
-            'fields'  => $this->getSchema(),
+            'type'   => 'tab',
+            'key'    => $this->key,
+            'fields' => $this->getSchema(),
         ];
     }
 

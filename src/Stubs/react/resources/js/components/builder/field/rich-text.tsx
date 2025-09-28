@@ -11,6 +11,7 @@ import StarterKit from '@tiptap/starter-kit';
 
 interface RichTextFieldProps {
     field: {
+        key: string;
         name: string;
         label: string;
         type: string;
@@ -46,10 +47,10 @@ export function AppFieldBuilderRichText({ field, value, onChange }: RichTextFiel
         },
         editorProps: {
             attributes: {
-                class: 'prose prose-sm sm:prose focus:outline-none max-w-none p-4 border rounded-md',
-                style: `min-height: ${field.minHeight || 200}px; ${field.maxHeight ? `max-height: ${field.maxHeight}px; overflow-y: auto;` : ''}`
-            }
-        }
+                class: 'dark:prose-invert prose-sm focus:outline-none max-w-none p-4 dark:bg-background',
+                style: `min-height: ${field.minHeight || 200}px; ${field.maxHeight ? `max-height: ${field.maxHeight}px; overflow-y: auto;` : ''}`,
+            },
+        },
     });
 
     if (!editor) {
@@ -162,10 +163,11 @@ export function AppFieldBuilderRichText({ field, value, onChange }: RichTextFiel
 
     return (
         <div className="space-y-2">
-            <div className="border border-input rounded-md overflow-hidden">
-                <div className="flex flex-wrap gap-1 p-1 border-b bg-muted/50">
+            <div className="overflow-hidden rounded-md border border-input">
+                <div className="flex flex-wrap gap-1 border-b bg-muted/50 p-1">
                     {toolbarItems.map((item) => {
-                        const tool = availableTools[item as keyof typeof availableTools];
+                        const tool =
+                            availableTools[item as keyof typeof availableTools];
                         if (!tool) return null;
 
                         return (
@@ -176,7 +178,9 @@ export function AppFieldBuilderRichText({ field, value, onChange }: RichTextFiel
                                 variant="ghost"
                                 className={cn(
                                     'h-8 px-2 py-1 text-sm',
-                                    tool.isActive() ? 'bg-accent text-accent-foreground' : ''
+                                    tool.isActive()
+                                        ? 'bg-accent text-accent-foreground'
+                                        : '',
                                 )}
                                 onClick={tool.action}
                             >
@@ -186,7 +190,9 @@ export function AppFieldBuilderRichText({ field, value, onChange }: RichTextFiel
                     })}
                 </div>
 
-                <EditorContent editor={editor} className={field.mergeClass} />
+                <EditorContent
+                    editor={editor}
+                />
             </div>
         </div>
     );

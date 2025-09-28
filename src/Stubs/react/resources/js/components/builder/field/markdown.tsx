@@ -48,7 +48,7 @@ export function AppFieldBuilderMarkdown({ field, value, onChange }: Props) {
 
                 <TabsContent value="preview">
                     <div
-                        className={cn("prose-sm dark:prose-dark max-w-none p-3 border rounded bg-muted")}
+                        className={cn("prose-sm dark:prose-invert max-w-none p-3 border rounded bg-muted")}
                         dangerouslySetInnerHTML={{ __html: marked.parse(value || '') }}
                     />
                 </TabsContent>

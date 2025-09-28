@@ -1,4 +1,5 @@
 import { Textarea } from "@/components/ui/textarea";
+import { cn } from "@/lib/utils";
 import { FieldDefinition } from "@/types/field-builder";
 
 type Props = {
@@ -22,9 +23,9 @@ export function AppFieldBuilderTextarea({ field, value, onChange }: Props) {
                 cols={field.cols}
                 rows={field.rows}
                 placeholder={field.placeholder || 'Fill in here..'}
-                className={field.mergeClass}
+                className={cn(field.mergeClass, 'dark:bg-background')}
                 disabled={field.isDisable}
             />
         </div>
-    )
+    );
 }
