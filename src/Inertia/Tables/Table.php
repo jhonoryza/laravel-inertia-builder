@@ -546,7 +546,14 @@ class Table implements JsonSerializable
                         $value = ['__html' => "<span>$value</span>"];
                     } elseif (str_contains($col->name, '.')) {
                         [$relationName, $relationAttribute] = extractRelation($col->name);
-                        $value                              = $row->{$relationName};
+                        $tmps                               = explode('.', $col->name);
+                        $value                              = $row;
+                        foreach ($tmps as $tmp) {
+                            if ($tmp == $relationAttribute) {
+                                continue;
+                            }
+                            $value = $value->{$tmp};
+                        }
                         if ($value instanceof Collection) {
                             $value = $value
                                 ->pluck($relationAttribute)
