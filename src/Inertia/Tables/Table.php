@@ -133,6 +133,13 @@ class Table implements JsonSerializable
         return $this;
     }
 
+    public function title(string $title): static
+    {
+        $this->title = $title;
+
+        return $this;
+    }
+
     public function dataName(string $name = 'data'): static
     {
         $this->name = $name;
