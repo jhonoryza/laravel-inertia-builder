@@ -1,11 +1,11 @@
 @import "@fontsource/nunito-sans";
 @import 'tailwindcss';
-@import "./theme/nova.css";
+@import "./theme/laravel.css";
 @source inline('{sm:,md:,lg:,xl:,2xl:,}grid-cols-{{1..12}}');
 @source inline('{sm:,md:,lg:,xl:,2xl:,}col-span-{{1..12}}');
 @source inline('{sm:,md:,lg:,xl:,2xl:,}order-{{1..12}}');
 
-@plugin 'tailwindcss-animate';
+/*@plugin 'tailwindcss-animate';*/
 @config "../../tailwind.config.js";
 
 @source '../views';
