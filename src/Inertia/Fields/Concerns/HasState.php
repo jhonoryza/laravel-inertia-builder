@@ -14,7 +14,10 @@ trait HasState
 
     protected ?\Closure $afterStateUpdated = null;
 
-    public function state(array|string|bool|int|callable|null $state): static
+    /**
+     * @param mixed $state
+     */
+    public function state($state): static
     {
         $this->state = $state;
 
