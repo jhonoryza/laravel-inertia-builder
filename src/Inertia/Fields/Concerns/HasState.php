@@ -6,7 +6,11 @@ use Jhonoryza\InertiaBuilder\Inertia\Forms\Set;
 
 trait HasState
 {
-    public \Closure|array|string|int|bool|null $state = null;
+    /**
+     *
+     * @var \Closure|array|string|int|bool|null
+     */
+    public $state = null;
 
     protected ?\Closure $afterStateUpdated = null;
 
